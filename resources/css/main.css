@@ -1,0 +1,42 @@
+/* =================== Main Design ==================== */
+.mainWrapper {
+    display: grid;
+    grid-template-columns: 300px auto 300px;
+    gap: 1rem;
+    margin: 1rem;
+    min-height: 100vh;
+}
+.mainWrapper-rem {
+    margin-top: 5.5rem;
+}
+.item {
+    height: 200px;
+    width: 100%;
+    border: 2px solid black;
+    border-radius: 10px;
+}
+
+.custom-button-white {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: var(--main-color-white);
+    color: var(--main-color-black);
+    text-decoration: none;
+    transition: 0.3s ease all;
+    border: 2px solid var(--main-color-white);
+}
+.custom-button-none {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: transparent;
+    color: var(--main-color-white);
+    text-decoration: none;
+    transition: 0.3s ease all;
+    border: 2px solid var(--main-color-white);
+}
