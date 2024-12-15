@@ -10,11 +10,22 @@
                             icon: 'info',
                             showCancelButton: true,
                             confirmButtonText: 'Logout',
-                            cancelButtonText: 'Home'
+                            cancelButtonText: 'Home',
+                            customClass: {
+                                confirmButton: 'btn btn-save',
+                                cancelButton: 'btn btn-cite'
+                            }
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                Swal.fire("Logout confirmed!", "", "success");
-                                document.getElementById('logout-form-user').submit();
+                                Swal.fire({
+                                    position: 'center',
+                                    icon: 'success',
+                                    title: 'Logout confirmed!',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                }).then(() => {
+                                    document.getElementById('logout-form-user').submit();
+                                });
                             } else if (result.isDismissed) {
                                 window.location.href = '{{ route('guest.account.home') }}';
                             }
@@ -28,7 +39,7 @@
                 <div class="logo">
                     <a href="{{ route('guest.account.home') }}" class="logo">
                         <img src="{{ asset('assets/img/kaiadmin/tsearch_logo.png') }}" alt="navbar brand"
-                            class="navbar-brand" />
+                            class="navbar-brand img-fluid" style="max-height: 50px;" />
                     </a>
                 </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -38,65 +49,34 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <div class="d-flex justify-content-between w-100">
+                    <div class="d-flex flex-column flex-md-row align-items-center justify-content-between w-100">
                         <div>
-                            <ul class="navbar-nav ms-auto">
-                                <li class="nav-item dropdown">
-                                    <a id="navbarDropdownUser" class="nav-link dropdown-toggle" href="#"
-                                        role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        {{ __('Menu') }}
-                                    </a>
-
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownUser">
-                                        <a class="dropdown-item" href="{{ route('landing.page') }}">{{ __('Home') }}</a>
-                                        <a class="dropdown-item" href="#">{{ __('About Us') }}</a>
-                                    </div>
+                            <ul class="navbar-nav ms-auto d-flex flex-row align-items-center justify-content-center">
+                                <li class="nav-item mx-2">
+                                    <a class="nav-link" href="{{ route('guest.account.home') }}">{{ __('Browse') }}</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">{{ __('Browse') }}</a>
+                                <li class="nav-item mx-2">
+                                    <a class="nav-link" href="{{ route('guest.about.display') }}">{{ __('About') }}</a>
                                 </li>
-                                <li class="nav-item dropdown">
-                                    <a id="navbarDropdownLinks" class="nav-link dropdown-toggle" href="#"
-                                        role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        {{ __('Links') }}
-                                    </a>
-
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownLinks">
-                                        <a class="dropdown-item" href="#">{{ __('Link 1') }}</a>
-                                        <a class="dropdown-item" href="#">{{ __('Link 2') }}</a>
-                                        <a class="dropdown-item" href="#">{{ __('Link 3') }}</a>
-                                    </div>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a id="navbarDropdownHelp" class="nav-link dropdown-toggle" href="#"
-                                        role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        {{ __('Help') }}
-                                    </a>
-
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownHelp">
-                                        <a class="dropdown-item" href="#">{{ __('Contact Us') }}</a>
-                                        <a class="dropdown-item" href="#">{{ __('Resources and Help') }}</a>
-                                    </div>
+                                <li class="nav-item mx-2">
+                                    <a class="nav-link"
+                                        href="{{ route('guest.eresources.display') }}">{{ __('E-Resources') }}</a>
                                 </li>
                             </ul>
                         </div>
                         <div>
-                            <ul class="navbar-nav ms-auto">
-                                <li class="nav-item">
+                            <ul class="navbar-nav ms-auto align-items-center justify-content-center flex-row">
+                                <li class="nav-item mx-2">
                                     <a class="nav-link" href="{{ route('guest.account.home.view.mylibrary') }}">
                                         <i class="fas fa-file"></i> {{ __('My Library') }}
                                     </a>
                                 </li>
-                                <li class="nav-item dropdown">
-                                    <a id="notification" class="nav-link dropdown-toggle" href="#" role="button"
-                                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <i class="fas fa-bell"></i>
-                                    </a>
 
+                                <li class="nav-item dropdown mx-2">
                                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="notification">
                                         <a class="dropdown-item" href="{{ route('guest.account.logout') }}"
                                             onclick="event.preventDefault();
-                        document.getElementById('logout-form').submit();">
+                                    document.getElementById('logout-form').submit();">
                                             {{ __('Logout') }}
                                         </a>
 
@@ -106,31 +86,31 @@
                                         </form>
                                     </div>
                                 </li>
-                                <li class="nav-item dropdown">
+                                @if (Auth::user()->profile)
+                                    <img src="{{ asset('assets/img/guest_profile/' . Auth::user()->profile) }}"
+                                        alt="Profile" class="rounded-circle profile-image mx-2"
+                                        style="width: 40px; height: 40px; object-fit: cover;" />
+                                @else
+                                    <img src="{{ asset('assets/img/default.png') }}" alt="Profile"
+                                        class="rounded-circle profile-image"
+                                        style="width: 40px; height: 40px; object-fit: cover;" />
+                                @endif
+                                <li class="nav-item dropdown mx-2">
                                     <a id="navbarDropdownUserProfile"
                                         class="nav-link dropdown-toggle d-flex align-items-center" href="#"
-                                        role="button" data-bs-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false">
-                                        @if (Auth::user()->profile)
-                                            <img src="{{ asset('assets/img/guest_profile/' . Auth::user()->profile) }}"
-                                                alt="Profile" class="rounded-circle" width="30" height="30">
-                                        @else
-                                            <img src="{{ asset('assets/img/default.png') }}" alt="Profile"
-                                                class="rounded-circle" width="30" height="30">
-                                        @endif
+                                        role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         <span class="ms-2">{{ Auth::user()->name }}</span>
                                     </a>
 
                                     <div class="dropdown-menu dropdown-menu-end"
                                         aria-labelledby="navbarDropdownUserProfile">
                                         <a class="dropdown-item"
-                                            href="{{ route('guest.account.profile', ['user_code' => encrypt(Auth::user()->user_code)]) }}">{{ __('Profile') }}</a>
-                                        <a class="dropdown-item"
-                                            href="{{ route('guest.account.preference') }}">{{ __('Setting') }}</a>
+                                            href="{{ route('guest.account.profile', ['user_code' => encrypt(Auth::user()->user_code)]) }}">
+                                            <i class="fa-solid fa-user me-2"></i>{{ __('Profile') }}
+                                        </a>
                                         <a class="dropdown-item" href="{{ route('guest.account.logout') }}"
-                                            onclick="event.preventDefault();
-                                    document.getElementById('logout-form').submit();">
-                                            {{ __('Logout') }}
+                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                            <i class="fa-solid fa-right-from-bracket me-2"></i>{{ __('Logout') }}
                                         </a>
                                     </div>
                                 </li>
@@ -152,7 +132,11 @@
                             icon: 'info',
                             showCancelButton: true,
                             confirmButtonText: 'Logout',
-                            cancelButtonText: 'Dashboard'
+                            cancelButtonText: 'Dashboard',
+                            customClass: {
+                                confirmButton: 'btn btn-save',
+                                cancelButton: 'btn btn-cite'
+                            }
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 Swal.fire("Logout confirmed!", "", "success");
@@ -179,7 +163,11 @@
                             icon: 'info',
                             showCancelButton: true,
                             confirmButtonText: 'Logout',
-                            cancelButtonText: 'Dashboard'
+                            cancelButtonText: 'Dashboard',
+                            customClass: {
+                                confirmButton: 'btn btn-save',
+                                cancelButton: 'btn btn-cite'
+                            }
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 Swal.fire("Logout confirmed!", "", "success");
@@ -190,8 +178,7 @@
                         });
                     });
                 </script>
-                <form id="logout-form-superadmin" action="{{ route('superadmin.logout') }}" method="POST"
-                    class="d-none">
+                <form id="logout-form-superadmin" action="{{ route('superadmin.logout') }}" method="POST" class="d-none">
                     @csrf
                 </form>
             @endif
@@ -202,66 +189,28 @@
             <div class="logo">
                 <a href="{{ route('landing.page') }}" class="logo">
                     <img src="{{ asset('assets/img/kaiadmin/tsearch_logo.png') }}" alt="navbar brand"
-                        class="navbar-brand" />
+                        class="navbar-brand img-fluid" style="max-height: 50px;" />
                 </a>
             </div>
-            {{-- <a class="navbar-brand" href="{{ url('/') }}">
-                {{ config('app.name', 'Thesis Management System') }}
-            </a> --}}
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="{{ __('Toggle navigation') }}">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <div class="d-flex justify-content-between w-100">
+                <div class="d-flex flex-column flex-md-row align-items-center justify-content-end w-100">
                     <div>
-                        <!-- Empty div for alignment -->
-                    </div>
-                    <div>
-                        <ul class="navbar-nav ms-auto">
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdownGuest" class="nav-link dropdown-toggle" href="#"
-                                    role="button" data-bs-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false">
-                                    {{ __('Menu') }}
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownGuest">
-                                    <a class="dropdown-item"
-                                        href="{{ route('landing.page') }}">{{ __('Home') }}</a>
-                                    <a class="dropdown-item" href="#">{{ __('About Us') }}</a>
-                                </div>
+                        <ul class="navbar-nav ms-auto text-center text-md-start">
+                            <li class="nav-item mx-2">
+                                <a class="nav-link" href="{{ route('guest.page') }}">{{ __('Browse') }}</a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">{{ __('Browse') }}</a>
+                            <li class="nav-item mx-2">
+                                <a class="nav-link" href="{{ route('about.display') }}">{{ __('About') }}</a>
                             </li>
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdownGuestLinks" class="nav-link dropdown-toggle" href="#"
-                                    role="button" data-bs-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false">
-                                    {{ __('Links') }}
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-end"
-                                    aria-labelledby="navbarDropdownGuestLinks">
-                                    <a class="dropdown-item" href="#">{{ __('Link 1') }}</a>
-                                    <a class="dropdown-item" href="#">{{ __('Link 2') }}</a>
-                                    <a class="dropdown-item" href="#">{{ __('Link 3') }}</a>
-                                </div>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdownGuestHelp" class="nav-link dropdown-toggle" href="#"
-                                    role="button" data-bs-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false">
-                                    {{ __('Help') }}
-                                </a>
-
-                                <div class="dropdown-menu dropdown-menu-end"
-                                    aria-labelledby="navbarDropdownGuestHelp">
-                                    <a class="dropdown-item" href="#">{{ __('Contact Us') }}</a>
-                                    <a class="dropdown-item" href="#">{{ __('Resources and Help') }}</a>
-                                </div>
+                            <li class="nav-item mx-2">
+                                <a class="nav-link"
+                                    href="{{ route('eresources.display') }}">{{ __('E-Resources') }}</a>
                             </li>
                         </ul>
                     </div>
@@ -273,7 +222,7 @@
                 <div class="logo">
                     <a href="{{ route('landing.page') }}" class="logo">
                         <img src="{{ asset('assets/img/kaiadmin/tsearch_logo.png') }}" alt="navbar brand"
-                            class="navbar-brand" />
+                            class="navbar-brand img-fluid" style="max-height: 50px;" />
                     </a>
                 </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -283,66 +232,74 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <div class="d-flex justify-content-between w-100">
-                        <div>
-                            <ul class="navbar-nav ms-auto">
-                                <li class="nav-item dropdown">
-                                    <a id="navbarDropdownGuest" class="nav-link dropdown-toggle" href="#"
-                                        role="button" data-bs-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false">
-                                        {{ __('Menu') }}
-                                    </a>
-
-                                    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownGuest">
-                                        <a class="dropdown-item"
-                                            href="{{ route('landing.page') }}">{{ __('Home') }}</a>
-                                        <a class="dropdown-item" href="#">{{ __('About Us') }}</a>
-                                    </div>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">{{ __('Browse') }}</a>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a id="navbarDropdownGuestLinks" class="nav-link dropdown-toggle" href="#"
-                                        role="button" data-bs-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false">
-                                        {{ __('Links') }}
-                                    </a>
-
-                                    <div class="dropdown-menu dropdown-menu-end"
-                                        aria-labelledby="navbarDropdownGuestLinks">
-                                        <a class="dropdown-item" href="#">{{ __('Link 1') }}</a>
-                                        <a class="dropdown-item" href="#">{{ __('Link 2') }}</a>
-                                        <a class="dropdown-item" href="#">{{ __('Link 3') }}</a>
-                                    </div>
-                                </li>
-                                <li class="nav-item dropdown">
-                                    <a id="navbarDropdownGuestHelp" class="nav-link dropdown-toggle" href="#"
-                                        role="button" data-bs-toggle="dropdown" aria-haspopup="true"
-                                        aria-expanded="false">
-                                        {{ __('Help') }}
-                                    </a>
-
-                                    <div class="dropdown-menu dropdown-menu-end"
-                                        aria-labelledby="navbarDropdownGuestHelp">
-                                        <a class="dropdown-item" href="#">{{ __('Contact Us') }}</a>
-                                        <a class="dropdown-item" href="#">{{ __('Resources and Help') }}</a>
-                                    </div>
-                                </li>
-                            </ul>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <div class="d-flex flex-column flex-md-row align-items-center justify-content-end w-100">
+                                <div>
+                                    <ul class="navbar-nav ms-auto text-center text-md-start">
+                                        <li class="nav-item mx-2">
+                                            <a class="nav-link" href="{{ route('guest.page') }}">{{ __('Browse') }}</a>
+                                        </li>
+                                        <li class="nav-item mx-2">
+                                            <a class="nav-link"
+                                                href="{{ route('about.display') }}">{{ __('About') }}</a>
+                                        </li>
+                                        <li class="nav-item mx-2">
+                                            <a class="nav-link"
+                                                href="{{ route('eresources.display') }}">{{ __('E-Resources') }}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
-                        {{-- <div>
-                            <ul class="navbar-nav ms-auto">
-                                <li class="nav-item">
-                                    <button type="button" class="nav-link text-white btn bg-primary"
-                                        data-bs-toggle="modal" data-bs-target="#institutionalLogin">
-                                        {{ __('Guest Registration') }}
-                                    </button>
-                                </li>
-                            </ul>
-                        </div> --}}
                     </div>
                 </div>
             @endguest
         @endif
     </div>
 </nav>
+
+<style>
+    /* Custom Responsive Styles */
+    .bg-maroon {
+        background-color: #800000 !important;
+    }
+
+    .navbar-dark .navbar-nav .nav-link {
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+
+    .navbar-dark .navbar-nav .nav-link:hover {
+        color: white !important;
+    }
+
+    @media (max-width: 768px) {
+        .navbar-collapse {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .navbar-nav {
+            flex-direction: column !important;
+            align-items: center !important;
+        }
+
+        .nav-item {
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+        }
+
+        .dropdown-menu {
+            position: static;
+            transform: none !important;
+            margin-top: 10px;
+            text-align: center;
+            border: none;
+            background-color: transparent;
+        }
+
+        .profile-image {
+            margin: 0 auto 10px !important;
+        }
+    }
+</style>

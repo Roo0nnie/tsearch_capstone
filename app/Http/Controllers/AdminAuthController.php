@@ -10,7 +10,7 @@ use App\Models\GuestAccount;
 use App\Models\LogHistory;
 use App\Models\Announcement;
 use App\Models\DeletedUsers;
-use App\Models\InvalidAdmin;
+// use App\Models\InvalidAdmin;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
 use Carbon\Carbon;
@@ -29,15 +29,14 @@ class AdminAuthController extends Controller
         $logusers = LogHistory::where('login', '>=', now()->subDays(7))->get();
         $announcements = Announcement::all();
 
-
         return view('admin.dashboard', compact('imrads','users', 'logusers', 'announcements'));
     }
 
     public function view()
     {
-        $invalidadmins = InvalidAdmin::all();
+        // $invalidadmins = InvalidAdmin::all();
         $admins = Admin::all();
-        return view('superadmin.admin.admin', compact('admins', 'invalidadmins'));
+        return view('superadmin.admin.admin', compact('admins'));
     }
 
     public function searchAdmin(Request $request)
@@ -131,7 +130,6 @@ class AdminAuthController extends Controller
             'birthday' => ['nullable', 'date'],
             'age' => 'nullable|integer|min:0',
             'gender' => 'nullable|in:male,female,other',
-            // 'account_status' => 'required|string|in:active,blocked',
         ]);
 
         $admin->user_code = $data['user_code'];
@@ -151,22 +149,6 @@ class AdminAuthController extends Controller
     // =================== If execute, admin can delete a user ==========================
     public function destroy(Admin $admin)
     {
-        // DeletedUsers::create([
-        //     'profile'    => $admin->profile ?: null,
-        //     'name'       => $admin->name,
-        //     'user_code'  => $admin->user_code,
-        //     'email'      => $admin->email,
-        //     'phone'      => $admin->phone ?: null,
-        //     'birthday'   => $admin->birthday ?: null,
-        //     'password'   => $admin->password,
-        //     'type'       => $admin->type,
-        //     'deleted_time' => now(),
-        //     'delete_by' => auth()->user()->user_code,
-        //     // 'permanent_delete' => now()->addDays(30),
-        //     'permanent_delete' => now()->addSeconds(30),
-        // ]);
-
-        // $admin->delete();
 
         $admin->update([
             'action' => 'deleted',
@@ -177,8 +159,6 @@ class AdminAuthController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Admin deleted successfully.');
-
-        // return redirect()->route('admin.admin')->with('success', 'Admin deleted successfully.');
     }
 
     public function excelstore(Request $request)
@@ -320,7 +300,7 @@ class AdminAuthController extends Controller
         $Admin = Auth::guard('admin')->user();
 
         if (!$Admin) {
-            return back()->withErrors(['verification_code' => 'You must be logged in as a superadmin to access this feature.']);
+            return back()->withErrors(['verification_code' => 'You must be logged in as a admin to access this feature.']);
         }
 
         if ($Admin->verification_code == $request->verification_code) {
@@ -350,5 +330,210 @@ class AdminAuthController extends Controller
         return view('superadmin.admin.adminView', compact('admin', 'logs'));
     }
 
+    public function file_upload(Request $request) {
+
+        $filter_type = $request->input('filter_type');
+
+        $authors = Imrad::select('author')->get();
+        $advisers = Imrad::select('adviser')->get();
+        $departments = Imrad::select('department')->distinct()->get();
+        $years = Imrad::select('publication_date')->distinct()->get();
+
+        $adviserList = [];
+        $departmentList = $departments->pluck('department')->toArray();
+        $yearList = [];
+
+        foreach ($years as $year) {
+            $year = substr($year->publication_date, -4);
+            if (!in_array($year, $yearList)) {
+                $yearList[] = $year;
+            }
+        }
+
+        rsort($yearList);
+
+
+        foreach ($advisers as $adviser) {
+            $names = explode(',', $adviser->adviser);
+            foreach ($names as $name) {
+                $trimmedName = trim($name);
+                if (!in_array($trimmedName, $adviserList)) {
+                    $adviserList[] = $trimmedName;
+                }
+            }
+        }
+
+        sort($adviserList);
+
+        if ($filter_type === 'filter') {
+            $query = Imrad::with('imradMetric');
+
+            $this->applyFilters($request, $query);
+            $imrads = $query->where('action', null)->get();
+            return view('admin.admin_page.report-table.file_upload', compact('imrads','adviserList', 'departmentList', 'yearList' ));
+        }
+
+        $imrads = Imrad::where('action', null)->get();
+        return view('admin.admin_page.report-table.file_upload', compact('imrads','adviserList', 'departmentList', 'yearList' ));
+    }
+
+    public function file_rating(Request $request) {
+
+        $filter_type = $request->input('filter_type');
+
+        $authors = Imrad::select('author')->get();
+        $advisers = Imrad::select('adviser')->get();
+        $departments = Imrad::select('department')->distinct()->get();
+        $years = Imrad::select('publication_date')->distinct()->get();
+
+        $adviserList = [];
+        $departmentList = $departments->pluck('department')->toArray();
+        $yearList = [];
+
+        foreach ($years as $year) {
+            $year = substr($year->publication_date, -4);
+            if (!in_array($year, $yearList)) {
+                $yearList[] = $year;
+            }
+        }
+
+        rsort($yearList);
+
+
+        foreach ($advisers as $adviser) {
+            $names = explode(',', $adviser->adviser);
+            foreach ($names as $name) {
+                $trimmedName = trim($name);
+                if (!in_array($trimmedName, $adviserList)) {
+                    $adviserList[] = $trimmedName;
+                }
+            }
+        }
+
+        sort($adviserList);
+
+        if ($filter_type === 'filter') {
+            $query = Imrad::with('imradMetric');
+
+            $this->applyFilters($request, $query);
+            $imrads = $query->where('action', null)->get();
+            return view('admin.admin_page.report-table.file_rating', compact('imrads','adviserList', 'departmentList', 'yearList' ));
+        }
+
+         $imrads = Imrad::with('imradMetric')->where('action', null)->get();
+        return view('admin.admin_page.report-table.file_rating', compact('imrads','adviserList', 'departmentList', 'yearList' ));
+    }
+
+    public function file_sdg(Request $request) {
+
+        $filter_type = $request->input('filter_type');
+
+        $authors = Imrad::select('author')->get();
+        $advisers = Imrad::select('adviser')->get();
+        $departments = Imrad::select('department')->distinct()->get();
+        $years = Imrad::select('publication_date')->distinct()->get();
+
+        $adviserList = [];
+        $departmentList = $departments->pluck('department')->toArray();
+        $yearList = [];
+
+        foreach ($years as $year) {
+            $year = substr($year->publication_date, -4);
+            if (!in_array($year, $yearList)) {
+                $yearList[] = $year;
+            }
+        }
+
+        rsort($yearList);
+
+
+        foreach ($advisers as $adviser) {
+            $names = explode(',', $adviser->adviser);
+            foreach ($names as $name) {
+                $trimmedName = trim($name);
+                if (!in_array($trimmedName, $adviserList)) {
+                    $adviserList[] = $trimmedName;
+                }
+            }
+        }
+
+        sort($adviserList);
+
+        if ($filter_type === 'filter') {
+            $query = Imrad::with('imradMetric');
+
+            $this->applyFilters($request, $query);
+            $imrads = $query->where('action', null)->get();
+            return view('admin.admin_page.report-table.file_sdg', compact('imrads','adviserList', 'departmentList', 'yearList' ));
+        }
+
+            $imrads = Imrad::where('action', null)->get();
+            return view('admin.admin_page.report-table.file_sdg', compact('imrads','adviserList', 'departmentList', 'yearList' ));
+    }
+
+
+
+    protected function applyFilters(Request $request, $query)
+    {
+        if ($request->filled('adviser')) {
+            $advisers = $request->input('adviser');
+            $query->where(function ($q) use ($advisers) {
+                foreach ($advisers as $adviser) {
+                    $q->orWhereRaw("FIND_IN_SET(?, adviser)", [$adviser]);
+                }
+            });
+        }
+
+        if($request->filled('category')) {
+            $categories = $request->input('category');
+            $query->whereIn('category', $categories);
+        }
+
+        if($request->filled('rating')) {
+            $ratings = $request->input('rating');
+
+            $query->whereHas('imradMetric', function ($q) use ($ratings) {
+                $q->whereIn('rates', $ratings);
+            });
+        }
+
+        if ($request->filled('status')) {
+            $statuses = $request->input('status');
+            $query->where(function ($q) use ($statuses) {
+                foreach ($statuses as $status) {
+                    $q->orWhereRaw("FIND_IN_SET(?, status)", [$status]);
+                }
+            });
+        }
+
+        $startYear = $request->input('start_year')[0] ?? null;
+        $endYear = $request->input('end_year')[0] ?? null;
+
+        if ($startYear && !$endYear) {
+            $query->where('publication_date', '>=', $startYear);
+        } elseif ($endYear && !$startYear) {
+            $query->where('publication_date', '<=', $endYear);
+        } elseif ($startYear && $endYear) {
+            if ($startYear === $endYear) {
+                $query->where('publication_date', $startYear);
+            } else {
+                $query->whereBetween('publication_date', [$startYear, $endYear]);
+            }
+        }
+
+        if ($request->filled('department')) {
+            $departments = $request->input('department');
+            $query->where('department', $departments);
+        }
+
+        if ($request->filled('sdg')) {
+            $sdgs = array_map('trim', $request->input('sdg'));
+            $query->where(function ($q) use ($sdgs) {
+                foreach ($sdgs as $sdg) {
+                    $q->orWhereRaw("FIND_IN_SET(?, REPLACE(SDG, ' ', ''))", [$sdg]);
+                }
+            });
+        }
+    }
 
 }

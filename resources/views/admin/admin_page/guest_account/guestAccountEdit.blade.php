@@ -7,7 +7,6 @@
             <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
                 <div>
                     <h3 class="fw-bold mb-3">Edit Guest Details</h3>
-
                 </div>
 
             </div>
@@ -95,31 +94,6 @@
                                         @enderror
                                     </div>
                                 </div>
-
-                                {{-- <div class="row mb-3">
-                                    <label for="gender"
-                                        class="col-md-4 col-form-label text-md-end">{{ __('Gender') }}</label>
-                                    <div class="col-md-6">
-                                        <select class="form-select @error('gender') is-invalid @enderror" id="gender"
-                                            name="gender" required>
-                                            <option value="" disabled>Select Gender</option>
-                                            <option value="male"
-                                                {{ old('gender', $guestAccount->gender) == 'male' ? 'selected' : '' }}>
-                                                Male</option>
-                                            <option value="female"
-                                                {{ old('gender', $guestAccount->gender) == 'female' ? 'selected' : '' }}>
-                                                Female</option>
-                                            <option value="other"
-                                                {{ old('gender', $guestAccount->gender) == 'other' ? 'selected' : '' }}>
-                                                Other</option>
-                                        </select>
-                                        @error('gender')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div> --}}
 
                                 <div class="row mb-3">
                                     <label for="gender"

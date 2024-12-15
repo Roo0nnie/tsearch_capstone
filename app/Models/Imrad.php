@@ -21,6 +21,7 @@ class imrad extends Model
         'publication_date',
         'keywords',
         'location',
+        'category',
         'awards',
         'volume',
         'issue',
@@ -46,5 +47,10 @@ class imrad extends Model
     public function myLibraries()
     {
         return $this->hasMany(MyLibrary::class, 'imrad_id');
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class, 'metric_id');
     }
 }

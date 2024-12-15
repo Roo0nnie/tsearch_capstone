@@ -293,11 +293,6 @@ class ReportController extends Controller
             ->orderBy('date')
             ->get();
 
-        // Average time consumed per user per day
-        $avgTimeConsumed = LogHistory::selectRaw('DATE(login) as date, AVG(TIMESTAMPDIFF(SECOND, login, logout)) / 3600 as avg_time_consumed') // Divide by 3600 to get hours
-        ->groupBy('date')
-        ->orderBy('date')
-        ->get();
 
         // Preparing data for Chart.js
         $dates = $activeUsersCount->pluck('date')->map(function($date) {
@@ -306,15 +301,11 @@ class ReportController extends Controller
 
         $activeData = $activeUsersCount->pluck('active_count')->toArray();
         $newUserData = $newUsersCount->pluck('new_user_count')->toArray();
-        $avgTimeData = $avgTimeConsumed->pluck('avg_time_consumed')->map(function ($time) {
-            return round($time, 2); // Optional: round the time to 2 decimal places
-        })->toArray();
 
         return response()->json([
             'dates' => $dates,
             'active_users' => $activeData,
             'new_users' => $newUserData,
-            'avg_time_consumed' => $avgTimeData,
         ]);
     }
 
@@ -331,12 +322,6 @@ class ReportController extends Controller
             ->orderBy('date')
             ->get();
 
-        // Average time consumed per user per day
-        $avgTimeConsumed = LogHistory::selectRaw('DATE(login) as date, AVG(TIMESTAMPDIFF(SECOND, login, logout)) / 3600 as avg_time_consumed') // Divide by 3600 to get hours
-        ->groupBy('date')
-        ->orderBy('date')
-        ->get();
-
         // Preparing data for Chart.js
         $dates = $activeUsersCount->pluck('date')->map(function($date) {
             return date('M d', strtotime($date));
@@ -344,15 +329,11 @@ class ReportController extends Controller
 
         $activeData = $activeUsersCount->pluck('active_count')->toArray();
         $newUserData = $newUsersCount->pluck('new_user_count')->toArray();
-        $avgTimeData = $avgTimeConsumed->pluck('avg_time_consumed')->map(function ($time) {
-            return round($time, 2); // Optional: round the time to 2 decimal places
-        })->toArray();
 
         return response()->json([
             'dates' => $dates,
             'active_users' => $activeData,
             'new_users' => $newUserData,
-            'avg_time_consumed' => $avgTimeData,
         ]);
     }
     public function viewDataUserStatistics() {
@@ -397,7 +378,7 @@ class ReportController extends Controller
             $combinedAges = $adminAges->merge($guestAges);
 
             $ageResult = [
-                '0 - 12' => 0,
+                'null' => 0,
                 '13 - 19' => 0,
                 '20 - 34' => 0,
                 '35 - 49' => 0,
@@ -407,7 +388,7 @@ class ReportController extends Controller
             foreach ($combinedAges as $age) {
                 $ageValue = (int)$age;
                 if ($ageValue < 13) {
-                    $ageResult['0 - 12']++;
+                    $ageResult['null']++;
                 } elseif ($ageValue <= 19) {
                     $ageResult['13 - 19']++;
                 } elseif ($ageValue <= 34) {
@@ -474,7 +455,7 @@ public function supergetUserDemographics(Request $request)
             $combinedAges = $adminAges->merge($guestAges);
 
             $ageResult = [
-                '0 - 12' => 0,
+                'null' => 0,
                 '13 - 19' => 0,
                 '20 - 34' => 0,
                 '35 - 49' => 0,
@@ -484,7 +465,7 @@ public function supergetUserDemographics(Request $request)
             foreach ($combinedAges as $age) {
                 $ageValue = (int)$age;
                 if ($ageValue < 13) {
-                    $ageResult['0 - 12']++;
+                    $ageResult['null']++;
                 } elseif ($ageValue <= 19) {
                     $ageResult['13 - 19']++;
                 } elseif ($ageValue <= 34) {
@@ -511,9 +492,45 @@ public function supergetUserDemographics(Request $request)
     }
 }
 
-public function viewUserDemographics()
-{
-    return view('admin.admin_page.reports.user_demographics');
-}
+    public function viewUserDemographics()
+    {
+        return view('admin.admin_page.reports.user_demographics');
+    }
+
+    public function viewfileupload()
+    {
+        return view('admin.admin_page.reports.report_fileupload');
+    }
+
+    public function reportfilecount(Request $request) {
+        $uploads = DB::table('imrads')
+            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as upload_count'))
+            ->groupBy('month')
+            ->get();
+
+        $monthlyCounts = array_fill(0, 12, 0);
+
+        foreach ($uploads as $upload) {
+            $monthlyCounts[$upload->month - 1] = $upload->upload_count;
+        }
+
+        return response()->json(['uploads' => $monthlyCounts]);
+    }
+
+    public function superreportfilecount(Request $request) {
+        $uploads = DB::table('imrads')
+            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as upload_count'))
+            ->groupBy('month')
+            ->get();
+
+        $monthlyCounts = array_fill(0, 12, 0);
+
+        foreach ($uploads as $upload) {
+            $monthlyCounts[$upload->month - 1] = $upload->upload_count;
+        }
+
+        return response()->json(['uploads' => $monthlyCounts]);
+    }
+
 
 }

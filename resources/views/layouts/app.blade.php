@@ -28,16 +28,10 @@
 
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.2.0/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
-
-
-
-
 </head>
 
-<body id="welcome" data-route="{{ Route::currentRouteName() }}">
+<body data-route="{{ Route::currentRouteName() }}">
     <div id="app">
-
-
         @if (!Str::contains(Route::currentRouteName(), 'admin') || Str::contains(Route::currentRouteName(), 'admin.login'))
             @yield('message')
             @yield('header')
@@ -55,7 +49,10 @@
             @yield('footer')
     </div>
     @endif
-    <button class="fixed-button ">Send Feedback</button>
+    <button class="fixed-button "><a
+            href="https://docs.google.com/forms/d/e/1FAIpQLScZ14WhnFoac_G0nytradkuUXi-pH_WmACQwvkgk-MCsNYb5Q/viewform?usp=pp_url"
+            target="_blank">IT
+            Expert Survey</a></button>
     </div>
 </body>
 
@@ -68,6 +65,16 @@
     } else {
         nav.classList.remove("welcome");
     }
+
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    })
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'PrintScreen') {
+            navigator.clipboard.writeText('Screenshots are disabled.');
+        }
+    });
 </script>
 
 

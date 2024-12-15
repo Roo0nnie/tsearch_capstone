@@ -5,15 +5,6 @@
                 <div class="card-header">
                     <div class="card-head-row">
                         <div class="card-title">Manuscript Downloads, Saves, Views and Average Ratings by SDG</div>
-                        <div class="card-tools">
-                            <a href="#" id="exportChart" class="btn btn-label-success btn-round btn-sm me-2">
-                                <span class="btn-label">
-                                    <i class="fa fa-pencil"></i>
-                                </span>
-                                Export Image
-                            </a>
-
-                        </div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -150,12 +141,4 @@
             }
         });
     }
-
-    document.getElementById('exportChart').addEventListener('click', function() {
-        var url_base64jp = document.getElementById('sdgBarChart').toDataURL("image/png");
-        var link = document.createElement('a');
-        link.href = url_base64jp;
-        link.download = 'chart_export.png';
-        link.click();
-    });
 </script>

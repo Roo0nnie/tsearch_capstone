@@ -5,18 +5,40 @@
     <div>
         <div>
             @if (session('success'))
-                <div class="alert alert-success" role="alert">
-                    {{ session('success') }}
+                <script>
+                    Swal.fire({
+                        title: 'Success!',
+                        text: "{{ session('success') }}",
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                </script>
+            @endif
+
+            @if (session('error'))
+                <script>
+                    Swal.fire({
+                        title: 'Error!',
+                        text: "{{ session('error') }}",
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                </script>
+            @endif
+
+            {{-- @if (session('error'))
+                <div class="alert alert-danger bg-danger text-white" role="alert">
+                    {{ session('error') }}
                 </div>
             @endif
 
             @if ($errors->any())
-                <div class="alert alert-danger">
+                <div class="alert alert-danger text-white">
                     @foreach ($errors->all() as $error)
                         <p>{{ $error }}</p>
                     @endforeach
                 </div>
-            @endif
+            @endif --}}
             <div class="page-inner">
                 <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
                     <div>
@@ -26,9 +48,6 @@
 
                 <div class="container mt-3">
                     <div class="row">
-                        <!-- For large screens, div1 takes 7 columns, div2 takes 5 columns -->
-                        <!-- For medium screens, both div1 and div2 take 6 columns each -->
-                        <!-- For small screens, div2 takes full width (12 columns) and is placed above div1 -->
 
                         <!-- div2 (Top on small screens, left on larger screens) -->
                         <div class="col-lg-8 col-md-6 col-12 order-2 order-md-1 order-lg-1">
@@ -109,7 +128,7 @@
                                                             <input id="email" type="email"
                                                                 class="form-control @error('email') is-invalid @enderror"
                                                                 name="email" value="{{ old('email', $admin->email) }}"
-                                                                required autocomplete="email">
+                                                                required autocomplete="email" readonly>
 
                                                             @error('email')
                                                                 <span class="invalid-feedback" role="alert">
@@ -200,23 +219,6 @@
                                                         </div>
                                                     </div>
 
-                                                    {{-- <div class="row mb-3">
-                                                        <label for="profile"
-                                                            class="col-md-4 col-form-label text-md-end">{{ __('Profile') }}</label>
-
-                                                        <div class="col-md-6">
-                                                            <input id="profile" type="file"
-                                                                class="form-control @error('profile') is-invalid @enderror"
-                                                                name="profile">
-
-                                                            @error('profile')
-                                                                <span class="invalid-feedback" role="alert">
-                                                                    <strong>{{ $message }}</strong>
-                                                                </span>
-                                                            @enderror
-                                                        </div>
-                                                    </div> --}}
-
                                                     <div class="row mb-0">
                                                         <div class="col-md-6 offset-md-4">
                                                             <button type="submit" class="btn btn-primary">
@@ -227,11 +229,10 @@
                                                 </form>
                                             </div>
                                         </div>
-                                        <!-- File Information Tab -->
+                                        <!-- Password Tab -->
                                         <div class="tab-pane fade" id="online-account" role="tabpanel"
                                             aria-labelledby="online-account-tab">
                                             <div class="container">
-                                                {{-- password --}}
 
                                                 <form method="POST"
                                                     action="{{ route('admin.profile.password.update', ['admin' => $admin]) }}">
@@ -249,10 +250,12 @@
                                                                     class="form-control @error('currpass') is-invalid @enderror"
                                                                     name="currpass" required
                                                                     autocomplete="current-password" autofocus>
-                                                                <span class="invalid-feedback" role="alert">
-                                                                    <strong id="currpass-error">The current password is
-                                                                        incorrect.</strong>
-                                                                </span>
+
+                                                                @error('currpass')
+                                                                    <span class="invalid-feedback" role="alert">
+                                                                        <strong>{{ $message }}</strong>
+                                                                    </span>
+                                                                @enderror
                                                             </div>
                                                         </div>
 
@@ -263,11 +266,33 @@
                                                                 <input id="password1" type="password"
                                                                     class="form-control @error('password') is-invalid @enderror"
                                                                     name="password" required autocomplete="new-password">
+
                                                                 @error('password')
                                                                     <span class="invalid-feedback" role="alert">
                                                                         <strong>{{ $message }}</strong>
                                                                     </span>
                                                                 @enderror
+
+                                                                <div class="mt-2">
+                                                                    <ul>
+                                                                        <li id="length" class="text-danger">Must be at
+                                                                            least 8 characters</li>
+                                                                        <li id="uppercase" class="text-danger">Must
+                                                                            include an
+                                                                            uppercase letter</li>
+                                                                        <li id="lowercase" class="text-danger">Must
+                                                                            include a
+                                                                            lowercase letter</li>
+                                                                        <li id="number" class="text-danger">Must
+                                                                            include a
+                                                                            number</li>
+                                                                        <li id="special" class="text-danger">Must
+                                                                            include a
+                                                                            special character (@, $, !, %, *, ?, &)</li>
+                                                                    </ul>
+                                                                </div>
+
+
                                                             </div>
                                                         </div>
 
@@ -303,7 +328,6 @@
                         </div>
                     </div>
 
-                    <!-- div1 (Bottom on small screens, right on larger screens) -->
                     <div class="col-lg-4 col-md-6 col-12 order-1 order-md-2 order-lg-2">
                         <div class="card">
                             <div class="card-body">
@@ -410,6 +434,44 @@
                 });
             });
         });
-    </script>
 
+
+        document.getElementById("password1").addEventListener("input", function() {
+            const password = this.value;
+
+            const validations = [{
+                    id: "length",
+                    test: password.length >= 8
+                },
+                {
+                    id: "uppercase",
+                    test: /[A-Z]/.test(password)
+                },
+                {
+                    id: "lowercase",
+                    test: /[a-z]/.test(password)
+                },
+                {
+                    id: "number",
+                    test: /\d/.test(password)
+                },
+                {
+                    id: "special",
+                    test: /[@$!%*?&]/.test(password)
+                },
+            ];
+
+            validations.forEach(validation => {
+                const element = document.getElementById(validation.id);
+                if (validation.test) {
+                    element.classList.remove("text-danger");
+                    element.classList.add("text-success", "visible");
+                } else {
+                    element.classList.remove("text-success");
+                    element.classList.add("text-danger", "visible");
+                }
+            });
+
+        });
+    </script>
 @endsection

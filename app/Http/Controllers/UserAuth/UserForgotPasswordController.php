@@ -20,21 +20,6 @@ class UserForgotPasswordController extends Controller
     {
         $request->validate(['email' => 'required']);
 
-        // $user_type = '';
-        // if (str_starts_with($request->user_code, '21')) {
-        //     $user_type = 'users';
-        // } elseif (str_starts_with($request->user_code, '20')) {
-        //     $user_type = 'faculties';
-        // } elseif (str_starts_with($request->user_code, '19')) {
-        //     $user_type = 'admins';
-        // } elseif (str_starts_with($request->user_code, '09')) {
-        //     $user_type = 'guest_account';
-        // } else {
-        //     return back()->withErrors(['user_code' => 'Invalid user ID format.'])->withInput();
-        // }
-
-        // $modelClass = $this->getModelClassForUserType($user_type);
-
         $user = Admin::where('email', $request->email)->first();
 
         if (!$user) {

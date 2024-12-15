@@ -3,7 +3,7 @@
         <div class="card-header">
             <div class="card-head-row">
                 <div class="card-title">User Demographics</div>
-                <div class="card-tools">
+                {{-- <div class="card-tools">
                     <a href="#" class="btn btn-label-success btn-round btn-sm me-2">
                         <span class="btn-label">
                             <i class="fa fa-pencil"></i>
@@ -16,7 +16,7 @@
                         </span>
                         Print
                     </a>
-                </div>
+                </div> --}}
             </div>
         </div>
         <div class="card-body">
@@ -71,9 +71,9 @@
                     break;
 
                 case 'ageRange':
-                    labels = ['0 - 12', '13 - 19', '20 - 34', '35 - 49', '50+'];
+                    labels = ['null', '13 - 19', '20 - 34', '35 - 49', '50+'];
                     data = [
-                        response.age['0 - 12'],
+                        response.age['null'],
                         response.age['13 - 19'],
                         response.age['20 - 34'],
                         response.age['35 - 49'],

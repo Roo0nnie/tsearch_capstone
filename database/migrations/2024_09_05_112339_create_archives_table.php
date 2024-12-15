@@ -20,8 +20,9 @@ return new class extends Migration
             $table->text('abstract');
             $table->string('publisher')->nullable();
             $table->string('publication_date');
-            $table->string('keywords')->nullable();
+            $table->text('keywords')->nullable();
             $table->string('location')->nullable();
+            $table->string('category')->nullable();
             $table->string('awards')->nullable();
             $table->string('SDG')->nullable();
             $table->string('volume')->nullable();

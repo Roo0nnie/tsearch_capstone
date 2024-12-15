@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('imrads', function (Blueprint $table) {
             $table->id();
-            // $table->string('title')->unique();
             $table->string('title')->nullable();
             $table->string('author');
             $table->string('adviser')->nullable();
@@ -22,7 +21,8 @@ return new class extends Migration
             $table->string('publisher')->nullable();
             $table->string('publication_date');
             $table->text('keywords')->nullable();
-            $table->string('location')>unique()->nullable();
+            $table->string('location')->nullable();
+            $table->string('category')->nullable();
             $table->string('awards')->nullable();
             $table->string('status')->default('published');
             $table->string('SDG')->nullable();

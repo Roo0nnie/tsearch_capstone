@@ -38,19 +38,60 @@
                     </a>
                 </li>
 
-                <li class="nav-item {{ Request::routeIs('admin.imrad') ? 'active' : '' }}">
-                    <a href="{{ route('admin.imrad') }}">
+                <li
+                    class="nav-item {{ Request::routeIs('admin.file.published', 'admin.imrad', 'admin.imrad') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#base_file">
                         <i class="fa-solid fa-book"></i>
                         <p>File Upload</p>
-
+                        <span class="caret"></span>
                     </a>
+                    <div class="collapse" id="base_file">
+                        <ul class="nav nav-collapse">
+                            <li class="{{ Request::is('admin/file/published') ? 'active' : '' }}">
+                                <a href="{{ route('admin.file.published') }}">
+                                    <span class="sub-item">Published</span>
+                                </a>
+                            </li>
+                            <li class="{{ Request::is('admin/file/archived') ? 'active' : '' }}">
+                                <a href="{{ route('admin.file.archived') }}">
+                                    <span class="sub-item">Archived</span>
+                                </a>
+                            </li>
+                            <li class="{{ Request::is('admin/file/draft') ? 'active' : '' }}">
+                                <a href="{{ route('admin.file.draft') }}">
+                                    <span class="sub-item">Draft</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
 
-                <li class="nav-item {{ Request::routeIs('admin.announcement') ? 'active' : '' }}">
-                    <a href="{{ route('admin.announcement') }}">
-                        <i class="fa-solid fa-bullhorn"></i>
-                        <p>Announcement</p>
+                <li
+                    class="nav-item {{ Request::routeIs('report.generation.file.upload', 'report.generation.file.sdg', 'report.generation.file.rating') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#base">
+                        <i class="fa-solid fa-chart-bar"></i>
+                        <p>Report</p>
+                        <span class="caret"></span>
                     </a>
+                    <div class="collapse" id="base">
+                        <ul class="nav nav-collapse">
+                            <li class="{{ Request::is('admin/file-upload') ? 'active' : '' }}">
+                                <a href="{{ route('report.generation.file.upload') }}">
+                                    <span class="sub-item">File Upload</span>
+                                </a>
+                            </li>
+                            <li class="{{ Request::is('admin/file-sdg') ? 'active' : '' }}">
+                                <a href="{{ route('report.generation.file.sdg') }}">
+                                    <span class="sub-item">File SDG</span>
+                                </a>
+                            </li>
+                            <li class="{{ Request::is('admin/file-rating') ? 'active' : '' }}">
+                                <a href="{{ route('report.generation.file.rating') }}">
+                                    <span class="sub-item">File Rating</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
 
                 <li class="nav-item {{ Request::routeIs('admin.log') ? 'active' : '' }}">
@@ -60,11 +101,26 @@
                     </a>
                 </li>
 
-                <li class="nav-item {{ Request::routeIs('admin.trash-bin') ? 'active' : '' }}">
-                    <a href="{{ route('admin.trash-bin') }}">
+                <li class="nav-item {{ Request::routeIs('admin.trash-user', 'admin.trash-file') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#base_trash">
                         <i class="fa-solid fa-trash"></i>
                         <p>Trash Bin</p>
+                        <span class="caret"></span>
                     </a>
+                    <div class="collapse" id="base_trash">
+                        <ul class="nav nav-collapse">
+                            <li class="{{ Request::is('admin/trash-user') ? 'active' : '' }}">
+                                <a href="{{ route('admin.trash-user') }}">
+                                    <span class="sub-item">Trash User</span>
+                                </a>
+                            </li>
+                            <li class="{{ Request::is('admin/trash-file') ? 'active' : '' }}">
+                                <a href="{{ route('admin.trash-file') }}">
+                                    <span class="sub-item">Trash File</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
 
             </ul>

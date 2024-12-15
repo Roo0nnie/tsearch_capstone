@@ -23,93 +23,162 @@ use Illuminate\Validation\Rule;
 
 class TrashBinController extends Controller
 {
-    public function view()
+    public function trashViewFile(Request $request)
     {
+        $filter_type = $request->input('filter_type');
+        if ($filter_type === 'published') {
+            $query = Imrad::query();
+
+            $this->applyFilters($request, $query);
+
+            $archives = $query->where('action', 'deleted')->get();
+
+            return view('admin.admin_page.trash_bin.trash_file', compact('archives'));
+        }
+
         $archives = Imrad::where('action', 'deleted')->get();
-        $users = GuestAccount::where('action', 'deleted')->get();
-        return view('admin.admin_page.trash_bin.trash_bin', compact('users', 'archives'));
+        return view('admin.admin_page.trash_bin.trash_file', compact('archives'));
     }
 
-    public function recover(GuestAccount $user) {
-        // $user_code = $user->user_code;
-
-        // $userData = [
-        //     'profile'   => $user->profile ?: null,
-        //     'name'      => $user->name,
-        //     'user_code' => $user->user_code,
-        //     'email'     => $user->email,
-        //     'phone'     => $user->phone ?: null,
-        //     'birthday'  => $user->birthday ?: null,
-        //     'password'  => $user->password ?: null,
-        //     'status'    => 'offline',
-        //     'type'      => $user->type,
-        // ];
-
-
-        // if (str_starts_with($user_code, '09')) {
-        //     $userData['google'] = $user->google_id ?: null;
-        //     GuestAccount::create($userData);
-        // } elseif (str_starts_with($user_code, '20')) {
-        //     Faculty::create($userData);
-        // } elseif (str_starts_with($user_code, '21')) {
-        //     User::create($userData);
-        // } elseif (str_starts_with($user_code, '19')) {
-        //     Admin::create($userData);
-        // } else {
-        //     return redirect()->back()->with('error', 'Invalid user, You must delete it.');
-        // }
-
-        // $user->delete();
-
-        $user->update([
-            'action' => null,
-            'deleted_time' => null,
-            'delete_by' => null,
-            'permanent_delete' => null,
-        ]);
-        return redirect()->route('admin.trash-bin')->with('success', 'User recovered successfully.');
-    }
-
-    public function destroy(GuestAccount $user)
+    protected function applyFilters(Request $request, $query)
     {
+
+        if($request->filled('category')) {
+            $categories = $request->input('category');
+            $query->whereIn('category', $categories);
+        }
+    }
+
+    public function trashViewUser()
+    {
+        $users = GuestAccount::where('action', 'deleted')->get();
+        return view('admin.admin_page.trash_bin.trash_user', compact('users'));
+    }
+
+    public function recover(Request $request) {
+
+        $ids = $request->input('ids', []);
+
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['message' => 'No items selected for deletion'], 400);
+        }
+
+        try {
+            $users = GuestAccount::whereIn('id', $ids)->get();
+
+            foreach ($users as $user) {
+                $user->update([
+                    'action' => null,
+                    'deleted_time' => null,
+                    'delete_by' => null,
+                    'permanent_delete' => null,
+                ]);
+            }
+
+            return response()->json(['message' => 'Selected items deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error deleting items: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function destroy(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['message' => 'No items selected for deletion'], 400);
+        }
+
+        try {
+            GuestAccount::whereIn('id', $ids)->each(function ($user) {
+                $filePath = public_path('assets/img/guest_profile/' . $user->profile);
+                if (file_exists($filePath)) {
+                    @unlink($filePath);
+                }
+                $user->delete();
+            });
+
+            return response()->json(['message' => 'Selected items deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error deleting items: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function destroyAutomatic(GuestAccount $user)
+    {
+        $filePath = public_path('assets/img/guest_profile/' . $user->profile);
+
+        if (file_exists($filePath)) {
+            @unlink($filePath);
+        }
+
         $user->delete();
 
         return redirect()->back()->with('success', 'User Deleted successfully.');
     }
 
-    public function recoverImrad(Imrad $archive) {
+    public function recoverImrad(Request $request) {
+        $ids = $request->input('ids', []);
 
-        $exists = Imrad::where('title', $archive->title)->where('action', null)->exists();
-        // Update the archive record to recover it
-        if (!$exists) {
-            $archive->update([
-                'action' => null,
-                'deleted_time' => null,
-                'delete_by' => null,
-                'permanent_delete' => null,
-            ]);
-            return redirect()->route('admin.trash-bin')->with('success', 'File recovered successfully.');
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['message' => 'No items selected for recovery'], 400);
         }
 
-        return redirect()->route('admin.trash-bin')->with('error', 'A record with this title already exists and is not deleted.');
+        try {
+            $files = Imrad::whereIn('id', $ids)->get();
+            $error = false;
 
+            foreach ($files as $file) {
+                $exists = Imrad::where('title', $file->title)
+                               ->where('action', null)
+                               ->exists();
+                if (!$exists) {
+                    $file->update([
+                        'action' => null,
+                        'deleted_time' => null,
+                        'delete_by' => null,
+                        'permanent_delete' => null,
+                    ]);
+                } else {
+                    $error = true;
+                }
+            }
+
+            if ($error) {
+                return response()->json([
+                    'message' => 'One or more files with the same title already exist and were not recovered.'
+                ], 400);
+            }
+
+            return response()->json(['message' => 'Selected items recovered successfully']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error recovering items: ' . $e->getMessage()
+            ], 500);
+        }
     }
+
 
     public function delete(Imrad $archive)
     {
-
         $pdf_file = $archive->pdf_file;
-        $filePath = storage_path('app/' . $pdf_file);
 
-        if ($pdf_file && file_exists($filePath)) {
-            unlink($filePath);
+        $destinationPath = public_path('assets/pdf/');
+        $filePath = $destinationPath . $pdf_file;
+
+        if (file_exists($filePath)) {
+
+            if (unlink($filePath)) {
+                \Log::info("Deleted temporary file: " . $filePath);
+            } else {
+                return back()->with('error', 'Failed to delete the file. Please try again.');
+            }
+        } else {
+            return back()->with('error', 'File not found.');
         }
-
         $archive->delete();
 
-        // return redirect()->route('admin.trash-bin')->with('success', 'File deleted successfully.');
         return redirect()->back()->with('success', 'File deleted successfully.');
-        // return response()->json(['success' => 'File successfully']);
 
     }
 
@@ -129,6 +198,34 @@ class TrashBinController extends Controller
         ]);
         return redirect()->route('superadmin.trash-bin')->with('success', 'Admin recovered successfully.');
     }
+
+    public function trashDelete(Request $request) {
+        $ids = $request->input('ids', []);
+
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['message' => 'No items selected for deletion'], 400);
+        }
+
+        try {
+            $deletedFiles = Imrad::whereIn('id', $ids)->get();
+
+            foreach ($deletedFiles as $file) {
+                $filePath = public_path('assets/pdf/' . $file->pdf_file);
+                if (file_exists($filePath)) {
+                    @unlink($filePath);
+                }
+                $file->delete();
+            }
+
+            return response()->json(['message' => 'Selected items deleted successfully.']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Error deleting items. Please try again later.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 
 }
 

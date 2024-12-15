@@ -22,6 +22,7 @@ class TempFile extends Model
         'publication_date',
         'publisher',
         'location',
+        'category',
         'volume',
         'issue',
         'SDG',

@@ -82,7 +82,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card card-secondary">
                 <div class="card-body skew-shadow">
                     <h1>{{ $users->filter(fn($user) => $user->status === 'Active')->count() }}</h1>
@@ -93,7 +93,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6">
             <div class="card card-secondary bg-secondary-gradient">
                 <div class="card-body bubble-shadow">
                     <h1>{{ count($imrads) }}</h1>
@@ -101,18 +101,6 @@
                     <div class="pull-right">
                         <i class="fa-solid fa-book fa-2x"></i>
 
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card card-secondary bg-secondary-gradient">
-                <div class="card-body curves-shadow">
-                    <h1>{{ $announcements->filter(fn($announcement) => $announcement->activation === 'Active')->count() }}
-                    </h1>
-                    <h5 class="op-8">Active Announcement</h5>
-                    <div class="pull-right">
-                        <i class="fa-solid fa-comments fa-2x"></i>
                     </div>
                 </div>
             </div>
@@ -209,12 +197,4 @@
             }
         });
     }
-
-    document.getElementById('exportChart').addEventListener('click', function() {
-        var url_base64jp = document.getElementById('sdgBarChart').toDataURL("image/png");
-        var link = document.createElement('a');
-        link.href = url_base64jp;
-        link.download = 'chart_export.png';
-        link.click();
-    });
 </script>

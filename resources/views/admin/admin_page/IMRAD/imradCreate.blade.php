@@ -14,18 +14,6 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">{{ __('File Details') }}</div>
-                    @if (session('success'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-
-                    @if (session('error'))
-                        <div class="alert alert-danger">
-                            <p>{{ session('error') }}</p>
-                        </div>
-                    @endif
-
 
                     <div class="card-body">
                         <form method="POST" action="{{ route('admin.imrad.store') }}" enctype="multipart/form-data">
@@ -155,6 +143,39 @@
                             </div>
 
                             <div class="row mb-3">
+                                <label for="category"
+                                    class="col-md-4 col-form-label text-md-end">{{ __('Category') }}</label>
+                                <div class="col-md-6">
+                                    <select id="category" name="category"
+                                        class="form-control @error('category') is-invalid @enderror" required>
+                                        <option value="" disabled selected>Select a category</option>
+                                        <option value="Technology"
+                                            {{ old('category') == 'Technology' ? 'selected' : '' }}>Technology
+                                        </option>
+                                        <option value="Midwifery" {{ old('category') == 'Midwifery' ? 'selected' : '' }}>
+                                            Midwifery
+                                        </option>
+                                        <option value="Engineering"
+                                            {{ old('category') == 'Engineering' ? 'selected' : '' }}>Engineering
+                                        </option>
+                                        <option value="Architecture"
+                                            {{ old('category') == 'Architecture' ? 'selected' : '' }}>Architecture
+                                        </option>
+                                        <option value="Accountancy"
+                                            {{ old('category') == 'Accountancy' ? 'selected' : '' }}>Accountancy
+                                        </option>
+                                        <option value="Other" {{ old('category') == 'Other' ? 'selected' : '' }}>Other
+                                        </option>
+                                    </select>
+                                    @error('category')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
                                 <label for="keywords"
                                     class="col-md-4 col-form-label text-md-end">{{ __('Keyword/s') }}</label>
                                 <div class="col-md-6">
@@ -217,10 +238,13 @@
                             </div>
 
                             <div class="row mb-0">
-                                <div class="col-md-6 offset-md-4">
-                                    <button type="submit" class="btn btn-primary">
+                                <div class="col-md-6 offset-md-4 d-flex justify-content-start align-items-center">
+                                    <button type="submit" class="btn btn-primary me-2">
                                         {{ __('Add File') }}
                                     </button>
+                                    <a href="{{ route('admin.file.draft') }}" class="btn btn-secondary">
+                                        {{ __('Back') }}
+                                    </a>
                                 </div>
                             </div>
                         </form>

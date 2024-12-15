@@ -19,6 +19,7 @@ class Archive extends Model
         'publication_date',
         'keywords',
         'location',
+        'category',
         'awards',
         'SDG',
         'volume',

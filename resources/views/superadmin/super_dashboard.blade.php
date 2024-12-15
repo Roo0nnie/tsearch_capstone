@@ -16,5 +16,9 @@
 
         @include('superadmin.reports.reports_linegraph')
 
+        @include('superadmin.reports.reports_filecount')
+
+
+
     </div>
 @endsection

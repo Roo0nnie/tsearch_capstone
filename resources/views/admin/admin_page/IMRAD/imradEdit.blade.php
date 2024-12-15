@@ -7,14 +7,12 @@
         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
             <div>
                 <h3 class="fw-bold mb-3">Edit IMRAD</h3>
-
             </div>
-
         </div>
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ __('Edit IMRAD Details') }}</div>
+                    <div class="card-header">{{ __('Edit File Details') }}</div>
 
                     <div class="card-body">
                         <form method="POST" action="{{ route('admin.imrad.update', ['imrad' => $imrad->id]) }}"
@@ -149,7 +147,7 @@
                                 <div class="col-md-6">
                                     <input id="location" type="text"
                                         class="form-control @error('location') is-invalid @enderror" name="location"
-                                        value="{{ old('keywords', $imrad->location ?? '') }}">
+                                        value="{{ old('location', $imrad->location ?? '') }}">
                                     @error('location')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -158,7 +156,45 @@
                                 </div>
                             </div>
 
-
+                            <div class="row mb-3">
+                                <label for="category"
+                                    class="col-md-4 col-form-label text-md-end">{{ __('Category') }}</label>
+                                <div class="col-md-6">
+                                    <select id="category" name="category"
+                                        class="form-control @error('category') is-invalid @enderror" required>
+                                        <option value="" disabled selected>Select a category</option>
+                                        <option value="Technology"
+                                            {{ old('category', $imrad->category == 'Technology' ? 'selected' : '') }}>
+                                            Technology
+                                        </option>
+                                        <option value="Midwifery"
+                                            {{ old('category', $imrad->category == 'Midwifery' ? 'selected' : '') }}>
+                                            Midwifery
+                                        </option>
+                                        <option value="Engineering"
+                                            {{ old('category', $imrad->category == 'Engineering' ? 'selected' : '') }}>
+                                            Engineering
+                                        </option>
+                                        <option value="Architecture"
+                                            {{ old('category', $imrad->category == 'Architecture' ? 'selected' : '') }}>
+                                            Architecture
+                                        </option>
+                                        <option value="Accountancy"
+                                            {{ old('category', $imrad->category == 'Accountancy' ? 'selected' : '') }}>
+                                            Accountancy
+                                        </option>
+                                        <option value="Other"
+                                            {{ old('category', $imrad->category == 'Other' ? 'selected' : '') }}>
+                                            Other
+                                        </option>
+                                    </select>
+                                    @error('category')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
 
                             <div class="row mb-3">
                                 <label for="SDG"
@@ -166,7 +202,7 @@
                                 <div class="col-md-6">
                                     <input id="SDG" type="text"
                                         class="form-control @error('SDG') is-invalid @enderror" name="SDG"
-                                        value="{{ old('keywords', $imrad->SDG ?? '') }}" readonly>
+                                        value="{{ old('SDG', $imrad->SDG ?? '') }}" readonly>
                                     @error('SDG')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -181,7 +217,7 @@
                                 <div class="col-md-6">
                                     <input id="volume" type="text"
                                         class="form-control @error('volume') is-invalid @enderror" name="volume"
-                                        value="{{ old('keywords', $imrad->volume ?? '') }}" readonly>
+                                        value="{{ old('volume', $imrad->volume ?? '') }}" readonly>
                                     @error('volume')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -196,7 +232,7 @@
                                 <div class="col-md-6">
                                     <input id="issue" type="text"
                                         class="form-control @error('issue') is-invalid @enderror" name="issue"
-                                        value="{{ old('keywords', $imrad->issue ?? '') }}" readonly>
+                                        value="{{ old('issue', $imrad->issue ?? '') }}" readonly>
                                     @error('issue')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -211,8 +247,13 @@
                                 <div class="col-md-6">
                                     @if ($imrad->pdf_file)
                                         <div class="mt-2">
-                                            <a href="{{ Storage::url($imrad->pdf_file) }}"
-                                                target="_blank">{{ basename($imrad->pdf_file) }}</a>
+
+                                            <a href="{{ asset('assets/pdf/' . $imrad->pdf_file) }}" target="_blank"
+                                                id="downloadPdfButton-{{ $imrad->id }}"
+                                                data-pdf-url="{{ asset('assets/pdf/' . $imrad->pdf_file) }}"
+                                                data-imrad-id="{{ $imrad->id }}">
+                                                {{ basename($imrad->pdf_file) }}
+                                            </a>
                                         </div>
                                     @endif
 
@@ -221,12 +262,14 @@
 
 
                             <div class="row mb-0">
-                                <div class="col-md-6 offset-md-4">
-                                    <button type="submit" class="btn btn-primary">
+                                <div class="col-md-6 offset-md-4 d-flex justify-content-start align-items-center">
+                                    <button type="submit" class="btn btn-primary me-2">
                                         {{ __('Update File') }}
                                     </button>
+                                    <a href="{{ route('admin.file.published') }}" class="btn btn-secondary">
+                                        {{ __('Back') }}
+                                    </a>
                                 </div>
-                            </div>
                         </form>
 
                     </div>

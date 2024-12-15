@@ -8,6 +8,7 @@ use App\Models\DeletedUsers;
 use App\Models\LogHistory;
 use App\Models\Preference;
 use App\Models\Rating;
+use App\Models\SetDeleteDate;
 use App\Models\MyLibrary;
 use App\Models\InvalidFaculty;
 use App\Notifications\CustomUserCode;
@@ -31,12 +32,6 @@ class GuestAccountController extends Controller
 
     public function showLoginForm()
     {
-
-        if (Auth::guard('guest_account')->check()) {
-            Auth::guard('guest_account')->logout();
-
-            return redirect()->to('login')->with('message', 'You have been logged out due to re-login attempt.');
-        }
 
         return view('auth.login');
     }
@@ -88,7 +83,6 @@ class GuestAccountController extends Controller
     public function logout()
     {
         $user = Auth::guard('guest_account')->user();
-
         if (!$user) {
             return redirect()->route('login')->with('error', 'Please log in to continue.');
         }
@@ -235,13 +229,33 @@ class GuestAccountController extends Controller
         return redirect()->route('login')->with('error', 'Invalid verification link.');
     }
 
-    public function view()
+    public function view(Request $request)
     {
 
-        // $invalidfaculties = InvalidFaculty::all();
+        $filter_type = $request->input('filter_type');
+
+        if ($filter_type === 'published') {
+            $query = GuestAccount::query();
+
+            $this->applyFilters($request, $query);
+
+            $guestAccounts = $query->get();
+
+            return view('admin.admin_page.guest_account.guestAccount', compact('guestAccounts'));
+        }
+
         $guestAccounts = GuestAccount::all();
         return view('admin.admin_page.guest_account.guestAccount', compact('guestAccounts'));
 
+    }
+
+    protected function applyFilters(Request $request, $query)
+    {
+
+        if($request->filled('status')) {
+            $statuses = $request->input('status');
+            $query->whereIn('status', $statuses);
+        }
     }
 
     public function searchguestAccount(Request $request)
@@ -272,7 +286,6 @@ public function callbackGoogle(Request $request) {
         ->first();
 
         if (!$guestUser) {
-            // Check if a deleted guest account exists for the provided email
             $guestDeleted = GuestAccount::where('email', $user->email)
                                          ->where('action', 'deleted')
                                          ->first();
@@ -300,34 +313,25 @@ public function callbackGoogle(Request $request) {
 
                         $email = $user->getEmail();
 
-                        $new_user = GuestAccount::create([
-                                    'profile' => $filename,
-                                    'name' => $user->getName(),
-                                    'email' => $email,
-                                    'google_id' => $user->getId(),
-                                    'status' => 'Active',
-                                    'type' => 'user',
-                                    'user_code' => $user_code,
-                                ]);
+                         if (str_ends_with($email, '@bicol-u.edu.ph')) {
+                            $new_user = GuestAccount::create([
+                                'profile' => $filename,
+                                'name' => $user->getName(),
+                                'email' => $email,
+                                'google_id' => $user->getId(),
+                                'status' => 'Active',
+                                'type' => 'user',
+                                'user_code' => $user_code,
+                            ]);
 
-                        // if (str_ends_with($email, '@bicol-u.edu.ph')) {
-                        //     $new_user = GuestAccount::create([
-                        //         'profile' => $filename,
-                        //         'name' => $user->getName(),
-                        //         'email' => $email,
-                        //         'google_id' => $user->getId(),
-                        //         'status' => 'Active',
-                        //         'type' => 'user',
-                        //         'user_code' => $user_code,
-                        //     ]);
-                        // } else {
-                        //     return redirect()->back()->with('error', 'Only university members are allowed. You can enter as a guest.');
-                        // }
+                        } else {
+                            return redirect()->back()->with('error', 'Make sure you are using your Sorsu email address to login.');
+                        }
 
                         Auth::guard('guest_account')->login($new_user, true);
                         $request->session()->regenerate();
 
-                        return redirect()->route('guest.account.home');
+                        return redirect()->route('guest.account.home')->with('success', 'Welcome to our T-search Management System!');
                     } else {
                         throw new Exception('Invalid image data.');
                     }
@@ -337,7 +341,7 @@ public function callbackGoogle(Request $request) {
         }
 
         } if($guestUser->account_status == 'blocked') {
-            return redirect()->back()->with('error', 'Your account has been blocked.');
+            return redirect()->back()->with('error', 'Your account has been blocked due to multiple failed login attempts.');
         } else {
 
             Auth::guard('guest_account')->login($guestUser, true);
@@ -346,26 +350,38 @@ public function callbackGoogle(Request $request) {
             $guestUser->status = 'Active';
             $guestUser->save();
 
-            return redirect()->route('guest.account.home');
+            return redirect()->route('guest.account.home')->with('success', 'Welcome to our T-search Management System!');
         }
     } catch (\Exception $ex) {
         return redirect()->back()->with('error', 'Google authentication failed. ' . $ex->getMessage());
     }
 }
 
-    public function destroy(GuestAccount $guestAccount) {
+    public function destroy(Request $request) {
 
+        $deleted_date = SetDeleteDate::first();
+        $ids = $request->input('ids', []);
 
-        $guestAccount->update([
-            'action' => 'deleted',
-            'deleted_time' => now(),
-            'delete_by' => auth()->user()->name,
-            'permanent_delete' => now()->addDays(30),
-            // 'permanent_delete' => now()->addSeconds(30),
-        ]);
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['message' => 'No items selected for deletion'], 400);
+        }
 
-        return redirect()->route('admin.guestAccount')->with('success', 'Guest deleted successfully.');
+        try {
+            $users = GuestAccount::whereIn('id', $ids)->get();
 
+            foreach ($users as $user) {
+                $user->update([
+                    'action' => 'deleted',
+                    'deleted_time' => now(),
+                    'delete_by' => auth()->user()->name,
+                    'permanent_delete' => now()->addDays($deleted_date->delete_date),
+                ]);
+            }
+
+            return response()->json(['message' => 'Selected items deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error deleting items: ' . $e->getMessage()], 500);
+        }
     }
 
     public function edit(GuestAccount $guestAccount)
@@ -410,7 +426,7 @@ public function callbackGoogle(Request $request) {
         ->with('imrad_metric.imrad')
         ->get();
 
-        $saved = MyLibrary::with('imrad') // Eager load the related Imrad
+        $saved = MyLibrary::with('imrad')
         ->where('user_code', $guestAccount->user_code)
         ->get();
 
@@ -420,5 +436,7 @@ public function callbackGoogle(Request $request) {
 
         return view('admin.admin_page.guest_account.guestAccountView', compact('guestAccount', 'logs', 'selectedAuthors', 'selectedAdvisers', 'selectedDepartments', 'title_ratings', 'saved'));
     }
+
+
 }
 

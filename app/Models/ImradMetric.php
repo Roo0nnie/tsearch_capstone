@@ -15,7 +15,7 @@ class ImradMetric extends Model
 
     public function ratings()
 {
-    return $this->hasMany(Rating::class, 'metric_id');
+    return $this->hasMany(Rating::class, 'metric_id', 'id');
 }
 
 public function imrad()

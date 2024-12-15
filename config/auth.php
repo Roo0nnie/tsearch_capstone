@@ -65,32 +65,32 @@ return [
         'users' => [
             'provider' => 'users',
             'table' => 'password_reset_tokens',
-            'expire' => 60,
+            'expire' => 30,
             'throttle' => 60,
         ],
 
         'admins' => [
             'provider' => 'admins',
             'table' => 'password_reset_tokens',
-            'expire' => 60,
+            'expire' => 30,
             'throttle' => 60,
         ],
         'faculties' => [
             'provider' => 'faculties',
             'table' => 'password_reset_tokens',
-            'expire' => 60,
+            'expire' => 30,
             'throttle' => 60,
         ],
         'guest_account' => [
             'provider' => 'guest_account',
             'table' => 'password_reset_tokens',
-            'expire' => 60,
+            'expire' => 30,
             'throttle' => 60,
         ],
         'superadmins' => [
             'provider' => 'superadmins',
             'table' => 'password_reset_tokens',
-            'expire' => 60,
+            'expire' => 30,
             'throttle' => 60,
         ],
 

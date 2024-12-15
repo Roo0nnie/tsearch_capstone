@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LogHistory;
+use App\Model\GuestAccount;
 use Illuminate\Support\Facades\DB;
 
 class LogHistoryController extends Controller
@@ -14,8 +15,10 @@ class LogHistoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return void
      */
+
     public function logLogin(Request $request, $sessionId)
     {
+
     $sessionId = $sessionId ?? session()->getId();
 
     $session = DB::table('sessions')->where('id', $sessionId)->first();

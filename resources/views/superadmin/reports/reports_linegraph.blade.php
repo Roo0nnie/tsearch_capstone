@@ -5,14 +5,6 @@
                 <div class="card-header">
                     <div class="card-head-row">
                         <div class="card-title">Social Development Goal - File Counts</div>
-                        <div class="card-tools">
-                            <a href="#" id="exportChart" class="btn btn-label-success btn-round btn-sm me-2">
-                                <span class="btn-label">
-                                    <i class="fa fa-pencil"></i>
-                                </span>
-                                Export Image
-                            </a>
-                        </div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -90,13 +82,4 @@
             }
         });
     }
-
-    // Export the chart as an image
-    document.getElementById('exportChart').addEventListener('click', function() {
-        var url_base64jp = document.getElementById('sdgLineChart').toDataURL("image/png");
-        var link = document.createElement('a');
-        link.href = url_base64jp;
-        link.download = 'sdg_line_chart.png';
-        link.click();
-    });
 </script>

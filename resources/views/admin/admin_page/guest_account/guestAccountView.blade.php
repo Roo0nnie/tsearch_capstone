@@ -17,13 +17,19 @@
     <div>
         <div>
             @if (session('success'))
-                <div class="alert alert-success" role="alert">
+                <div class="alert alert-success bg-primary text-white" role="alert">
                     {{ session('success') }}
                 </div>
             @endif
 
+            @if (session('error'))
+                <div class="alert alert-danger bg-danger text-white" role="alert">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             @if ($errors->any())
-                <div class="alert alert-danger">
+                <div class="alert alert-danger text-white">
                     @foreach ($errors->all() as $error)
                         <p>{{ $error }}</p>
                     @endforeach
@@ -38,11 +44,6 @@
 
                 <div class="container mt-3">
                     <div class="row">
-                        <!-- For large screens, div1 takes 7 columns, div2 takes 5 columns -->
-                        <!-- For medium screens, both div1 and div2 take 6 columns each -->
-                        <!-- For small screens, div2 takes full width (12 columns) and is placed above div1 -->
-
-                        <!-- div2 (Top on small screens, left on larger screens) -->
                         <div class="col-lg-8 col-md-6 col-12 order-2 order-md-1 order-lg-1">
                             <div class="card">
                                 <div class="card-body">
@@ -53,11 +54,6 @@
                                                 href="#all-account" role="tab" aria-controls="all-account"
                                                 aria-selected="false" data-tab="all">Basic information</a>
 
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" id="online-account-tab" data-bs-toggle="tab"
-                                                href="#online-account" role="tab" aria-controls="online-account"
-                                                aria-selected="false" data-tab="online">File Preferences</a>
                                         </li>
                                         <li class="nav-item">
                                             <a class="nav-link" id="offline-account-tab" data-bs-toggle="tab"
@@ -138,8 +134,7 @@
                                                     <div class="col-md-6">
                                                         <input id="phone" type="text"
                                                             class="form-control @error('phone') is-invalid @enderror"
-                                                            name="phone"
-                                                            value="{{ old('phone', $guestAccount->phone) }}"
+                                                            name="phone" value="{{ old('phone', $guestAccount->phone) }}"
                                                             autocomplete="phone" readonly>
                                                     </div>
                                                 </div>

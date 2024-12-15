@@ -6,13 +6,19 @@
     <div>
         <div>
             @if (session('success'))
-                <div class="alert alert-success" role="alert">
+                <div class="alert alert-success bg-primary text-white" role="alert">
                     {{ session('success') }}
                 </div>
             @endif
 
+            @if (session('error'))
+                <div class="alert alert-danger bg-danger text-white" role="alert">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             @if ($errors->any())
-                <div class="alert alert-danger">
+                <div class="alert alert-danger text-white">
                     @foreach ($errors->all() as $error)
                         <p>{{ $error }}</p>
                     @endforeach
@@ -23,84 +29,27 @@
                 <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
                     <div>
                         <h3 class="fw-bold mb-3">Log History</h3>
-
                     </div>
-
                 </div>
-                <div class="row">
-                    <div class="col-sm-6 col-md-6 col-lg-3">
-                        <div class="card card-stats card-round">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-icon">
-                                        <div class="icon-big text-center icon-primary bubble-shadow-small">
-                                            <i class="fas fa-users"></i>
-                                        </div>
-                                    </div>
-                                    <div class="col col-stats ms-3 ms-sm-0">
-                                        <div class="numbers">
-                                            <p class="card-category ">Active Today:</p>
-                                            <h4 class="card-title">
-                                                {{-- {{ count($users) }} --}}
-                                                123
-                                            </h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-6 col-lg-3">
-                        <div class="card card-stats card-round">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-icon">
-                                        <div class="icon-big text-center icon-info bubble-shadow-small">
-                                            <i class="fas fa-user-check"></i>
-                                        </div>
-                                    </div>
-                                    <div class="col col-stats ms-3 ms-sm-0">
-                                        <div class="numbers">
-                                            <p class="card-category">Active Last 7 days:</p>
-                                            <h4 class="card-title">
-                                                {{-- {{ count($invalidusers) }}</h4> --}}
-                                                123
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-12 col-md-12 col-lg-6">
-                        <div class="card card-stats card-round">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-icon">
-                                        <div class="icon-big text-center icon-secondary bubble-shadow-small">
-                                            <i class="far fa-check-circle"></i>
-                                        </div>
-                                    </div>
-                                    <div class="col col-stats ms-3 ms-sm-0">
-                                        <div class="numbers">
-                                            <p class="card-category">Total:</p>
-                                            <h4 class="card-title">
-                                                <h4 class="card-title">
-                                                    {{-- {{ $users->filter(fn($user) => $user->created_at >= now()->subDay())->count() }} --}}
-                                                    123
-                                                </h4>
-                                            </h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
+                <div class="d-flex align-items-center mb-2">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Download
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item"
+                                    href="{{ route('download.pdf.logs.admin') . '?' . http_build_query(['ids' => $logs->pluck('id')->toArray()]) }}">PDF</a>
+                            </li>
+                        </ul>
                     </div>
                 </div>
 
                 <div class="card table-responsive">
                     <div class="card-body">
                         <div class="table-responsive mt-3">
-                            <table id="basic-datatables" class="display table table-striped table-hover">
+                            <table id="logDeleted-datatables_sample" class="display table table-striped table-hover">
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>

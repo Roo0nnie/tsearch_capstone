@@ -60,21 +60,11 @@ class UserLoginController extends Controller
 
     public function landingPage()
     {
-        //Show the landing page of the user
-        // if (Auth::check()) {
-        //     $user = Auth::user();
-        //     return view('alreadyLoggedIn', ['user' => $user]);
-        // }
         return view('welcome');
     }
 
     public function showLoginForm($userType)
     {
-        // Show the login form of the user
-        // if (Auth::check()) {
-        //     Auth::logout();
-        //     return redirect()->route('login')->with('message', 'You have been logged out due to re-login attempt.');
-        // }
         return view('auth.login', ['userType' => $userType]);
     }
 
@@ -118,7 +108,7 @@ class UserLoginController extends Controller
         $verificationCode = rand(100000, 999999);
 
         $superAdmin->verification_code = $verificationCode;
-        $superAdmin->verification_code_expires_at = now()->addMinutes(1);
+        $superAdmin->verification_code_expires_at = now()->addMinutes(3);
         $superAdmin->save();
 
         try {
@@ -150,6 +140,8 @@ class UserLoginController extends Controller
                     app('auth.password.broker')->createToken($admin),
                     $verificationCode
                 ));
+                // session(['user_id' => $admin->id]);
+                // Auth::guard('admin')->logout();
 
                 return redirect()->route('admin.verify')
                     ->with('success', 'Check your email for the verification code.');
@@ -159,6 +151,55 @@ class UserLoginController extends Controller
          return back()->withErrors(['email' => 'Failed to send the verification code. Please try again.']);
         }
     }
+
+    protected function resendSuperadminLogin()
+    {
+        $superAdmin = Auth::guard('superadmin')->user();
+        $verificationCode = rand(100000, 999999);
+
+        $superAdmin->verification_code = $verificationCode;
+        $superAdmin->verification_code_expires_at = now()->addMinutes(3);
+        $superAdmin->save();
+
+        try {
+            Notification::send($superAdmin, new SuperAdminVerification(
+                app('auth.password.broker')->createToken($superAdmin),
+                $verificationCode
+            ));
+
+            return back()->with(['status' => 'The verification code has been sent again.']);
+        } catch (\Exception $e) {
+            return back()->withErrors(['email' => 'Failed to send the verification code. Please try again.']);
+        }
+    }
+
+    public function resendAdminLogin()
+    {
+        $admin = Auth::guard('admin')->user();
+        if ($admin->action === 'deleted') {
+            Auth::guard('admin')->logout();
+            return back()->withErrors(['email' => 'Your account has been deleted, Cannot login.']);
+        } else {
+            $verificationCode = rand(100000, 999999);
+            $admin->verification_code = $verificationCode;
+            $admin->verification_code_expires_at = now()->addMinutes(3);
+            $admin->save();
+
+            try {
+                Notification::send($admin, new AdminVerification(
+                    app('auth.password.broker')->createToken($admin),
+                    $verificationCode
+                ));
+
+                return back()->with(['status' => 'The verification code has been sent again.']);
+            } catch (\Exception $e) {
+                return back()->withErrors(['email' => 'Failed to send the verification code. Please try again.']);
+        }
+         return back()->withErrors(['email' => 'Failed to send the verification code. Please try again.']);
+        }
+    }
+
+
 
     protected function loginFailedResponse(Request $request)
     {

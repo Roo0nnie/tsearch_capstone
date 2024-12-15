@@ -6,6 +6,7 @@ use App\Models\Imrad;
 use App\Models\ImradMetric;
 use App\Models\TempFile;
 use App\Models\Archive;
+use App\Models\SetDeleteDate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Smalot\PdfParser\Parser;
@@ -14,39 +15,72 @@ use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Http;
 
 
 
 class IMRADController extends Controller
 {
 
-    public function view(Request $request)
+    public function file_published(Request $request)
     {
         $filter_type = $request->input('filter_type');
+
+        $authors = Imrad::select('author')->get();
+        $advisers = Imrad::select('adviser')->get();
+        $departments = Imrad::select('department')->distinct()->get();
+        $years = Imrad::select('publication_date')->distinct()->get();
+
+        $adviserList = [];
+        $departmentList = $departments->pluck('department')->toArray();
+        $yearList = [];
+
+
+
+        foreach ($years as $year) {
+            $year = substr($year->publication_date, -4);
+            if (!in_array($year, $yearList)) {
+                $yearList[] = $year;
+            }
+        }
+
+        rsort($yearList);
+
+
+        foreach ($advisers as $adviser) {
+            $names = explode(',', $adviser->adviser);
+            foreach ($names as $name) {
+                $trimmedName = trim($name);
+                if (!in_array($trimmedName, $adviserList)) {
+                    $adviserList[] = $trimmedName;
+                }
+            }
+        }
+
+        sort($adviserList);
 
         if ($filter_type === 'published') {
             $query = Imrad::query();
 
             $this->applyFilters($request, $query);
 
-            $imrads = $query->get();
+            $imrads = $query->where('status', 'published')->where('action', null)->get();
             $archives = Imrad::where('status', 'archive')->where('action', null)->get();
             $tempfiles = TempFile::all();
 
-            return view('admin.admin_page.IMRAD.imrad', compact('imrads', 'archives', 'tempfiles'));
+            return view('admin.admin_page.IMRAD.filePublished', compact('imrads', 'archives', 'tempfiles', 'yearList', 'adviserList', 'departmentList'));
         }
 
         if ($filter_type === 'archive') {
             $query = Imrad::query();
 
-            // Apply filters if any
             $this->applyFilters($request, $query);
 
-            $archives = $query->get();
+            $archives = $query->where('status', 'archive')->get();
             $imrads = Imrad::where('status', 'published')->where('action', null)->get();
             $tempfiles = TempFile::all();
 
-            return view('admin.admin_page.IMRAD.imrad', compact('imrads', 'archives', 'tempfiles'));
+            return view('admin.admin_page.IMRAD.filePublished', compact('imrads', 'archives', 'tempfiles', 'yearList', 'adviserList', 'departmentList'));
         }
 
         if ($filter_type === 'draft') {
@@ -58,38 +92,220 @@ class IMRADController extends Controller
             $archives = Imrad::where('status', 'archive')->where('action', null)->get();
             $imrads = Imrad::where('status', 'published')->where('action', null)->get();
 
-            return view('admin.admin_page.IMRAD.imrad', compact('imrads', 'archives', 'tempfiles'));
+            return view('admin.admin_page.IMRAD.filePublished', compact('imrads', 'archives', 'tempfiles', 'yearList', 'adviserList', 'departmentList'));
         }
 
         // Handle other filter types if needed
         $imrads = Imrad::where('status', 'published')->where('action', null)->get();
         $archives = Imrad::where('status', 'archive')->where('action', null)->get();
         $tempfiles = TempFile::all();
-        return view('admin.admin_page.IMRAD.imrad', compact('imrads', 'archives', 'tempfiles'));
+        return view('admin.admin_page.IMRAD.filePublished', compact('imrads', 'archives', 'tempfiles', 'yearList', 'adviserList', 'departmentList'));
+    }
+
+    public function file_archived(Request $request)
+    {
+        $filter_type = $request->input('filter_type');
+
+        $authors = Imrad::select('author')->get();
+        $advisers = Imrad::select('adviser')->get();
+        $departments = Imrad::select('department')->distinct()->get();
+        $years = Imrad::select('publication_date')->distinct()->get();
+
+        $adviserList = [];
+        $departmentList = $departments->pluck('department')->toArray();
+        $yearList = [];
+
+
+
+        foreach ($years as $year) {
+            $year = substr($year->publication_date, -4);
+            if (!in_array($year, $yearList)) {
+                $yearList[] = $year;
+            }
+        }
+
+        rsort($yearList);
+
+
+        foreach ($advisers as $adviser) {
+            $names = explode(',', $adviser->adviser);
+            foreach ($names as $name) {
+                $trimmedName = trim($name);
+                if (!in_array($trimmedName, $adviserList)) {
+                    $adviserList[] = $trimmedName;
+                }
+            }
+        }
+
+        sort($adviserList);
+
+        if ($filter_type === 'published') {
+            $query = Imrad::query();
+
+            $this->applyFilters($request, $query);
+
+            $imrads = $query->where('status', 'published')->where('action', null)->get();
+            $archives = Imrad::where('status', 'archive')->where('action', null)->get();
+            $tempfiles = TempFile::all();
+
+            return view('admin.admin_page.IMRAD.fileArchived', compact('imrads', 'archives', 'tempfiles', 'yearList', 'adviserList', 'departmentList'));
+        }
+
+        if ($filter_type === 'archive') {
+            $query = Imrad::query();
+
+            $this->applyFilters($request, $query);
+
+            $archives = $query->where('status', 'archive')->get();
+            $imrads = Imrad::where('status', 'published')->where('action', null)->get();
+            $tempfiles = TempFile::all();
+
+            return view('admin.admin_page.IMRAD.fileArchived', compact('imrads', 'archives', 'tempfiles', 'yearList', 'adviserList', 'departmentList'));
+        }
+
+        if ($filter_type === 'draft') {
+            $query = TempFile::query();
+
+            $this->applyFilters($request, $query);
+
+            $tempfiles = $query->get();
+            $archives = Imrad::where('status', 'archive')->where('action', null)->get();
+            $imrads = Imrad::where('status', 'published')->where('action', null)->get();
+
+            return view('admin.admin_page.IMRAD.fileArchived', compact('imrads', 'archives', 'tempfiles', 'yearList', 'adviserList', 'departmentList'));
+        }
+
+        // Handle other filter types if needed
+        $imrads = Imrad::where('status', 'published')->where('action', null)->get();
+        $archives = Imrad::where('status', 'archive')->where('action', null)->get();
+        $tempfiles = TempFile::all();
+        return view('admin.admin_page.IMRAD.fileArchived', compact('imrads', 'archives', 'tempfiles', 'yearList', 'adviserList', 'departmentList'));
+    }
+
+    public function file_draft(Request $request)
+    {
+        $filter_type = $request->input('filter_type');
+
+        $authors = Imrad::select('author')->get();
+        $advisers = Imrad::select('adviser')->get();
+        $departments = Imrad::select('department')->distinct()->get();
+        $years = Imrad::select('publication_date')->distinct()->get();
+
+        $adviserList = [];
+        $departmentList = $departments->pluck('department')->toArray();
+        $yearList = [];
+
+
+
+        foreach ($years as $year) {
+            $year = substr($year->publication_date, -4);
+            if (!in_array($year, $yearList)) {
+                $yearList[] = $year;
+            }
+        }
+
+        rsort($yearList);
+
+
+        foreach ($advisers as $adviser) {
+            $names = explode(',', $adviser->adviser);
+            foreach ($names as $name) {
+                $trimmedName = trim($name);
+                if (!in_array($trimmedName, $adviserList)) {
+                    $adviserList[] = $trimmedName;
+                }
+            }
+        }
+
+        sort($adviserList);
+
+        if ($filter_type === 'published') {
+            $query = Imrad::query();
+
+            $this->applyFilters($request, $query);
+
+            $imrads = $query->where('status', 'published')->where('action', null)->get();
+            $archives = Imrad::where('status', 'archive')->where('action', null)->get();
+            $tempfiles = TempFile::all();
+
+            return view('admin.admin_page.IMRAD.fileDraft', compact('imrads', 'archives', 'tempfiles', 'yearList', 'adviserList', 'departmentList'));
+        }
+
+        if ($filter_type === 'archive') {
+            $query = Imrad::query();
+
+            $this->applyFilters($request, $query);
+
+            $archives = $query->where('status', 'archive')->get();
+            $imrads = Imrad::where('status', 'published')->where('action', null)->get();
+            $tempfiles = TempFile::all();
+
+            return view('admin.admin_page.IMRAD.fileDraft', compact('imrads', 'archives', 'tempfiles', 'yearList', 'adviserList', 'departmentList'));
+        }
+
+        if ($filter_type === 'draft') {
+            $query = TempFile::query();
+
+            $this->applyFilters($request, $query);
+
+            $tempfiles = $query->get();
+            $archives = Imrad::where('status', 'archive')->where('action', null)->get();
+            $imrads = Imrad::where('status', 'published')->where('action', null)->get();
+
+            return view('admin.admin_page.IMRAD.fileDraft', compact('imrads', 'archives', 'tempfiles', 'yearList', 'adviserList', 'departmentList'));
+        }
+
+        // Handle other filter types if needed
+        $imrads = Imrad::where('status', 'published')->where('action', null)->get();
+        $archives = Imrad::where('status', 'archive')->where('action', null)->get();
+        $tempfiles = TempFile::all();
+        return view('admin.admin_page.IMRAD.fileDraft', compact('imrads', 'archives', 'tempfiles', 'yearList', 'adviserList', 'departmentList'));
     }
 
     protected function applyFilters(Request $request, $query)
     {
-        if ($request->filled('author')) {
-            $query->where('author', 'like', '%' . $request->author . '%');
-        }
         if ($request->filled('adviser')) {
-            $query->where('adviser', 'like', '%' . $request->adviser . '%');
+            $advisers = $request->input('adviser');
+            $query->where(function ($q) use ($advisers) {
+                foreach ($advisers as $adviser) {
+                    $q->orWhereRaw("FIND_IN_SET(?, adviser)", [$adviser]);
+                }
+            });
         }
+
+        if($request->filled('category')) {
+            $categories = $request->input('category');
+            $query->whereIn('category', $categories);
+        }
+
+        $startYear = $request->input('start_year')[0] ?? null;
+        $endYear = $request->input('end_year')[0] ?? null;
+
+        if ($startYear && !$endYear) {
+            $query->where('publication_date', '>=', $startYear);
+        } elseif ($endYear && !$startYear) {
+            $query->where('publication_date', '<=', $endYear);
+        } elseif ($startYear && $endYear) {
+            if ($startYear === $endYear) {
+                $query->where('publication_date', $startYear);
+            } else {
+                $query->whereBetween('publication_date', [$startYear, $endYear]);
+            }
+        }
+
         if ($request->filled('department')) {
-            $query->where('department', 'like', '%' . $request->department . '%');
+            $departments = $request->input('department');
+            $query->whereIn('department', $departments);
         }
-        if ($request->filled('publication_month')) {
-            $query->where('publication_date', 'like', '%' . $request->publication_month . '%');
-        }
-        if ($request->filled('publication_year')) {
-            $query->where('publication_date', 'like', '%' . $request->publication_year . '%');
-        }
-        if ($request->filled('location')) {
-            $query->where('location', 'like', '%' . $request->location . '%');
-        }
-        if ($request->filled('SDG')) {
-            $query->where('SDG', 'like', '%' . $request->SDG . '%');
+
+        // Filter by SDGs
+        if ($request->filled('sdg')) {
+            $sdgs = array_map('trim', $request->input('sdg'));
+            $query->where(function ($q) use ($sdgs) {
+                foreach ($sdgs as $sdg) {
+                    $q->orWhereRaw("FIND_IN_SET(?, REPLACE(SDG, ' ', ''))", [$sdg]);
+                }
+            });
         }
     }
 
@@ -100,19 +316,7 @@ class IMRADController extends Controller
             'status' => 'archive',
         ]);
 
-        // $archive->save();
-
-        return redirect()->route('admin.imrad')->with('success', 'File moved to archive successfully.');
-    }
-
-    public function return(Imrad $archive)
-    {
-
-        $archive->update([
-            'status' => 'published',
-        ]);
-
-        return redirect()->route('admin.imrad')->with('success', 'File published successfully.');
+        return back()->with('success', 'File has been archived successfully.');
     }
 
     public function searchImrad(Request $request)
@@ -307,7 +511,6 @@ class IMRADController extends Controller
             'title' => [
                 'required',
                 'string',
-
                 Rule::unique('imrads')->where(function ($query) {
                     return $query->where('action', null);
                 }),
@@ -319,38 +522,22 @@ class IMRADController extends Controller
             'publisher' => 'nullable|string',
             'publication_date'  => 'required|string',
             'keywords' => 'nullable|string',
-            'location' => 'nullable|string|unique:location,location',
+            'location' => [
+                'nullable',
+                'string',
+                Rule::unique('imrads')->whereNotNull('location')
+            ],
             'SDG' => 'nullable|string',
+            'category' => 'required|string|in:Technology,Midwifery,Engineering,Architecture,Accountancy,Other',
             'volume' => 'nullable|string',
             'issue' => 'nullable|string',
         ]);
 
+
         $tempFile = TempFile::find($data['id']);
-            if ($tempFile) {
-                $pdf_file = $tempFile->pdf_file;
-                $filePath = storage_path('app/' . $pdf_file);
+        $pdfPath = $tempFile->pdf_file;
+        $tempFile->delete();
 
-                if ($pdf_file && file_exists($filePath)) {
-                    $destinationPath = storage_path('app/public/pdf/' . basename($pdf_file));
-
-                    if (rename($filePath, $destinationPath)) {
-                        $tempFile->delete();
-                    } else {
-                        return back()->with('error', 'Failed to move the file to the pdf folder.');
-                    }
-                } else {
-                    $tempFile->delete();
-                }
-            }
-
-            $pdfPath = null;
-
-            if ($tempFile && $tempFile->pdf_file) {
-                $pdf_file = $tempFile->pdf_file;
-                $pdfPath = 'public/pdf/' . basename($pdf_file);
-            }
-
-            // Create the new IMRAD record
             $imrad = Imrad::create([
                 'title' => $data['title'],
                 'author'  => $data['author'],
@@ -361,6 +548,7 @@ class IMRADController extends Controller
                 'publication_date'  => $data['publication_date']  ?? null,
                 'keywords' => $data['keywords'] ??  null,
                 'location' => $data['location']  ?? null,
+                'category' => $data['category'],
                 'SDG' => $data['SDG']  ?? null,
                 'volume' => $data['volume']  ?? null,
                 'issue' => $data['issue']  ?? null,
@@ -376,11 +564,95 @@ class IMRADController extends Controller
                 'no_download' => 0,
             ]);
 
-            return redirect()->route('admin.imrad')->with('success', 'Imrad created successfully.');
-
-        // Proceed with temp file and PDF handling logic
-
+            return redirect()->route('admin.file.published')->with('success', 'File created successfully.');
     }
+
+    public function manual_create(Request $request)
+    {
+    $data = $request->validate([
+        'title' => [
+            'required',
+            'string',
+            Rule::unique('imrads')->where(function ($query) {
+                return $query->where('action', null);
+            }),
+        ],
+        'author'  => 'required|string|max:255',
+        'adviser' => 'required|string|max:255',
+        'department' => 'required|string|max:255',
+        'publication_date' => 'required|date_format:Y|before_or_equal:' . date('Y'),
+        'abstract' => 'required|string',
+        'publisher' => 'required|string',
+        'author'  => 'required|string|max:255',
+        'keywords' => 'required|string',
+        'category' => 'required|string|in:Technology,Midwifery,Engineering,Architecture,Accountancy,Other',
+        'location' => [
+            'nullable',
+            'string',
+            Rule::unique('imrads')->whereNotNull('location')
+        ],
+        'SDG' => 'nullable|string|regex:/^\d+(,\s?\d+)*$/',
+        'volume' => 'nullable|string',
+        'issue' => 'nullable|string',
+        'file' => 'required|mimes:pdf|max:5120',
+    ],[
+        'title.required' => 'The title field is mandatory.',
+        'author.required' => 'Please specify at least one author.',
+        'publication_date.date_format' => 'The publication date must be a valid year (e.g., 2022).',
+        'SDG.regex' => 'Social Development Goals must be a comma-separated list of numbers (e.g., 1, 2, 3).',
+        'file.mimes' => 'The file must be a PDF, DOC, or DOCX format.',
+        'file.max' => 'The file size cannot exceed 10MB.',
+    ]);
+
+    if (!$request->hasFile('file') || !$request->file('file')->isValid()) {
+        return redirect()->back()->withErrors(['file' => 'Invalid file uploaded.']);
+    }
+
+    $file = $request->file('file');
+    $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+    $extension = $file->getClientOriginalExtension();
+    $filename = $originalName . '_' . time() . '.' . $extension;
+    $destinationPath = public_path('assets/pdf/');
+
+    if (!is_dir($destinationPath)) {
+        mkdir($destinationPath, 0755, true);
+    }
+
+    $file->move($destinationPath, $filename);
+    $filePath = $destinationPath . $filename;
+
+    try {
+        $imrad = Imrad::create([
+            'title' => $data['title'],
+            'author' => $data['author'],
+            'adviser' => $data['adviser'],
+            'department' => $data['department'],
+            'abstract' => $data['abstract'],
+            'publisher' => $data['publisher'],
+            'publication_date' => $data['publication_date'],
+            'keywords' => $data['keywords'],
+            'location' => $data['location'] ?? null,
+            'category' => $data['category'],
+            'SDG' => $data['SDG'],
+            'volume' => $data['volume'] ?? null,
+            'issue' => $data['issue'] ?? null,
+            'pdf_file' => $filename,
+        ]);
+
+        ImradMetric::create([
+            'imradID' => $imrad->id,
+            'rating' => 0,
+            'no_click' => 0,
+            'no_saved' => 0,
+            'no_download' => 0,
+        ]);
+
+        return redirect()->route('admin.file.published')->with('success', 'File created successfully.');
+    } catch (\Exception $e) {
+
+        return redirect()->back()->withErrors(['message' => 'Failed to create record. ' . $e->getMessage()]);
+    }
+}
 
     public function edit(Imrad $imrad)
     {
@@ -403,8 +675,13 @@ class IMRADController extends Controller
             'publisher' => 'nullable|string',
             'publication_date'  => 'required|string',
             'keywords' => 'nullable|string',
-            'location' => 'nullable|string',
+            'location' => [
+            'nullable',
+            'string',
+            Rule::unique('imrads')->ignore($imrad->id)->whereNotNull('location')
+             ],
             'SDG' => 'nullable|string',
+            'category' => 'required|string|in:Technology,Midwifery,Engineering,Architecture,Accountancy,Other',
             'volume' => 'nullable|string',
             'issue' => 'nullable|string',
             'pdf_file' => 'nullable|file|mimes:pdf',
@@ -437,77 +714,92 @@ class IMRADController extends Controller
             'publisher' => $data['publisher'],
             'publication_date'  => $data['publication_date'],
             'keywords' => $data['keywords'],
-            'location' => $data['location'],
+            'location' => $data['location'] ?? null,
+            'category' => $data['category'],
             'SDG' => $data['SDG'],
             'volume' => $data['volume'],
             'issue' => $data['issue'],
             'pdf_file' => $pdfPath,
         ]);
 
-        return redirect()->route('admin.imrad')->with('success', 'Imrad updated successfully.');
+        return redirect()->route('admin.file.published')->with('success', 'File updated successfully.');
     }
 
     public function destroy(Imrad $imrad)
     {
 
-
+        $deleted_date = SetDeleteDate::first();
         $imrad->update([
             'action' => 'deleted',
             'deleted_time' => now(),
-            'delete_by' => auth()->user()->user_code,
-            'permanent_delete' => now()->addDays(30),
+            'delete_by' => auth()->user()->name,
+            'permanent_delete' => now()->addSeconds($deleted_date->delete_date),
             'created_at' => now(),
             'updated_at' => now(),
         ]);
 
-        return redirect()->route('admin.imrad')->with('success', 'The file have 30 days to deleted');
+        return back()->with('success', 'The file will be permanently deleted in ' .$deleted_date->delete_date. ' days. Use the DELETE button in the Trash Bin to proceed.');
     }
 
-    public function destroyTemp(TempFile $temp)
-    {
+    // public function destroyTemp(TempFile $temp)
+    // {
 
-        $pdf_file = $temp->pdf_file;
-        $filePath = storage_path('app/' . $pdf_file);
+    //     $pdf_file = $temp->pdf_file;
+    //     $destinationPath = public_path('assets/pdf/');
+    //     $filePath = $destinationPath . $pdf_file;
 
-        if ($pdf_file && file_exists($filePath)) {
-            unlink($filePath);
-        }
+    //     if ($pdf_file) {
+    //         if (file_exists($filePath)) {
+    //             if (unlink($filePath)) {
+    //                 \Log::info("Deleted temporary file: " . $filePath);
+    //             } else {
+    //                 return redirect()->route('admin.file.archived')->with('error', 'Failed to delete the file. Please try again.');
+    //             }
+    //         } else {
+    //             return redirect()->route('admin.file.archived')->with('error', 'File not found.');
+    //         }
+    //     } else {
+    //         foreach (glob($destinationPath . "/*_" . $temp->id . ".*") as $existingFile) {
+    //             if (file_exists($existingFile)) {
+    //                 unlink($existingFile);
+    //             }
+    //         }
+    //     }
 
-        $temp->delete();
+    //     $temp->delete();
 
-        return redirect()->route('admin.imrad')->with('success', 'File deleted successfully.');
+    //     return back()->with('success', 'File deleted successfully.');
 
-    }
+    // }
 
 
-    public function destroyArhive(Imrad $archive)
-    {
+    // public function destroyArhive(Imrad $archive)
+    // {
+    //     $deleted_date = SetDeleteDate::first();
 
-        $archive->update([
-            'action' => 'deleted',
-            'deleted_time' => now(),
-            'delete_by' => auth()->user()->user_code,
-            'permanent_delete' => now()->addDays(30),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+    //     $archive->update([
+    //         'action' => 'deleted',
+    //         'deleted_time' => now(),
+    //         'delete_by' => auth()->user()->name,
+    //         'permanent_delete' => now()->addDays($deleted_date->delete_date),
+    //         'created_at' => now(),
+    //         'updated_at' => now(),
+    //     ]);
 
-        return redirect()->route('admin.imrad')->with('success', 'The file have 30 days to deleted');
-    }
+    //     return back()->with('success', 'The file will be permanently deleted in ' .$deleted_date->delete_date. ' days. Use the DELETE button in the Trash Bin to proceed.');
+    // }
 
         public function pdfscan(Request $request)
     {
-        // Validate the incoming request
+
         $data = $request->validate([
-            'file' => 'required|mimes:pdf',
+            'file' => 'required|mimes:pdf|max:5120',
         ]);
 
-        // Get the uploaded file
         $file = $request->file('file');
 
-        // Create a new TempFile entry to get the `id` before saving the file
         $tempData = [
-            'publisher' => null, // Placeholder, as you'll update this later
+            'publisher' => null,
             'title' => null,
             'author' => null,
             'adviser' => null,
@@ -525,83 +817,111 @@ class IMRADController extends Controller
 
         $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
         $extension = $file->getClientOriginalExtension();
-
         $filename = $originalName . '_' . $temp->id . '.' . $extension;
 
-        $destinationPath = 'public/temp';
-
-        $filePath = $file->storeAs($destinationPath, $filename);
-        $pdfPath = storage_path('app/' . $filePath);
-
-        $pythonExecutable = 'C:\Users\tsear\AppData\Local\Programs\Python\Python312\python.exe';
-        $pythonScriptPath = 'C:\xampp\htdocs\Capstone_System\public\storage\scripts\pdfscan.py';
-
-        $command = [
-            $pythonExecutable,
-            $pythonScriptPath,
-            $pdfPath
-        ];
-
-        Log::info('Executing command: ' . implode(' ', $command));
-
-        $process = new Process($command);
-        $process->setTimeout(null);
+        $destinationPath = public_path('assets/pdf/');
+        $file->move($destinationPath, $filename);
+        $filePath = $destinationPath . $filename;
 
         try {
-            $process->mustRun();
-            $output = $process->getOutput();
 
-            // Extract relevant information from the output
-            $title = $this->extractTitle($output);
-            $adviser = $this->extractAdviserName($output);
-            $department = $this->extractDepartment($output);
-            $abstract = $this->extractAbstract($output);
-            $authors = $this->extractAuthors($output);
-            $keywords = $this->extractKeywords($output);
-            $SDG = $this->extractSDG($output);
-            $date = $this->extractDate($output);
-            $issue = $this->extractIssue($output);
-            $publisher = $this->extractPublisher($output);
-            $volume = $this->extractVol($output);
+            $fileResource = fopen($filePath, 'r');
+            $response = Http::attach('file', $fileResource, $filename)
+                ->post('https://python-extracter-2.onrender.com/extract_pdf');
 
-            // Ensure UTF-8 encoding for all extracted data
-            $title = $this->ensureUtf8Encoding($title);
-            $adviser = $this->ensureUtf8Encoding($adviser);
-            $department = $this->ensureUtf8Encoding($department);
-            $abstract = $this->ensureUtf8Encoding($abstract);
-            $authors = $this->ensureUtf8Encoding($authors);
-            $keywords = $this->ensureUtf8Encoding($keywords);
-            $SDG = $this->ensureUtf8Encoding($SDG);
-            $date = $this->ensureUtf8Encoding($date);
-            $issue = $this->ensureUtf8Encoding($issue);
-            $volume = $this->ensureUtf8Encoding($volume);
-            $publisher = $this->ensureUtf8Encoding($publisher);
+            fclose($fileResource);
 
+            if ($response->ok()) {
+                $extractedData = $response->json();
+                foreach ($extractedData as $key => $value) {
 
-            $temp->update([
-                'publisher' => $publisher,
-                'title' => $title,
-                'author' => $authors,
-                'adviser' => $adviser,
-                'department' => $department,
-                'abstract' => $abstract,
-                'publication_date' => $date,
-                'keywords' => $keywords,
-                'SDG' => $SDG,
-                'issue' => $issue,
-                'volume' => $volume,
-                'pdf_file' => $filePath,
-            ]);
+                $title = $this->extractTitle($value);
+                $adviser = $this->extractAdviserName($value);
+                $department = $this->extractDepartment($value);
+                $abstract = $this->extractAbstract($value);
+                $authors = $this->extractAuthors($value);
+                $keywords = $this->extractKeywords($value);
+                $SDG = $this->extractSDG($value);
+                $date = $this->extractDate($value);
+                $issue = $this->extractIssue($value);
+                $publisher = $this->extractPublisher($value);
+                $volume = $this->extractVol($value);
 
-            return $this->create($temp);
+                $title = $this->ensureUtf8Encoding($title);
+                $adviser = $this->ensureUtf8Encoding($adviser);
+                $department = $this->ensureUtf8Encoding($department);
+                $abstract = $this->ensureUtf8Encoding($abstract);
+                $authors = $this->ensureUtf8Encoding($authors);
+                $keywords = $this->ensureUtf8Encoding($keywords);
+                $SDG = $this->ensureUtf8Encoding($SDG);
+                $date = $this->ensureUtf8Encoding($date);
+                $issue = $this->ensureUtf8Encoding($issue);
+                $volume = $this->ensureUtf8Encoding($volume);
+                $publisher = $this->ensureUtf8Encoding($publisher);
 
-        } catch (ProcessFailedException $exception) {
-            // Handle the process failure
-            Log::error('Process failed: ' . $exception->getMessage());
-            return redirect()->back()->with('error', 'Failed to process the PDF file.');
+                if(empty($title) || empty($adviser) || empty($department) || empty($abstract) || empty($authors) || empty($keywords) || empty($SDG) || empty($date) || empty($issue) || empty($volume) || empty($publisher)) {
+
+                    $this->errorFile($temp);
+                    return back()->with('error_format', 'Incorrect file format, check this format for you reference: ');
+                }
+
+                $temp->update([
+                    'publisher' => $publisher,
+                    'title' => $title,
+                    'author' => $authors,
+                    'adviser' => $adviser,
+                    'department' => $department,
+                    'abstract' => $abstract,
+                    'publication_date' => $date,
+                    'keywords' => $keywords,
+                    'SDG' => $SDG,
+                    'issue' => $issue,
+                    'volume' => $volume,
+                    'pdf_file' => $filename,
+                ]);
+
+                return $this->create($temp);
+
+                }
+            } else {
+                $this->errorFile($temp);
+                Log::error('Python API extraction failed: ' . $response->body());
+                return back()->with('error', 'Failed to extract PDF content. Make sure you have strong internet connection and try again.');
+            }
+
+        } catch (\Exception $exception) {
+            $this->errorFile($temp);
+            Log::error('Error processing PDF: ' . $exception->getMessage());
+            return back()->with('error', 'Failed to extract PDF content. Make sure you have strong internet connection and try again.');
         }
     }
 
+    public function errorFile(TempFile $temp)
+    {
+
+        $pdf_file = $temp->pdf_file;
+        $destinationPath = public_path('assets/pdf/');
+        $filePath = $destinationPath . $pdf_file;
+
+        if ($pdf_file) {
+            if (file_exists($filePath)) {
+                if (unlink($filePath)) {
+                    \Log::info("Deleted temporary file: " . $filePath);
+                } else {
+                    return redirect()->route('admin.file.draft')->with('error', 'Failed to delete the file. Please try again.');
+                }
+            } else {
+                return redirect()->route('admin.file.draft')->with('error', 'File not found.');
+            }
+        } else {
+            foreach (glob($destinationPath . "/*_" . $temp->id . ".*") as $existingFile) {
+                if (file_exists($existingFile)) {
+                    unlink($existingFile);
+                }
+            }
+        }
+        $temp->delete();
+    }
 
     private function ensureUtf8Encoding(?string $data): string
     {
@@ -618,7 +938,6 @@ class IMRADController extends Controller
 
     private function extractTitle($text)
     {
-
         $lines = preg_split('/\r\n|\r|\n/', $text);
         $title = '';
         $inAuthorsSection = false;
@@ -643,14 +962,28 @@ class IMRADController extends Controller
             }
         }
 
+        $removePatterns = [
+            '/SORSOGONSTATEUNIVERSITY PUBLICATIONANDKNOWLEDGEMANAGEMENTUNIT/i',
+            '/THESISMANAGEMENTSYSTEM Issue\d+Volume\d+/i'
+        ];
+
+        $title = preg_replace($removePatterns, '', $title);
+
         $title = trim($title);
+
         return $title ?? '';
     }
 
     private function extractPublisher($text)
     {
         $lines = preg_split('/\r\n|\r|\n/', $text);
+
         $lines[0] = str_replace('PUBLICATION AND KNOWLEDGE MANAGEMENT UNIT', '', $lines[0]);
+        $lines[0] = str_replace('PUBLICATIONANDKNOWLEDGEMANAGEMENTUNIT', '', $lines[0]);
+        if(preg_match('/^SORSOGONSTATEUNIVERSITY/', $lines[0])) {
+            $lines[0] = 'SORSOGON STATE UNIVERSITY';
+        }
+
         $lines[0] = trim($lines[0]);
         return $lines[0] ?? '';
     }
@@ -659,7 +992,8 @@ class IMRADController extends Controller
     {
         // Collected by numbers of SDG
         $collectedContent = [];
-        preg_match_all('/Sustainable Development Goals:\s*(.*?)(?=\n\n|\Z)/is', $text, $matches);
+        $pattern = '/Sustainable\s*Development\s*Goals:\s*(.*?)(?=\n\n|\Z)/is';
+        preg_match_all($pattern, $text, $matches);
 
         $collectedContent = $matches[1];
 
@@ -685,24 +1019,6 @@ class IMRADController extends Controller
         }
 
         return implode(", ", $sdgDetails);
-
-        // $collectedContent = [];
-        // preg_match_all('/Sustainable Development Goals:\s*(.*?)(?=\n\n|\Z)/is', $text, $matches);
-
-        // // Collect all matched content after each instance
-        // $collectedContent = $matches[1];
-
-        // // Step 2: Extract only SDG names, removing numbers and newlines
-        // $sdgNames = [];
-        // foreach ($collectedContent as $content) {
-        //     // Remove numbers and trim whitespace from each line
-        //     $cleanedContent = preg_replace('/\d+/', '', $content);  // Remove numbers
-        //     $cleanedContent = preg_replace('/\r\n|\r|\n/', ' ', $cleanedContent);  // Replace line breaks with spaces
-        //     $sdgNames[] = trim($cleanedContent); // Trim any surrounding whitespace
-        // }
-
-        // // Convert SDG names into a comma-separated string
-        // return implode(", ", $sdgNames);
     }
 
     private function extractIssue($text)
@@ -736,21 +1052,7 @@ class IMRADController extends Controller
 
     private function extractDepartment($text)
     {
-        // preg_match('/Sorsogon State University,\s*([\w\s]+?)(?=\s*\n|,|$)\s*(January|February|March|April|May|June|July|August|September|October|November|December)/i', $text, $matches);
-        // $department = $matches[1] ?? '';
-        // $department = preg_replace('/\r\n|\r|\n/', ' ', trim($department));
-        // return $department;
-
-        // $start = 'Sorsogon State University,';
-        // $months = 'January|February|March|April|May|June|July|August|September|October|November|December';
-
-        // $pattern = '/'. preg_quote($start, '/') .'\s*([\w\s\-&,]+?)\s*(?=\b(?:' . $months . ')\b)/i';
-        // preg_match($pattern, $text, $matches);
-        // $department = isset($matches[1]) ? trim(preg_replace('/\s+/', ' ', $matches[1])) : '';
-
-        // return $department;
-
-        preg_match('/Sorsogon State University,\s*(.*?)(?=\n\s*(January|February|March|April|May|June|July|August|September|October|November|December|\w+:))/is', $text, $matches);
+        preg_match('/Sorsogon State University,\s*(.*?)\s+(\d{4})/is', $text, $matches);
 
         $department = $matches[1] ?? '';
         $department = preg_replace('/\r\n|\r|\n/', ' ', $department);
@@ -761,60 +1063,10 @@ class IMRADController extends Controller
 
     private function extractDate($text)
     {
-        // preg_match('/Sorsogon State University,\s*Department of [\w\s]+?\s*(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),\s+(\d{4})\s*Abstract/i', $text, $matches);
+        preg_match('/Sorsogon State University,\s*.*?.*?(\d{4})/is', $text, $matches);
 
-        // $date = $matches[1].' '.$matches[2].', '.$matches[3] ?? '';
-
-        // $date = preg_replace('/\r\n|\r|\n/', ' ', trim($date));
-
-        // return $date;
-
-        // preg_match('/Sorsogon State University,\s*(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),\s+(\d{4})\s*SORSOGON STATE UNIVERSITY/i', $text, $matches);
-
-        // $date = $matches[3] ?? '';
-
-        // $date = preg_replace('/\r\n|\r|\n/', ' ', trim($date));
-
-        // return $date;
-
-        // preg_match('/Sorsogon State University,\s*(.*?)(?=\n\s*(January|February|March|April|May|June|July|August|September|October|November|December|\w+:))/is', $text, $matches);
-
-        // $department = $matches[1] ?? '';
-        // $department = preg_replace('/\r\n|\r|\n/', ' ', $department);
-
-        // return $department;
-
-        // $collectedContent = [];
-        // preg_match_all('/Sorsogon State University,\s*(.*?)(?=\n\n|\Z)/is', $text, $matches);
-        //
-        // // Collect all matched content after each instance
-        // $collectedContent = $matches[1];
-
-        // // Step 2: Extract only SDG names, removing numbers and newlines
-        // $sdgNames = [];
-        // foreach ($collectedContent as $content) {
-        //     // Remove numbers and trim whitespace from each line
-        //     $cleanedContent = preg_replace('/\d+/', '', $content);  // Remove numbers
-        //     $cleanedContent = preg_replace('/\r\n|\r|\n/', ' ', $cleanedContent);  // Replace line breaks with spaces
-        //     $sdgNames[] = trim($cleanedContent); // Trim any surrounding whitespace
-        // }
-
-        // // Convert SDG names into a comma-separated string
-        // return implode(", ", $sdgNames);
-
-        // preg_match('/Sorsogon State University,\s*(.*?)(?=\n\s*(SORSOGON STATE UNIVERSITY|\w+:))/is', $text, $matches);
-
-        // $abstract = $matches[1] ?? '';
-        // $abstract = preg_replace('/\r\n|\r|\n/', ' ', $abstract);
-
-        // return $abstract;
-
-        preg_match('/Sorsogon State University,\s*.*?.*?(\w+\s+\d{4})/is', $text, $matches);
-
-    // Extracting the date from the captured group
         $date = $matches[1] ?? '';
 
-        // Clean up any new line characters if present
         $date = preg_replace('/\r\n|\r|\n/', ' ', trim($date));
 
         return $date;
@@ -824,11 +1076,21 @@ class IMRADController extends Controller
     private function extractAbstract($text)
     {
 
-        preg_match('/Abstract\s*(.*?)(?=\n\s*(Keywords|Introduction|Methods|Results|Discussion|Conclusion|\w+:))/is', $text, $matches);
+        preg_match(
+            '/Abstract\s*(.*?)(?=\n\s*(Keywords|Introduction|Methods|Results|Discussion|Conclusion|\w+:))/is',
+            $text,
+            $matches
+        );
 
-        $abstract = $matches[1] ?? '';
-        $abstract = preg_replace('/\r\n|\r|\n/', ' ', $abstract);
+        $abstract = $matches[1]?? '';
+        $removePatterns = [
+            '/SORSOGON STATE UNIVERSITY PUBLICATION AND KNOWLEDGE MANAGEMENT UNIT/i',
+            '/THESIS MANAGEMENT SYSTEM Issue \d+ Volume \d+/i'
+        ];
 
+        $abstract = preg_replace($removePatterns, '', $abstract);
+        $abstract = preg_replace('/\r\n|\r|\n/', '', $abstract);
+        $abstract = preg_replace('/\s+/', ' ', trim($abstract));
         return $abstract;
     }
 
@@ -861,7 +1123,7 @@ class IMRADController extends Controller
 
     private function extractKeywords($text)
     {
-        preg_match('/Keywords:\s*(.*?)\s*Sustainable Development Goals:/is', $text, $matches);
+        preg_match('/Keywords:\s*(.*?)\s*Sustainable\s*Development\s*Goals:/is', $text, $matches);
 
     if (!empty($matches[1])) {
 
@@ -889,46 +1151,237 @@ class IMRADController extends Controller
 
         return '';
 
-        // $adviserPattern = '/\nAdviser\s*$/m';
-        // $abstractPattern = '/\nAbstract\s*$/m';
-
-        // $adviserPos = $abstractPos = false;
-        // if (preg_match($adviserPattern, $text, $adviserMatch, PREG_OFFSET_CAPTURE)) {
-        //     $adviserPos = $adviserMatch[0][1];
-        // }
-        // if (preg_match($abstractPattern, $text, $abstractMatch, PREG_OFFSET_CAPTURE)) {
-        //     $abstractPos = $abstractMatch[0][1];
-        // }
-
-        // if ($adviserPos !== false && $abstractPos !== false && $abstractPos > $adviserPos) {
-
-        //     $betweenText = substr($text, $adviserPos, $abstractPos - $adviserPos);
-
-        //     $lines = preg_split('/\r\n|\r|\n/', $betweenText);
-
-        //     foreach ($lines as $line) {
-        //         $trimmedLine = trim($line);
-        //         if (!empty($trimmedLine) && strpos($trimmedLine, '.') !== false) {
-        //             $trimmedLine = preg_replace(['/([a-z])([A-Z])/', '/\.(?!\s)/'], ['$1 $2', '. '], $trimmedLine);
-        //             return $trimmedLine;
-        //         }
-        //     }
-        // }
-
-        // return '';
-
 
     }
 
     public function imradview(Imrad $imrad) {
 
+        $SDGMapping = [
+            1 => 'No Poverty',
+            2 => 'Zero Hunger',
+            3 => 'Good Health and Well-being',
+            4 => 'Quality Education',
+            5 => 'Gender Equality',
+            6 => 'Clean Water and Sanitation',
+            7 => 'Affordable and Clean Energy',
+            8 => 'Decent Work and Economic Growth',
+            9 => 'Industry, Innovation, and Infrastructure',
+            10 => 'Reduced Inequalities',
+            11 => 'Sustainable Cities and Communities',
+            12 => 'Responsible Consumption and Production',
+            13 => 'Climate Action',
+            14 => 'Life Below Water',
+            15 => 'Life on Land',
+            16 => 'Peace, Justice, and Strong Institutions',
+            17 => 'Partnerships for the Goals',
+        ];
+
         $authorString = Imrad::where('id', $imrad->id)->pluck('author')->first();
-        $authorsArray = explode(', ', $authorString);
+        preg_match_all('/[A-Za-z.\s]+, R\.M\., BSM/', $authorString, $matches);
+        $authorsArray = $matches[0];
+        if(empty($authorsArray)) {
+            $authorsArray = explode(', ', $authorString);
+        }
 
-        $SDG_list = Imrad::where('id', $imrad->id)->pluck('SDG')->first();
-        $SDG_array = explode(', ', $SDG_list);
+        $SDGs = Imrad::select('SDG')->where('id', $imrad->id)->get();
+        $SDGNO = [];
+        $SDGList = [];
 
-        return view('admin.admin_page.IMRAD.imrad-view', compact('imrad', 'authorsArray', 'SDG_array'));
+        foreach ($SDGs as $SDG) {
+            // Split the SDG values by comma
+            $sdgArray = explode(',', $SDG->SDG);
+
+            foreach ($sdgArray as $sdgItem) {
+                $trimmedName = trim($sdgItem);
+                $sdgNumber = (int)$trimmedName;
+
+                if (!in_array($sdgNumber, $SDGNO)) {
+                    $SDGNO[] = $sdgNumber;
+                    if (isset($SDGMapping[$sdgNumber])) { $SDGList[$sdgNumber] = $SDGMapping[$sdgNumber];
+                    }
+                }
+            }
+        }
+
+        foreach ($SDGs as $SDG) {
+            $SDG = explode(',', $SDG->SDG);
+            foreach ($SDG as $SDG) {
+                $trimmedName = trim($SDG);
+                if (!in_array($trimmedName, $SDGNO)) {
+                    $SDGNO[] = $trimmedName;
+                }
+            }
+        }
+
+
+        return view('admin.admin_page.IMRAD.imrad-view', compact('imrad', 'authorsArray', 'SDGList'));
     }
+
+    public function imradviewtemp(Tempfile $tempfile) {
+        $SDGMapping = [
+            1 => 'No Poverty',
+            2 => 'Zero Hunger',
+            3 => 'Good Health and Well-being',
+            4 => 'Quality Education',
+            5 => 'Gender Equality',
+            6 => 'Clean Water and Sanitation',
+            7 => 'Affordable and Clean Energy',
+            8 => 'Decent Work and Economic Growth',
+            9 => 'Industry, Innovation, and Infrastructure',
+            10 => 'Reduced Inequalities',
+            11 => 'Sustainable Cities and Communities',
+            12 => 'Responsible Consumption and Production',
+            13 => 'Climate Action',
+            14 => 'Life Below Water',
+            15 => 'Life on Land',
+            16 => 'Peace, Justice, and Strong Institutions',
+            17 => 'Partnerships for the Goals',
+        ];
+
+        $imrad = $tempfile;
+
+        $authorString = Tempfile::where('id', $tempfile->id)->pluck('author')->first();
+        preg_match_all('/[A-Za-z.\s]+, R\.M\., BSM/', $authorString, $matches);
+        $authorsArray = $matches[0];
+        if(empty($authorsArray)) {
+            $authorsArray = explode(', ', $authorString);
+        }
+
+
+        $SDGs = Tempfile::select('SDG')->where('id', $tempfile->id)->get();
+        $SDGNO = [];
+        $SDGList = [];
+
+        foreach ($SDGs as $SDG) {
+            // Split the SDG values by comma
+            $sdgArray = explode(',', $SDG->SDG);
+
+            foreach ($sdgArray as $sdgItem) {
+                $trimmedName = trim($sdgItem);
+                $sdgNumber = (int)$trimmedName;
+
+                if (!in_array($sdgNumber, $SDGNO)) {
+                    $SDGNO[] = $sdgNumber;
+                    if (isset($SDGMapping[$sdgNumber])) { $SDGList[$sdgNumber] = $SDGMapping[$sdgNumber];
+                    }
+                }
+            }
+        }
+
+        foreach ($SDGs as $SDG) {
+            $SDG = explode(',', $SDG->SDG);
+            foreach ($SDG as $SDG) {
+                $trimmedName = trim($SDG);
+                if (!in_array($trimmedName, $SDGNO)) {
+                    $SDGNO[] = $trimmedName;
+                }
+            }
+        }
+
+        return view('admin.admin_page.IMRAD.imrad-view', compact('imrad', 'authorsArray', 'SDGList'));
+
+    }
+
+    public function manual_add() {
+        return view('admin.admin_page.IMRAD.imradCreateManual');
+    }
+
+    public function bulkDelete(Request $request)
+{
+    $deleted_date = SetDeleteDate::first();
+    $ids = $request->input('ids', []);
+
+    if (!is_array($ids) || empty($ids)) {
+        return response()->json(['message' => 'No items selected for deletion'], 400);
+    }
+
+    try {
+        $files = Imrad::whereIn('id', $ids)->get();
+
+        foreach ($files as $file) {
+            $file->update([
+                'action' => 'deleted',
+                'deleted_time' => now(),
+                'delete_by' => auth()->user()->name,
+                'permanent_delete' => now()->addDays($deleted_date->delete_date),
+            ]);
+        }
+
+        return response()->json(['message' => 'Selected items deleted successfully']);
+    } catch (\Exception $e) {
+        return response()->json(['message' => 'Error deleting items: ' . $e->getMessage()], 500);
+    }
+}
+
+    public function bulkArchive(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['message' => 'No items selected for archiving'], 400);
+        }
+
+        try {
+            $files = Imrad::whereIn('id', $ids)->get();
+
+            foreach ($files as $file) {
+                $file->update([
+                    'status' => 'archive',
+                ]);
+            }
+
+            return response()->json(['message' => 'Selected items archived successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error deleting items: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function bulkPublished(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['message' => 'No items selected for archiving'], 400);
+        }
+
+        try {
+            $files = Imrad::whereIn('id', $ids)->get();
+
+            foreach ($files as $file) {
+                $file->update([
+                    'status' => 'published',
+                ]);
+            }
+
+            return response()->json(['message' => 'Selected items archived successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error deleting items: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function bulkDeleteDraft(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['message' => 'No items selected for deletion'], 400);
+        }
+
+        try {
+            TempFile::whereIn('id', $ids)->each(function ($file) {
+                $filePath = public_path('assets/pdf/' . $file->pdf_file);
+                if (file_exists($filePath)) {
+                    @unlink($filePath);
+                }
+                $file->delete();
+            });
+
+            return response()->json(['message' => 'Selected items deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error deleting items: ' . $e->getMessage()], 500);
+        }
+    }
+
+
 
 }

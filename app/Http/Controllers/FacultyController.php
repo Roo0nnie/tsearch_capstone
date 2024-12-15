@@ -131,11 +131,7 @@ class FacultyController extends Controller
 
     public function showLoginForm()
     {
-        if (Auth::guard('faculty')->check()) {
-            Auth::guard('faculty')->logout();
 
-            return redirect()->to('login')->with('message', 'You have been logged out due to re-login attempt.');
-        }
         return view('auth.login');
     }
 

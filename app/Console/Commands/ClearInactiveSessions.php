@@ -6,10 +6,9 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use App\Models\LogHistory;
-use App\Models\User;
-use App\Models\Faculty;
 use App\Models\Admin;
 use App\Models\GuestAccount;
+use Illuminate\Support\Facades\Auth;
 
 class ClearInactiveSessions extends Command
 {
@@ -30,75 +29,75 @@ class ClearInactiveSessions extends Command
     /**
      * Execute the console command.
      */
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
-        // $this->setHidden(true);
     }
+
     public function handle()
     {
+        $timeout = 60;
+        $cutoff = Carbon::now()->subMinutes($timeout)->timestamp;
 
-         $timeout = 10;
+        $sessions = DB::table('sessions')
+            ->where('last_activity', '<', $cutoff)
+            ->get();
 
-         $cutoff = Carbon::now()->subMinutes($timeout)->timestamp;
+        foreach ($sessions as $session) {
+            $this->logLogout($session->id);
 
-         $sessions = DB::table('sessions')
-             ->where('last_activity', '<', $cutoff)
-             ->get();
+            DB::table('sessions')->where('id', $session->id)->delete();
+        }
 
-         foreach ($sessions as $session) {
-
-             $this->logLogout($session->id);
-
-             DB::table('sessions')->where('id', $session->id)->delete();
-         }
-
-         $this->info('Inactive sessions cleared and users logged out successfully.');
+        $this->info('Inactive sessions cleared and users logged out successfully.');
     }
 
     protected function logLogout($sessionId)
     {
-        LogHistory::where('session_id', $sessionId)
+        $logHistory = LogHistory::where('session_id', $sessionId)
         ->whereNull('logout')
-        ->update(['logout' => now()]);
+        ->first();
 
-        $user_code = LogHistory::where('session_id', $sessionId)->value('user_code');
+    if ($logHistory) {
 
-        $credentials = ['user_code' => $user_code];
-        $guard = '';
-        $model = '';
+        $logHistory->update(['logout' => now()]);
 
-        if (str_starts_with($user_code, '21')) {
-            $guard = 'user';
-            $model = \App\Models\User::class;
-        } elseif (str_starts_with($user_code, '20')) {
-            $guard = 'faculty';
-            $model = \App\Models\Faculty::class;
-        } elseif (str_starts_with($user_code, '19')) {
+        $user_code = $logHistory->user_code;
+        $guard = null;
+
+        // Determine the user type and guard
+        if (str_starts_with($user_code, '19')) {
             $guard = 'admin';
-            $model = \App\Models\Admin::class;
+            $model = Admin::class;
         } elseif (str_starts_with($user_code, '09')) {
             $guard = 'guest_account';
-            $model = \App\Models\GuestAccount::class;
+            $model = GuestAccount::class;
         } else {
-            return back()->withErrors(['user_code' => 'Invalid user ID format.'])->withInput();
+            $this->error("Invalid user_code format for session: {$sessionId}");
+            return;
         }
 
-        $logHistoryCount = LogHistory::where('user_code', $user_code)
-        ->whereNull('logout')->count();
+        if ($guard) {
+            Auth::guard($guard)->logout();
+
+            session()->invalidate();
+            session()->regenerateToken();
+        }
 
         $user = $model::where('user_code', $user_code)->first();
 
-        if ($logHistoryCount > 0) {
+        if ($user) {
+            $activeLogins = LogHistory::where('user_code', $user_code)
+                ->whereNull('logout')
+                ->count();
 
-            $user->update(['status' => 'Active']);
+            $status = $activeLogins > 0 ? 'Active' : 'Inactive';
+            $user->update(['status' => $status]);
+
+            $this->info("User with user_code {$user_code} set to {$status} and logged out.");
         } else {
-
-            $user->update(['status' => 'Inactive']);
+            $this->error("User with user_code {$user_code} not found.");
         }
-
     }
-
-
-
-
+    }
 }

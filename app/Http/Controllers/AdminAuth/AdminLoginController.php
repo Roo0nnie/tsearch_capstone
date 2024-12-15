@@ -16,12 +16,6 @@ class AdminLoginController extends Controller
 
     public function landingPage()
     {
-        // if (Auth::guard('admin')->check() || Auth::check()) {
-        //     Auth::guard('admin')->logout();
-        //     Auth::logout();
-        //     return view('welcome')->with('message', 'You have been logged out due to re-login attempt.');
-        // }
-
         return view('welcome');
     }
 

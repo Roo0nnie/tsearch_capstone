@@ -78,12 +78,12 @@
                     </div>
                 </li> --}}
 
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                     <a href="#sidebarLayouts">
                         <i class="fa-solid fa-school"></i>
                         <p>Setting</p>
                     </a>
-                </li>
+                </li> --}}
 
             </ul>
         </div>

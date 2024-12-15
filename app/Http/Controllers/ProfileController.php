@@ -91,6 +91,7 @@ class ProfileController extends Controller
             $extension = $file->getClientOriginalExtension();
             $filename = time() . "_" . $data['user_code'] . "." . $extension;
 
+
             $profileDirectory = '';
             switch ($profileExtension) {
                 case 'user':
@@ -192,7 +193,10 @@ class ProfileController extends Controller
     }
 
     // Admin profile
-    public function adminProfile(Admin $admin) {
+    public function adminProfile($admin) {
+
+        $adminId = decrypt($admin);
+        $admin = Admin::findOrFail($adminId);
         return view('admin.admin_profile', compact('admin'));
     }
 
@@ -248,9 +252,14 @@ class ProfileController extends Controller
     public function adminupdatePassword(Admin $admin, Request $request) {
 
         $request->validate([
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/',
+                'confirmed',
+            ],
         ]);
-
 
         if (Hash::check($request->currpass, $admin->password)) {
 
@@ -259,7 +268,7 @@ class ProfileController extends Controller
 
             return redirect()->back()->with('success', 'Password has been changed');
         } else {
-            return back()->withErrors(['currPass' => 'Current password is incorrect.']);
+            return back()->withErrors(['currpass' => 'Current password is incorrect.']);
         }
 
     }
@@ -267,7 +276,13 @@ class ProfileController extends Controller
     public function superadminupdatePassword(SuperAdmin $superadmin, Request $request) {
 
         $request->validate([
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/',
+                'confirmed',
+            ],
         ]);
 
 
@@ -278,7 +293,7 @@ class ProfileController extends Controller
 
             return redirect()->back()->with('success', 'Password has been changed');
         } else {
-            return back()->withErrors(['currPass' => 'Current password is incorrect.']);
+            return back()->withErrors(['currpass' => 'Current password is incorrect.']);
         }
 
     }

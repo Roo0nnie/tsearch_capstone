@@ -30,14 +30,6 @@
                             <button class="btn bg-primary">Add Admin</button>
                         </a>
                     </div>
-                    {{-- <div>
-                        <form action="{{ route('super_admin.admin.import.store') }}" method="POST"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <input type="file" class="" accept=".xlsx, .xls, .csv" name="file" required>
-                            <button class="btn bg-primary" type="submit">Add Admin</button>
-                        </form>
-                    </div> --}}
                 </div>
             </div>
 
@@ -53,22 +45,6 @@
                                     Admin</a>
 
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="online-account-tab" data-bs-toggle="tab" href="#online-account"
-                                    role="tab" aria-controls="online-account" aria-selected="false"
-                                    data-tab="online">Active
-                                    Admin</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="offline-account-tab" data-bs-toggle="tab" href="#offline-account"
-                                    role="tab" aria-controls="offline-account" aria-selected="false"
-                                    data-tab="offline">Inactive Admin</a>
-                            </li>
-                            {{-- <li class="nav-item">
-                                <a class="nav-link" id="invalid-account-tab" data-bs-toggle="tab" href="#invalid-account"
-                                    role="tab" aria-controls="invalid-account" aria-selected="false"
-                                    data-tab="invalid">Blocked Admin</a>
-                            </li> --}}
                         </ul>
 
                         <!-- Tab panes -->
@@ -108,9 +84,8 @@
                                                                     <div class="btn-group text-sm-center" role="group"
                                                                         aria-label="Basic mixed styles example">
 
-                                                                        <a href="{{ route('super_admin.admin.edit', ['admin' => $admin]) }}"
-                                                                            class="btn-primary btn">Edit</a>
-
+                                                                        <a href="{{ route('superadmin.admin.view', ['admin' => $admin]) }}"
+                                                                            class="btn-primary btn">View</a>
                                                                         <button
                                                                             class="btn btn-outline-secondary dropdown-toggle"
                                                                             type="button"
@@ -121,9 +96,6 @@
                                                                         </button>
                                                                         <ul class="dropdown-menu"
                                                                             aria-labelledby="actionDropdown{{ $admin->id }}">
-                                                                            <li><a href="{{ route('superadmin.admin.view', ['admin' => $admin]) }}"
-                                                                                    class="dropdown-item">View</a>
-                                                                            </li>
                                                                             <li>
                                                                                 <form
                                                                                     action="{{ route('super_admin.admin.delete', ['admin' => $admin]) }}"
@@ -147,229 +119,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Online Users Tab -->
-                            <div class="tab-pane fade" id="online-account" role="tabpanel"
-                                aria-labelledby="online-account-tab">
-                                <div class="container">
-                                    <div>
-                                        <div id="admin_table">
-                                            <table class="table table-striped" id="basic-datatables_2">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="col">ID</th>
-                                                        <th scope="col">Code</th>
-                                                        <th scope="col">Name</th>
-                                                        <th scope="col">Email</th>
-                                                        <th scope="col">Phone</th>
-                                                        <th scope="col">Birthday</th>
-                                                        <th scope="col">Status</th>
-                                                        <th scope="col">Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="adminActive-table-body">
-                                                    @foreach ($admins as $admin)
-                                                        @if ($admin->status === 'active' && $admin->account_status === 'active')
-                                                            <tr>
-                                                                <td>{{ $admin->id }}</td>
-                                                                <td>{{ $admin->user_code }}</td>
-                                                                <td>{{ $admin->name }}</td>
-                                                                <td>{{ $admin->email }}</td>
-                                                                <td>{{ $admin->phone }}</td>
-                                                                <td>{{ $admin->birthday }}</td>
-                                                                <td>{{ $admin->status }}</td>
-                                                                <td>
-                                                                    <div class="btn-group text-sm-center" role="group"
-                                                                        aria-label="Basic mixed styles example">
-
-                                                                        <a href="{{ route('super_admin.admin.edit', ['admin' => $admin]) }}"
-                                                                            class="btn-primary btn">Edit</a>
-
-                                                                        <button
-                                                                            class="btn btn-outline-secondary dropdown-toggle"
-                                                                            type="button"
-                                                                            id="actionDropdown{{ $admin->id }}"
-                                                                            data-bs-toggle="dropdown" aria-haspopup="true"
-                                                                            aria-expanded="false">
-
-                                                                        </button>
-                                                                        <ul class="dropdown-menu"
-                                                                            aria-labelledby="actionDropdown{{ $admin->id }}">
-                                                                            <li><a href="{{ route('superadmin.admin.view', ['admin' => $admin]) }}"
-                                                                                    class="dropdown-item">View</a>
-                                                                            </li>
-                                                                            <li>
-                                                                                <form
-                                                                                    action="{{ route('super_admin.admin.delete', ['admin' => $admin]) }}"
-                                                                                    method="POST"
-                                                                                    style="display:inline;">
-                                                                                    @csrf
-                                                                                    @method('DELETE')
-                                                                                    <button type="submit"
-                                                                                        class="dropdown-item">Delete</button>
-                                                                                </form>
-                                                                            </li>
-                                                                        </ul>
-                                                                        </button>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        @endif
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Invalid Users Tab -->
-                            <div class="tab-pane fade" id="offline-account" role="tabpanel"
-                                aria-labelledby="offline-account-tab">
-                                <!-- Content for Invalid Users Tab -->
-                                <div class="container">
-                                    <div>
-                                        <table class="table table-striped" id="basic-datatables_3">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">ID</th>
-                                                    <th scope="col">Code</th>
-                                                    <th scope="col">Name</th>
-                                                    <th scope="col">Email</th>
-                                                    <th scope="col">Phone</th>
-                                                    <th scope="col">Birthday</th>
-                                                    <th scope="col">Status</th>
-                                                    <th scope="col">Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="adminDeactive-table-body">
-                                                @foreach ($admins as $admin)
-                                                    @if ($admin->status === 'inactive' && $admin->action === null)
-                                                        <tr>
-                                                            <td>{{ $admin->id }}</td>
-                                                            <td>{{ $admin->user_code }}</td>
-                                                            <td>{{ $admin->name }}</td>
-                                                            <td>{{ $admin->email }}</td>
-                                                            <td>{{ $admin->phone }}</td>
-                                                            <td>{{ $admin->birthday }}</td>
-                                                            <td>{{ $admin->status }}</td>
-                                                            <td>
-                                                                <div class="btn-group text-sm-center" role="group"
-                                                                    aria-label="Basic mixed styles example">
-
-                                                                    <a href="{{ route('super_admin.admin.edit', ['admin' => $admin]) }}"
-                                                                        class="btn-primary btn">Edit</a>
-
-                                                                    <button
-                                                                        class="btn btn-outline-secondary dropdown-toggle"
-                                                                        type="button"
-                                                                        id="actionDropdown{{ $admin->id }}"
-                                                                        data-bs-toggle="dropdown" aria-haspopup="true"
-                                                                        aria-expanded="false">
-
-                                                                    </button>
-                                                                    <ul class="dropdown-menu"
-                                                                        aria-labelledby="actionDropdown{{ $admin->id }}">
-                                                                        <li><a href="{{ route('superadmin.admin.view', ['admin' => $admin]) }}"
-                                                                                class="dropdown-item">View</a>
-                                                                        </li>
-                                                                        <li>
-                                                                            <form
-                                                                                action="{{ route('super_admin.admin.delete', ['admin' => $admin]) }}"
-                                                                                method="POST" style="display:inline;">
-                                                                                @csrf
-                                                                                @method('DELETE')
-                                                                                <button type="submit"
-                                                                                    class="dropdown-item">Delete</button>
-                                                                            </form>
-                                                                        </li>
-                                                                    </ul>
-                                                                    </button>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    @endif
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                            {{--
-                            <div class="tab-pane fade" id="invalid-account" role="tabpanel"
-                                aria-labelledby="invalid-account-tab">
-                                <!-- Content for Invalid Users Tab -->
-                                <div class="container">
-                                    <div>
-                                        <div id="admin-table">
-                                            <table class="table table-striped" id="basic-datatables_4">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="col">ID</th>
-                                                        <th scope="col">Code</th>
-                                                        <th scope="col">Name</th>
-                                                        <th scope="col">Email</th>
-                                                        <th scope="col">Phone</th>
-                                                        <th scope="col">Birthday</th>
-                                                        <th scope="col">Status</th>
-                                                        <th scope="col">Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="admin-invalid-table-body">
-                                                    @foreach ($admins as $admin)
-                                                        @if ($admin->account_status === 'blocked')
-                                                            <tr>
-                                                                <td>{{ $admin->id }}</td>
-                                                                <td>{{ $admin->user_code }}</td>
-                                                                <td>{{ $admin->name }}</td>
-                                                                <td>{{ $admin->email }}</td>
-                                                                <td>{{ $admin->phone }}</td>
-                                                                <td>{{ $admin->birthday }}</td>
-                                                                <td>{{ $admin->account_status }}</td>
-                                                                <td>
-                                                                    <div class="btn-group text-sm-center" role="group"
-                                                                        aria-label="Basic mixed styles example">
-
-                                                                        <a href="{{ route('super_admin.admin.edit', ['admin' => $admin]) }}"
-                                                                            class="btn-primary btn">Edit</a>
-
-                                                                        <button
-                                                                            class="btn btn-outline-secondary dropdown-toggle"
-                                                                            type="button"
-                                                                            id="actionDropdown{{ $admin->id }}"
-                                                                            data-bs-toggle="dropdown" aria-haspopup="true"
-                                                                            aria-expanded="false">
-
-                                                                        </button>
-                                                                        <ul class="dropdown-menu"
-                                                                            aria-labelledby="actionDropdown{{ $admin->id }}">
-                                                                            <li><a href="{{ route('superadmin.admin.view', ['admin' => $admin]) }}"
-                                                                                    class="dropdown-item">View</a>
-                                                                            </li>
-                                                                            <li>
-                                                                                <form
-                                                                                    action="{{ route('super_admin.admin.delete', ['admin' => $admin]) }}"
-                                                                                    method="POST"
-                                                                                    style="display:inline;">
-                                                                                    @csrf
-                                                                                    @method('DELETE')
-                                                                                    <button type="submit"
-                                                                                        class="dropdown-item">Delete</button>
-                                                                                </form>
-                                                                            </li>
-                                                                        </ul>
-                                                                        </button>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        @endif
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div> --}}
                         </div>
                     </div>
                 </div>

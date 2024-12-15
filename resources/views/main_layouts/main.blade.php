@@ -1,56 +1,31 @@
 <div class="mainWrapper" id="mainWrapper">
-    <div class="left-container item bg-maroon">
-        @include('main_layouts.filters') <!-- Include the filters here -->
+    <div class="left-container">
+        <div class="left-item bg-white">
+            @include('main_layouts.filters')
+        </div>
     </div>
 
-    <div class="main-container item bg-white main-content">
-        <h1>Discover Knowledge!</h1>
-        @include('main_layouts.modal')
-        @include('main_layouts.search', ['imrads' => $imrads])
+    <div class="main-container">
+        <div class="mid-item bg-white main-content">
+            @include('main_layouts.search', ['imrads' => $imrads])
 
-        @if ($noResults)
-            <p class="text-center">
-                No file results found for
-                <span class="badge text-bg-danger">{{ $query }}</span>
-                @if ($query != $querySuggestions)
-                    , you can use the suggested word(s) below:
-                @endif
-            </p>
-        @else
-            @include('main_layouts.result', [
-                'imrads' => $imrads,
-            ])
-        @endif
-
+            @if ($noResults)
+                <div class="d-flex justify-content-center align-items-center flex-col">
+                    <div class="title thesis-title roboto-bold my-2">No result based on search term.</div>
+                </div>
+            @else
+                @include('main_layouts.result', ['imrads' => $imrads])
+            @endif
+        </div>
     </div>
-    <div class="right-container ">
 
-
-
-        <div class="right-item bg-maroon">
+    <div class="right-container">
+        <div class="right-item bg-white">
             @include('main_layouts.main_rightside')
         </div>
 
-        <div class="right-item bg-maroon">
-            @include('main_layouts.main_announcement', [
-                'announcements' => $announcements,
-                'noAnnouncements' => $noAnnouncements,
-            ])
+        <div class="right-item bg-white">
+            @include('main_layouts.main_announcement')
         </div>
     </div>
-    <script>
-        function abstract(elementId, maxLength) {
-            const element = document.querySelector(`#${elementId}`);
-
-            if (element) {
-                const text = element.textContent;
-                if (text.length > maxLength) {
-                    element.textContent = text.substring(0, maxLength) + "...";
-                }
-            }
-        }
-
-        abstract("abstract", 500);
-    </script>
-
 </div>

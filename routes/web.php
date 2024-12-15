@@ -18,7 +18,10 @@ use App\Http\Controllers\UserAuth\UserResetController;
 use App\Http\Controllers\IMRADController;
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\GuestController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\MyLibraryController;
+use App\Http\Controllers\SendEmailController;
+
 
 use App\Http\Controllers\GuestAccountController;
 use App\Http\Controllers\ProfileController;
@@ -28,6 +31,7 @@ use App\Http\Controllers\InvalidAdminController;
 use App\Http\Controllers\LogHistoryController;
 use App\Http\Controllers\ImradMetricController;
 use App\Http\Controllers\PreferenceController;
+use App\Http\Controllers\ImradExportController;
 // Auth::routes();
 
 use App\Http\Controllers\RatingController;
@@ -54,7 +58,6 @@ Route::group(['middleware' => ['auth:superadmin', \App\Http\Middleware\SuperAdmi
 
     Route::put('superadmin/profile/updatePass/{superadmin}', [ProfileController::class, 'superadminupdatePassword'])->name('superadmin.profile.password.update');
     Route::put('superadmin/profile/picture/{superadmin}', [ProfileController::class, 'superadminprofilePicture'])->name('superadmin.profile.picture');
-
 
     // ======================= Super Admin manage User/Student Route ================================
     Route::get('super_admin/user', [UserController::class, 'view'])->name('super_admin.user');
@@ -109,8 +112,10 @@ Route::group(['middleware' => ['auth:superadmin', \App\Http\Middleware\SuperAdmi
     Route::get('superadmin/getUserDemographics', [ReportController::class, 'supergetUserDemographics'])->name('superadmin.getUserDemographics');
     Route::get('superadmin/getData', [ReportController::class, 'superreportsBarSDG'])->name('superadmin.getData');
     Route::get('superadmin/getDatalinegraph', [ReportController::class, 'superreportsLineSDG'])->name('superadmin.getDatalinegraph');
-});
 
+    Route::get('superadmin/filecount', [ReportController::class, 'superreportfilecount'])->name('superadmin.filecount');;
+
+});
 
 // ======================= Super Admin Verification Route ================================
 Route::get('login/superadmin/verify', [SuperAdminController::class, 'showVerifyForm'])->name('superadmin.verify');
@@ -124,7 +129,15 @@ Route::post('login/admin/verify_code', [AdminAuthController::class, 'adminVerify
 Route::get('/', [AdminLoginController::class, 'landingPage'])->name('landing.page');
 
 Route::middleware('guest')->group(function () {
-    Route::get('/guest/{imrad}', [GuestController::class, 'viewFile'])->name('guest.view.file');
+
+    Route::get('guest/filter', [GuestController::class, 'filterFiles'])->name('guest.filter');
+
+    Route::get('guest/FAQ', [HomeController::class,'viewFAQ'])->name('faq.display');
+    Route::get('guest/about', [HomeController::class,'viewAbout'])->name('about.display');
+    Route::get('guest/e-resources', [HomeController::class,'viewEresources'])->name('eresources.display');
+
+
+    Route::get('guest/{imrad}', [GuestController::class, 'viewFile'])->name('guest.view.file');
     Route::get('guest', [GuestController::class, 'index'])->name('guest.page');
     Route::get('guest/announcement/{announcement}', [AnnouncementController::class, 'viewAnnouncement'])->name('guest.view.announcement');
 });
@@ -137,13 +150,15 @@ Route::post('/login/{userType}', [UserLoginController::class, 'login'])
     ->where('userType', 'admin|superadmin')
     ->name('login.submit');
 
-
 Route::get('/index', [UserLoginController::class, 'alreadyLoggedIn'])->name('already.logged.in');
 
 Route::post('logout', [UserLoginController::class, 'logout'])->name('logout');
 Route::get('/verify-email/user/{user_code}', [UserLoginController::class, 'verifyEmail'])->name('verify.email');
 Route::get('/verify-email/admin/{user_code}', [AdminLoginController::class, 'verifyEmail'])->name('verify.email.admin');
 Route::get('/verify-email/guest/{user_code}', [GuestAccountController::class, 'verifyEmail'])->name('verify.email.guest');
+Route::get('admin/reset/verification', [UserLoginController::class,'resendAdminLogin'])->name('admin.resend.verification.request');
+Route::get('superadmin/reset/verification', [UserLoginController::class,'resendSuperadminLogin'])->name('superadmin.resend.verification.request');
+
 
 Route::get('password/reset', [UserForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('password/email', [UserForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
@@ -153,6 +168,7 @@ Route::post('/password/reset', [UserResetController::class, 'reset'])->name('pas
 // count users donwload
 Route::post('/update-downloads/{imradID}', [ImradMetricController::class, 'updateDownloads'])->name('update.downloads');
 Route::post('/update-views/{imradID}', [ImradMetricController::class, 'updateViews'])->name('update.views');
+
 
 
 // ======================= Student Route Method ================================
@@ -188,16 +204,25 @@ Route::post('guest/account/logout', [GuestAccountController::class, 'logout'])->
 Route::get('/guest/auth/google', [GuestAccountController::class, 'googleLogin'])->name('guest.auth.google');
 Route::get('guest/auth/google/call-back', [GuestAccountController::class, 'callbackGoogle'])->name('guest.auth.call-back');
 
-Route::middleware(['auth:guest_account'])->group(function () {
+Route::post('guest/send/email', [SendEmailController::class,'sendEmail'])->name('guest.send.email');
+
+
+Route::middleware(['auth:guest_account'], ['web'])->group(function () {
     Route::get('guest/account/home/preference', [PreferenceController::class, 'view'])->name('guest.account.preference');
     Route::post('guest/account/home/save/preference', [PreferenceController::class, 'save'])->name('guest.account.save.preferences');
 
+    Route::get('guest/account/FAQ', [HomeController::class,'viewFAQ'])->name('guest.faq.display');
+    Route::get('guest/account/about', [HomeController::class,'viewAbout'])->name('guest.about.display');
+    Route::get('guest/account/e-resources', [HomeController::class,'viewEresources'])->name('guest.eresources.display');
+
+
     Route::get('guest/account/home', [HomeController::class, 'index'])->name('guest.account.home');
+    Route::get('guest/account/home/filter', [HomeController::class, 'filter'])->name('guest.account.home.filter');
+    Route::post('guest/account/send/email', [SendEmailController::class,'sendEmail'])->name('guest.account.send.email');
 
     // Unsave and save file
     Route::post('guest/account/home/{imrad}', [MyLibraryController::class, 'save'])->name('guest.account.home.save.imrad');
     Route::delete('guest/account/unsave/{imrad}', [MyLibraryController::class, 'unsave'])->name('guest.account.home.unsave.imrad');
-
 
     Route::get('guest/account/home/{imrad}', [HomeController::class, 'viewFile'])->name('guest_account.home.view.file');
     Route::get('guest/account/home/view/mylibrary', [MyLibraryController::class, 'index'])->name('guest.account.home.view.mylibrary');
@@ -226,11 +251,24 @@ Route::post('admin/password/reset', [ResetPasswordController::class, 'reset'])->
 
 Route::group(['middleware' => ['auth:admin', \App\Http\Middleware\AdminVerified::class]], function () {
 
+
+
     Route::get('admin/dashboard', [AdminAuthController::class, 'index'])->name('admin.dashboard');
     Route::post('admin/passwordcheck/{user_code}', [ProfileController::class, 'currPass']);
 
-    // ======================= Dashboard ADMIN CRUD method ================================
+    // ======================= Dashboard ADMIN Objectives: Report Generation ================================
+    Route::get('admin/report', [AdminAuthController::class, 'report'])->name('admin.report');
+    Route::get('admin/file-upload', [AdminAuthController::class, 'file_upload'])->name('report.generation.file.upload');
+    Route::get('/report/file-sdg', [AdminAuthController::class, 'file_sdg'])->name('report.generation.file.sdg');
+    Route::get('/report/file-rating', [AdminAuthController::class, 'file_rating'])->name('report.generation.file.rating');
 
+    // ======================= Dashboard ADMIN CRUD method ================================
+    // Admin manage setting
+    Route::get('admin/setting', [SettingController::class, 'setting'])->name('admin.setting');
+    Route::put('admin/setting/set-date', [SettingController::class, 'setArchive'])->name('admin.set.date.archive');
+    Route::put('admin/setting/set-delete', [SettingController::class, 'setDelete'])->name('admin.set.date.delete');
+
+    // Admin manage passwords
     Route::get('admin/profile/{admin}', [ProfileController::class, 'adminProfile'])->name('admin.profile');
     Route::put('admin/profile/update/{admin}', [ProfileController::class, 'adminProfileupdate'])->name('admin.profile.update');
 
@@ -303,13 +341,32 @@ Route::group(['middleware' => ['auth:admin', \App\Http\Middleware\AdminVerified:
     Route::put('admin/invalidfaculty/update/{invalidfaculty}', [InvalidFacultyController::class, 'update'])->name('admin.invalidfaculty.update');
     Route::delete('admin/invalidfaculty/delete/{invalidfaculty}', [InvalidFacultyController::class, 'destroy'])->name('admin.invalidfaculty.delete');
 
+    // ======================= Download File in the Admin method ================================
+    Route::get('admin/download/pdf/log', [ImradExportController::class, 'downloadlogFile'])->name('download.pdf.logs.admin');
+    Route::get('admin/download/pdf/deleted-file', [ImradExportController::class, 'downloadDeletedFileFile'])->name('download.pdf.deletedfile.admin');
+    Route::get('admin/download/pdf/deleted-user', [ImradExportController::class, 'downloadDeletedUserFile'])->name('download.pdf.deleteduser.admin');
+    Route::get('admin/download/pdf/user', [ImradExportController::class, 'downloadUserFile'])->name('download.pdf.user.admin');
+
+    Route::get('admin/download/pdf/file', [ImradExportController::class, 'downloadListFile'])->name('download.pdf.file.admin');
+    Route::get('admin/download/excel/file', [ImradExportController::class, 'downloadListExcel'])->name('download.excel.file.admin');
+
+    Route::get('admin/download/pdf/draft', [ImradExportController::class, 'downloadDraftFile'])->name('download.pdf.file.draft');
+    Route::get('admin/download/excel/draft', [ImradExportController::class, 'downloadDraftExcel'])->name('download.excel.file.draft');
+    // For SDG
+    Route::get('admin/download/file/sdg', [ImradExportController::class, 'downloadSDGFile'])->name('download.pdf.file.sdg');
+    Route::get('admin/download/excel/sdg', [ImradExportController::class, 'downloadSDGExcel'])->name('download.excel.file.sdg');
+
+    // For Rating
+    Route::get('admin/download/file/rate', [ImradExportController::class, 'downloadRateFile'])->name('download.pdf.file.rate');
+    Route::get('admin/download/excel/rate', [ImradExportController::class, 'downloadRateExcel'])->name('download.excel.file.rate');
+
     // ======================= Dashboard GUEST ACCOUNT CRUD method ================================
     Route::get('admin/guestAccount', [GuestAccountController::class, 'view'])->name('admin.guestAccount');
     Route::post('/admin/guestAccount', [GuestAccountController::class, 'storefromadmin'])->name('admin.guestAccount.store');
     Route::get('admin/guestAccount/create', [GuestAccountController::class, 'createfromadmin'])->name('admin.guestAccount.create');
     Route::get('admin/guestAccount/edit/{guestAccount}', [GuestAccountController::class, 'edit'])->name('admin.guestAccount.edit');
     Route::put('admin/guestAccount/update/{guestAccount}', [GuestAccountController::class, 'update'])->name('admin.guestAccount.update');
-    Route::delete('admin/guestAccount/delete/{guestAccount}', [GuestAccountController::class, 'destroy'])->name('admin.guestAccount.delete');
+    Route::delete('admin/guestAccount/delete', [GuestAccountController::class, 'destroy'])->name('admin.guestAccount.delete');
 
     Route::post('/admin/guestAccount/search', [GuestAccountController::class, 'searchguestAccount'])->name('admin.guestAccount.search');
 
@@ -336,17 +393,26 @@ Route::group(['middleware' => ['auth:admin', \App\Http\Middleware\AdminVerified:
     Route::get('admin/log/export-excel', [LogHistoryExportController::class, 'exportExcel'])->name('log.export.excel');
 
     // ======================= Dashboard IMRAD CRUD method ================================
-    Route::get('admin/imrad', [IMRADController::class, 'view'])->name('admin.imrad');
+    Route::get('admin/file/published', [IMRADController::class, 'file_published'])->name('admin.file.published');
+    Route::get('admin/file/archived', [IMRADController::class, 'file_archived'])->name('admin.file.archived');
+    Route::get('admin/file/draft', [IMRADController::class, 'file_draft'])->name('admin.file.draft');
 
-    Route::post('admin/imrad/', [IMRADController::class, 'store'])->name('admin.imrad.store');
+    Route::post('admin/imrad', [IMRADController::class, 'store'])->name('admin.imrad.store');
     Route::get('admin/imrad/create', [IMRADController::class, 'create'])->name('admin.imrad.create');
     Route::get('admin/imrad/edit/{imrad}', [IMRADController::class, 'edit'])->name('admin.imrad.edit');
     Route::put('admin/imrad/update/{imrad}', [IMRADController::class, 'update'])->name('admin.imrad.update');
     Route::delete('admin/imrad/delete/{imrad}', [IMRADController::class, 'destroy'])->name('admin.imrad.delete');
-    Route::delete('admin/archive/delete/{archive}', [IMRADController::class, 'destroyArhive'])->name('admin.archive.delete');
-    Route::delete('admin/temp/delete/{temp}', [IMRADController::class, 'destroyTemp'])->name('admin.temp.delete');
+    Route::delete('admin/bulk-delete-draft', [IMRADController::class, 'bulkDeleteDraft'])->name('admin.bulk-delete.draft');
+    Route::delete('admin/bulk-delete', [IMRADController::class, 'bulkDelete'])->name('admin.bulk-delete');
+    Route::put('admin/bulk-archive', [IMRADController::class, 'bulkArchive'])->name('admin.select.archive');
+    Route::put('admin/bulk-published', [IMRADController::class, 'bulkPublished'])->name('admin.select.published');
+
+
+    // Route::delete('admin/archive/delete/{archive}', [IMRADController::class, 'destroyArhive'])->name('admin.archive.delete');
+    // Route::delete('admin/temp/delete/{temp}', [IMRADController::class, 'destroyTemp'])->name('admin.temp.delete');
 
     Route::get('admin/imrad/view/{imrad}', [IMRADController::class, 'imradview'])->name('admin.imrad.view');
+    Route::get('admin/imrad/view/temp/{tempfile}', [IMRADController::class, 'imradviewtemp'])->name('admin.imrad.view.temp');
 
     Route::get('admin/tempimrad/edit/{tempfile}', [IMRADController::class, 'editTemp'])->name('admin.temp.edit');
 
@@ -355,9 +421,10 @@ Route::group(['middleware' => ['auth:admin', \App\Http\Middleware\AdminVerified:
     Route::post('/admin/archive/search', [IMRADController::class, 'searchArchive'])->name('admin.archive.search');
 
     Route::get('/admin/archive/{imrad}', [IMRADController::class, 'archive'])->name('admin.imrad.archive');
-    Route::get('/admin/return/{archive}', [IMRADController::class, 'return'])->name('admin.archive.return');
 
     Route::post('/admin/imrad/create', [IMRADController::class, 'pdfscan'])->name('admin.imrad.create');
+    Route::get('/admin/imrad/manual/add', [IMRADController::class, 'manual_add'])->name('admin.imrad.manual.add');
+    Route::post('/admin/imrad/manual/create', [IMRADController::class, 'manual_create'])->name('admin.imrad.manual.create');
 
     // ======================= Dashboard Annoucement CRUD method ================================
     Route::get('admin/announcement', [AnnouncementController::class, 'view'])->name('admin.announcement');
@@ -376,6 +443,9 @@ Route::group(['middleware' => ['auth:admin', \App\Http\Middleware\AdminVerified:
     Route::get('admin/log', [LogHistoryController::class, 'view'])->name('admin.log');
 
     // ======================= Dashboard Dashboard/Reports method ================================
+    Route::get('admin/filecount', [ReportController::class, 'reportfilecount'])->name('admin.filecount');;
+    Route::get('admin/reports/filecount', [ReportController::class, 'viewfileupload']);
+
     Route::get('admin/getData', [ReportController::class, 'reportsBarSDG'])->name('admin.getData');
     Route::get('admin/reports', [ReportController::class, 'viewReports']);
 
@@ -390,15 +460,16 @@ Route::group(['middleware' => ['auth:admin', \App\Http\Middleware\AdminVerified:
 
 
 
-    Route::get('admin/trash-bin', [TrashBinController::class, 'view'])->name('admin.trash-bin');
-    Route::get('admin/trash-bin/{user}', [TrashBinController::class, 'recover'])->name('admin.user.recover');
-    Route::delete('admin/trash-destroy/{user}', [TrashBinController::class, 'destroy'])->name('admin.user.destroy');
+    // Route::get('admin/trash-bin', [TrashBinController::class, 'view'])->name('admin.trash-bin');
+    Route::get('admin/trash-file', [TrashBinController::class, 'trashViewFile'])->name('admin.trash-file');
+    Route::get('admin/trash-user', [TrashBinController::class, 'trashViewUser'])->name('admin.trash-user');
+    Route::put('admin/trash-bin', [TrashBinController::class, 'recover'])->name('admin.user.recover');
+    Route::delete('admin/trash-destroy', [TrashBinController::class, 'destroy'])->name('admin.user.destroy');
 
-    Route::get('/admin/recover/{archive}', [TrashBinController::class, 'recoverImrad'])->name('admin.archive.recover');
+    Route::delete('admin/trash-destroy/auto/{user}', [TrashBinController::class, 'destroyAutomatic'])->name('admin.user.destroy');
+    Route::put('/admin/recover/', [TrashBinController::class, 'recoverImrad'])->name('admin.archive.recover');
     Route::delete('admin/trash-destroy/imrad/{archive}', [TrashBinController::class, 'delete'])->name('admin.trash-bin.delete');
-
-
-
+    Route::delete('/admin/trash-destroy/imrad/select/delete', [TrashBinController::class, 'trashDelete'])->name('admin.trash-bin.select.delete');
 
 });
 

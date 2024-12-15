@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 
 use App\Models\Imrad;
+use App\Models\Admin;
 use App\Models\Preference;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,7 @@ class PreferenceController extends Controller
         $authors = Imrad::select('author')->get();
         $advisers = Imrad::select('adviser')->get();
         $departments = Imrad::select('department')->distinct()->get();
+
 
         $authorList = [];
         $adviserList = [];
@@ -43,15 +45,12 @@ class PreferenceController extends Controller
         }
 
         $user_code = Auth::user()->user_code;
-        $userPreferences = Preference::where('user_code', $user_code)->first();
-
-        $selectedAuthors = $userPreferences ? explode(',', $userPreferences->authors) : [];
-        $selectedAdvisers = $userPreferences ? explode(',', $userPreferences->advisers) : [];
-        $selectedDepartments = $userPreferences ? explode(',', $userPreferences->departments) : [];
+        $admins = Admin::all();
 
         return view('user_preference.user_preference', compact(
             'authorList',
             'adviserList',
+            'admins',
             'departmentList',
             'selectedAuthors',
             'selectedAdvisers',
@@ -61,12 +60,6 @@ class PreferenceController extends Controller
 
     public function save(Request $request)
     {
-
-        // $validated = $request->validate([
-        //     'authors' => 'required|array|min:1',
-        //     'advisers' => 'required|array|min:1',
-        //     'departments' => 'required|array|min:1',
-        // ]);
 
          $validated = $request->validate([
             'authors' => 'required|array|min:1',

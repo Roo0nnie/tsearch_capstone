@@ -16,5 +16,10 @@ class Rating extends Model
     public function imrad_metric() {
         return $this->belongsTo(ImradMetric::class, 'metric_id');
     }
+
+    public function imrad()
+    {
+        return $this->belongsTo(Imrad::class,);
+    }
 }
 

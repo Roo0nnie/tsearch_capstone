@@ -16,6 +16,8 @@
 
         @include('admin.admin_page.reports.reports-sdg-linegraph')
 
+        @include('admin.admin_page.reports.report_fileupload')
+
 
     </div>
 @endsection

@@ -85,8 +85,7 @@ class InvalidAdminController extends Controller
 
         $admin->delete();
 
-       return redirect()->back()->with('success', 'invalid admin deleted successfully.');
+       return redirect()->back()->with('success', 'Admin has been deleted successfully.');
 
-        // return redirect()->route('admin.admin')->with('success', 'invalid admin deleted successfully.');
     }
 }

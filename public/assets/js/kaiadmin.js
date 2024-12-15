@@ -449,6 +449,27 @@ document.querySelectorAll(".dropdown-item").forEach((item) => {
     });
 });
 
+// reports File Upload
+$(document).ready(function () {
+    $("#report-file-upload").DataTable({
+        pageLength: 5,
+    });
+});
+
+// reports File SDG
+$(document).ready(function () {
+    $("#report-file-SDG").DataTable({
+        pageLength: 5,
+    });
+});
+
+// reports File Download Rating
+$(document).ready(function () {
+    $("#report-file-download-rating").DataTable({
+        pageLength: 5,
+    });
+});
+
 $(document).ready(function () {
     // An array of Users table IDs or classes
     var userTables = [
@@ -471,6 +492,8 @@ $(document).ready(function () {
         "#basic-datatables-view-2",
     ];
 
+    var logTables = ["#logDeleted-datatables_sample"];
+
     var userDeletedTables = ["#userDeleted-datatables_1"];
 
     var fileDeletedTables = ["#fileDeleted-datatables_1"];
@@ -484,32 +507,16 @@ $(document).ready(function () {
         fixedHeader: true,
         responsive: true,
         dom:
-            '<"row"<"col-md-6"l><"col-md-6 d-flex justify-content-end"fB>>' +
+            '<"row"<"col-md-6"l><"col-md-6 d-flex justify-content-end align-items-center"<"me-3"f>B>>' +
             '<"row"<"col-md-12"t>>' +
             '<"row"<"col-md-6"i><"col-md-6"p>>',
         buttons: [
-            {
-                extend: "csv",
-                className: "btn btn-success",
-                exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5],
-                },
-            },
             {
                 extend: "excel",
                 title: "Users List",
                 className: "btn btn-primary",
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5],
-                },
-            },
-            {
-                extend: "pdf",
-                orientation: "portrait",
-                title: "Users List",
-                className: "btn btn-danger",
-                exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5],
+                    columns: [1, 2, 3, 4, 5, 6, 7],
                 },
             },
             {
@@ -519,7 +526,7 @@ $(document).ready(function () {
                 title: "Users List",
                 className: "btn btn-warning",
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5],
+                    columns: [1, 2, 3, 4, 5, 6, 7],
                 },
             },
         ],
@@ -532,43 +539,36 @@ $(document).ready(function () {
         lengthMenu: [10, 20, 50, 70, 100],
         fixedHeader: true,
         responsive: true,
+    };
+
+    var dataTableConfigLog = {
+        paging: true, // Enable pagination
+        searching: true, // Enable searching
+        ordering: true, // Enable column ordering
+        lengthMenu: [10, 20, 50, 70, 100],
+        fixedHeader: true,
+        responsive: true,
         dom:
-            '<"row"<"col-md-6"l><"col-md-6 d-flex justify-content-end"fB>>' +
+            '<"row"<"col-md-6"l><"col-md-6 d-flex justify-content-end align-items-center"<"me-3"f>B>>' +
             '<"row"<"col-md-12"t>>' +
             '<"row"<"col-md-6"i><"col-md-6"p>>',
         buttons: [
             {
-                extend: "csv",
-                className: "btn btn-success",
-                exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                },
-            },
-            {
                 extend: "excel",
-                title: "Imrad List",
+                title: "Users List",
                 className: "btn btn-primary",
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                },
-            },
-            {
-                extend: "pdf",
-                orientation: "landscape",
-                title: "Imrad List",
-                className: "btn btn-danger",
-                exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                    columns: [0, 1, 2, 3, 4, 5],
                 },
             },
             {
                 extend: "print",
-                orientation: "landscape",
+                orientation: "portrait",
                 pageSize: "A4",
-                title: "Imrad List",
+                title: "Users List",
                 className: "btn btn-warning",
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+                    columns: [0, 1, 2, 3, 4, 5],
                 },
             },
         ],
@@ -582,32 +582,16 @@ $(document).ready(function () {
         fixedHeader: true,
         responsive: true,
         dom:
-            '<"row"<"col-md-6"l><"col-md-6 d-flex justify-content-end"fB>>' +
+            '<"row"<"col-md-6"l><"col-md-6 d-flex justify-content-end align-items-center"<"me-3"f>B>>' +
             '<"row"<"col-md-12"t>>' +
             '<"row"<"col-md-6"i><"col-md-6"p>>',
         buttons: [
             {
-                extend: "csv",
-                className: "btn btn-success",
-                exportOptions: {
-                    columns: [0, 1, 2, 3, 4],
-                },
-            },
-            {
                 extend: "excel",
-                title: "Deleted User List",
+                title: "Deleted File List",
                 className: "btn btn-primary",
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4],
-                },
-            },
-            {
-                extend: "pdf",
-                orientation: "portrait",
-                title: "Deleted User List",
-                className: "btn btn-danger",
-                exportOptions: {
-                    columns: [0, 1, 2, 3, 4],
+                    columns: [1, 2, 3, 4, 5],
                 },
             },
             {
@@ -617,7 +601,7 @@ $(document).ready(function () {
                 title: "Deleted User List",
                 className: "btn btn-warning",
                 exportOptions: {
-                    columns: [0, 1, 2, 3, 4],
+                    columns: [1, 2, 3, 4, 5],
                 },
             },
         ],
@@ -631,17 +615,10 @@ $(document).ready(function () {
         fixedHeader: true,
         responsive: true,
         dom:
-            '<"row"<"col-md-6"l><"col-md-6 d-flex justify-content-end"fB>>' +
+            '<"row"<"col-md-6"l><"col-md-6 d-flex justify-content-end align-items-center"<"me-3"f>B>>' +
             '<"row"<"col-md-12"t>>' +
             '<"row"<"col-md-6"i><"col-md-6"p>>',
         buttons: [
-            {
-                extend: "csv",
-                className: "btn btn-success",
-                exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6],
-                },
-            },
             {
                 extend: "excel",
                 title: "Deleted User List",
@@ -651,17 +628,8 @@ $(document).ready(function () {
                 },
             },
             {
-                extend: "pdf",
-                orientation: "landscape",
-                title: "Deleted User List",
-                className: "btn btn-danger",
-                exportOptions: {
-                    columns: [0, 1, 2, 3, 4, 5, 6],
-                },
-            },
-            {
                 extend: "print",
-                orientation: "landscape",
+                orientation: "portrait",
                 pageSize: "A4",
                 title: "Deleted User List",
                 className: "btn btn-warning",
@@ -701,6 +669,10 @@ $(document).ready(function () {
 
     userDeletedTables.forEach(function (table) {
         $(table).DataTable(dataTableConfigDeletedUser);
+    });
+
+    logTables.forEach(function (table) {
+        $(table).DataTable(dataTableConfigLog);
     });
 
     viewTables.forEach(function (table) {

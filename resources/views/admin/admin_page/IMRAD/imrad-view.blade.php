@@ -6,13 +6,19 @@
     <div>
         <div>
             @if (session('success'))
-                <div class="alert alert-success" role="alert">
+                <div class="alert alert-success bg-primary text-white" role="alert">
                     {{ session('success') }}
                 </div>
             @endif
 
+            @if (session('error'))
+                <div class="alert alert-danger bg-danger text-white" role="alert">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             @if ($errors->any())
-                <div class="alert alert-danger">
+                <div class="alert alert-danger bg-danger text-white">
                     @foreach ($errors->all() as $error)
                         <p>{{ $error }}</p>
                     @endforeach
@@ -29,6 +35,7 @@
                 <div class="container mt-3">
                     <div class="row">
                         <div class="col-lg-8 col-md-6 col-12 order-lg-1">
+
                             <div class="card">
                                 <div class="card-body">
                                     <p><strong>Title:</strong></p>
@@ -60,7 +67,7 @@
                             <div class="card">
                                 <div class="card-body">
                                     <p><strong>Sustainable Development Goals:</strong></p>
-                                    @foreach ($SDG_array as $SDG)
+                                    @foreach ($SDGList as $SDG)
                                         <li>
                                             {{ $SDG }}
                                         </li>
@@ -77,8 +84,15 @@
 
                         </div>
 
-                        <!-- div1 (Bottom on small screens, right on larger screens) -->
                         <div class="col-lg-4 col-md-6 col-12 order-lg-2">
+
+                            <div class="card">
+                                <div class="card-body">
+                                    <p><strong>Category:</strong></p>
+                                    <p>{{ $imrad->category }}</p>
+                                </div>
+                            </div>
+
                             <div class="card">
                                 <div class="card-body">
                                     <p><strong>Published:</strong></p>
@@ -128,13 +142,27 @@
                             <div class="card">
                                 <div class="card-body">
                                     <p><strong>PDF File:</strong></p>
-                                    <a href="{{ Storage::url($imrad->pdf_file) }}" target="_blank">
+                                    <a href="{{ asset('assets/pdf/' . $imrad->pdf_file) }}" target="_blank"
+                                        id="downloadPdfButton-{{ $imrad->id }}"
+                                        data-pdf-url="{{ asset('assets/pdf/' . $imrad->pdf_file) }}"
+                                        data-imrad-id="{{ $imrad->id }}">
                                         Download PDF
                                     </a>
                                 </div>
                             </div>
+
                         </div>
                     </div>
+
+                    <div class="row mb-0">
+                        <div>
+                            <a href="{{ route('admin.file.published') }}" class="btn btn-secondary">
+                                {{ __('Back') }}
+                            </a>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
         </div>
