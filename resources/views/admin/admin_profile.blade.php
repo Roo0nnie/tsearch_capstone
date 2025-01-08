@@ -25,20 +25,6 @@
                     });
                 </script>
             @endif
-
-            {{-- @if (session('error'))
-                <div class="alert alert-danger bg-danger text-white" role="alert">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            @if ($errors->any())
-                <div class="alert alert-danger text-white">
-                    @foreach ($errors->all() as $error)
-                        <p>{{ $error }}</p>
-                    @endforeach
-                </div>
-            @endif --}}
             <div class="page-inner">
                 <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
                     <div>
@@ -326,7 +312,17 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row mb-0">
+                            <div>
+                                <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+                                    {{ __('Back') }}
+                                </a>
+                            </div>
+                        </div>
                     </div>
+
+
 
                     <div class="col-lg-4 col-md-6 col-12 order-1 order-md-2 order-lg-2">
                         <div class="card">
@@ -372,9 +368,15 @@
                                 </form>
                             </div>
                         </div>
+
+
                     </div>
+
                 </div>
+
             </div>
+
+
         </div>
     </div>
     </div>

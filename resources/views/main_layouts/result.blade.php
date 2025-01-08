@@ -21,58 +21,10 @@
                     <!-- Display the abstract of the article with a max length -->
                     <div>
                         <p class="abstract-text mb-2" id="abstract-{{ $imrad->id }}">{{ $imrad->abstract }}</p>
-
-                        <!-- Display other article details like school, author, call number, keywords, SDG, and department -->
-                        <p><strong>School:</strong> {{ ucwords(strtolower($imrad->publisher)) }}</p>
                         <p><strong>Author:</strong> {{ $imrad->author }}</p>
-                        <p><strong>Department:</strong> {{ $imrad->department }}</p>
                         <p><strong>Call No.:</strong> {{ $imrad->location }}</p>
                         <p><strong>Keyword:</strong> {{ $imrad->keywords }}</p>
-                        <p class="my-2"><strong>Social Development Goal:</strong>
-
-                            @php
-                                $SDGMapping = [
-                                    1 => 'No Poverty',
-                                    2 => 'Zero Hunger',
-                                    3 => 'Good Health and Well-being',
-                                    4 => 'Quality Education',
-                                    5 => 'Gender Equality',
-                                    6 => 'Clean Water and Sanitation',
-                                    7 => 'Affordable and Clean Energy',
-                                    8 => 'Decent Work and Economic Growth',
-                                    9 => 'Industry, Innovation, and Infrastructure',
-                                    10 => 'Reduced Inequalities',
-                                    11 => 'Sustainable Cities and Communities',
-                                    12 => 'Responsible Consumption and Production',
-                                    13 => 'Climate Action',
-                                    14 => 'Life Below Water',
-                                    15 => 'Life on Land',
-                                    16 => 'Peace, Justice, and Strong Institutions',
-                                    17 => 'Partnerships for the Goals',
-                                ];
-
-                                $SDGNO = [];
-                                $SDGList = [];
-
-                                $sdgArray = explode(',', $imrad->SDG);
-
-                                foreach ($sdgArray as $sdgItem) {
-                                    $trimmedName = trim($sdgItem);
-                                    $sdgNumber = (int) $trimmedName;
-
-                                    if (!in_array($sdgNumber, $SDGNO)) {
-                                        $SDGNO[] = $sdgNumber;
-                                        if (isset($SDGMapping[$sdgNumber])) {
-                                            $SDGList[$sdgNumber] = $SDGMapping[$sdgNumber];
-                                        }
-                                    }
-                                    echo $SDGList[$sdgNumber] . ', ';
-                                }
-
-                            @endphp
-                        </p>
                         <p><strong>Year:</strong> {{ $imrad->publication_date }}</p>
-
                     </div>
                 </div>
                 <div
@@ -85,7 +37,7 @@
                                     target="_blank" id="downloadPdfButton-{{ $imrad->id }}"
                                     data-pdf-url="{{ asset('assets/pdf/' . $imrad->pdf_file) }}"
                                     data-imrad-id="{{ $imrad->id }}">
-                                    Download PDF
+                                    PDF
                                 </a>
                             @endif
                         @endif
@@ -103,6 +55,8 @@
                                 <button type="submit" class="btn btn-save">Save</button>
                             </form>
                         @endif
+
+                        <span class="btn btn-cite">Downloads: {{ $imrad->imradMetric->downloads }}</span>
                     </div>
 
                     <div class="">
@@ -122,15 +76,14 @@
                         @endphp
 
                         <div class="btn-maroon">User Rate : {{ $userCount }}</div>
+
                     </div>
+
 
                 </div>
             </div>
         </div>
 
-
-
-        <!-- Modal Citation for generating citations in different formats -->
         <div class="modal fade" id="modalCitation{{ $imrad->id }}" tabindex="-1"
             aria-labelledby="modalCitation{{ $imrad->id }}" aria-hidden="true" style="z-index: 1300;">
             <div class="modal-dialog modal-dialog-centered">
@@ -347,18 +300,22 @@
     <!-- Pagination for article list -->
     @if ($imrads->hasPages())
         <div class="d-flex justify-content-start align-items-start w-100">
-            @if ($imrads->onFirstPage())
-            @else
+            @if (!$imrads->onFirstPage())
                 <a href="{{ $imrads->previousPageUrl() }}" class="btn me-2 text-white"
                     style="background-color: #800000">Previous</a>
             @endif
-            @if (!$imrads->hasMorePages())
-            @else
+
+            <span class="mx-3 align-self-center">
+                Page {{ $imrads->currentPage() }} of {{ $imrads->lastPage() }}
+            </span>
+
+            @if ($imrads->hasMorePages())
                 <a href="{{ $imrads->nextPageUrl() }}" class="btn text-white"
                     style="background-color: #800000">Next</a>
             @endif
         </div>
     @endif
+
 @endif
 
 <script>
@@ -482,7 +439,7 @@
                             Swal.fire({
                                 position: 'center',
                                 icon: 'success',
-                                title: 'file successfully saved',
+                                title: 'File saved',
                                 showConfirmButton: false,
                                 timer: 1500
                             });
@@ -490,7 +447,7 @@
                             Swal.fire({
                                 position: 'center',
                                 icon: 'info',
-                                title: 'You have already saved this file',
+                                title: 'Already saved this file',
                                 showConfirmButton: false,
                                 timer: 1500
                             });
@@ -500,7 +457,7 @@
                         Swal.fire({
                             position: 'center',
                             icon: 'info',
-                            title: 'You have already saved this file',
+                            title: 'Already saved this file',
                             showConfirmButton: false,
                             timer: 1500
                         });

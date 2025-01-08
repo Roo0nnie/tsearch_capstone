@@ -167,11 +167,23 @@
                                         </div>
                                     </div>
 
+
+
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <div class="row mb-0">
+                        <div>
+                            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+                                {{ __('Back') }}
+                            </a>
+                        </div>
+                    </div>
                 </div>
+
+
             </div>
         </div>
     </div>

@@ -18,10 +18,10 @@
         <div class="main-container item bg-white main-content p-4">
             <div>
                 <div class="">
-                    <div class="title thesis-title roboto-bold my-2">My Library</div>
+                    <div class="title thesis-title roboto-bold my-2">My Advise</div>
                 </div>
 
-                <form method="GET" action="{{ route('guest.account.home.view.mylibrary') }}" class="w-100 mb-3">
+                <form method="GET" action="{{ route('guest.account.home.view.myAdvise') }}" class="w-100 mb-3">
                     <div class="input-group">
                         <span class="input-group-text bg-light"><i class="fas fa-search"></i></span>
                         <input type="text" name="query" class="form-control" value="{{ old('query', $query) }}"
@@ -34,7 +34,7 @@
                     @if (Auth::guard('guest_account')->check())
                         <div class="d-flex justify-content-center align-items-center flex-col">
                             <p>You can click the suggested word:</p>
-                            <a href="{{ route('guest.account.home.view.mylibrary', ['query' => $querySuggestions]) }}">
+                            <a href="{{ route('guest.account.home.view.myAdvise', ['query' => $querySuggestions]) }}">
                                 <span class="badge mt-2 mb-2 fs-5 btn-anno"> {{ $querySuggestions }}</span>
                             </a>
                         </div>
@@ -54,21 +54,18 @@
                                     data-imrad-id="{{ $savefile->imrad->id }}">
                                     <a href="#" class="view-imrad-link" data-imrad-id="{{ $savefile->imrad->id }}"
                                         data-pdf-url="
-                           @if (Auth::guard('guest_account')->check()) {{ route('guest_account.home.view.file', ['imrad' => $savefile->imrad->id]) }}
-                           @else
-                           {{ route('guest.view.file', ['imrad' => $savefile->imrad->id]) }} @endif
-                           ">
+                                    @if (Auth::guard('guest_account')->check()) {{ route('guest_account.home.view.file', ['imrad' => $savefile->imrad->id]) }}
+                                    @else
+                                    {{ route('guest.view.file', ['imrad' => $savefile->imrad->id]) }} @endif
+                                    ">
                                         {{ $savefile->imrad->title }}
                                     </a>
                                 </h3>
                             </div>
 
                             <div>
-                                <p class="abstract-text mb-2" id="abstract-{{ $savefile->imrad->id }}">
-                                    {{ $savefile->imrad->abstract }}</p>
                                 <p><strong>Author:</strong> {{ $savefile->imrad->author }}</p>
                                 <p><strong>Call No.:</strong> {{ $savefile->imrad->location }}</p>
-                                <p><strong>Keyword:</strong> {{ $savefile->imrad->keywords }}</p>
                                 <p><strong>Year:</strong> {{ $savefile->imrad->publication_date }}</p>
                             </div>
                         </div>
@@ -329,17 +326,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Unsave form with DELETE method -->
-                                <form
-                                    action="{{ route('guest.account.home.unsave.imrad', ['imrad' => $savefile->imrad->id]) }}"
-                                    method="POST" class="save-imrad-form" id="unsave-file-{{ $savefile->imrad->id }}"
-                                    style="display: inline">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
-                                <button type="button" class="btn btn-save"
-                                    onclick="unsaveImradForms({{ $savefile->imrad->id }})">Unsave</button>
                                 <span class="btn btn-cite mx-1">Downloads:
                                     {{ $savefile->imrad->imradMetric->downloads }}</span>
 
@@ -372,7 +358,7 @@
                         @endif
 
                         @if (empty($query) && empty($querySuggestions))
-                            <div class="title thesis-title roboto-bold my-2">No saved file/s</div>
+                            <div class="title thesis-title roboto-bold my-2">No file/s</div>
                         @endif
                     </div>
                 @endforelse
@@ -417,6 +403,7 @@
             abstract();
             viewsImradForms();
             downloadImrad();
+
         });
 
         function downloadImrad() {

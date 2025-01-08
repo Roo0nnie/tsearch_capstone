@@ -124,6 +124,8 @@
                                     <button type="submit" class="btn btn-save">Save</button>
                                 </form>
                             @endif
+
+                            <span class="btn btn-cite">Downloads: {{ $imrad->imradMetric->downloads }}</span>
                         </div>
 
                         <div>
@@ -417,27 +419,46 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
 
-            // nonCopy();
-
             saveImradForms();
             submitRatingForms();
+            downloadImrad();
         });
 
-        // function nonCopy() {
-        //     $ifGuest = document.getElementById('select').value;
-        //     let elements = document.querySelectorAll('.non-select');
+        function downloadImrad() {
 
-        //     if ($ifGuest === 'true') {
-        //         elements.forEach(element => {
-        //             element.className = 'select';
-        //         });
-        //     } else {
-        //         elements.forEach(element => {
-        //             element.className = 'non-select';
-        //         });
-        //     }
+            var downloadButtons = document.querySelectorAll('[id^="downloadPdfButton-"]');
 
-        // }
+            downloadButtons.forEach(function(button) {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
+
+                    var pdfUrl = this.getAttribute('data-pdf-url');
+                    var imradId = this.getAttribute('data-imrad-id');
+
+                    fetch(`/update-downloads/${imradId}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content'),
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message === 'Download recorded successfully') {
+
+                                window.open(pdfUrl, '_blank');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                });
+            });
+        }
 
         function saveImradForms() {
             document.querySelectorAll('.save-imrad-form').forEach(form => {
@@ -468,7 +489,7 @@
                                 Swal.fire({
                                     position: 'center',
                                     icon: 'info',
-                                    title: 'You have already saved this file',
+                                    title: 'Already saved this file',
                                     showConfirmButton: false,
                                     timer: 1500
                                 });
@@ -541,3 +562,23 @@
 @endsection
 
 <script src="{{ asset('js/rating.js') }}"></script>
+<script>
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    })
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'PrintScreen') {
+            navigator.clipboard.writeText('Screenshots are disabled.');
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "F12") {
+            e.preventDefault();
+        }
+        if ((e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || (e.ctrlKey && e.key === 'U')) {
+            e.preventDefault();
+        }
+    });
+</script>

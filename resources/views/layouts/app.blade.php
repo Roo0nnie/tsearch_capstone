@@ -10,6 +10,10 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
+    {{-- logo --}}
+    <link rel="shortcut icon" href="{{ asset('assets/img/kaiadmin/ssu_logo.png') }}" type="image/png">
+
+
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
@@ -75,8 +79,15 @@
             navigator.clipboard.writeText('Screenshots are disabled.');
         }
     });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "F12") {
+            e.preventDefault();
+        }
+        if ((e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || (e.ctrlKey && e.key === 'U')) {
+            e.preventDefault();
+        }
+    });
 </script>
-
-
 
 </html>

@@ -273,6 +273,29 @@ class IMRADController extends Controller
             });
         }
 
+        $startCreate = $request->input('start_create') ?? null;
+        $endCreate = $request->input('end_create') ?? null;
+
+        if (is_array($startCreate)) {
+            $startCreate = $startCreate[0];
+        }
+
+        if (is_array($endCreate)) {
+            $endCreate = $endCreate[0];
+        }
+
+        if ($startCreate && !$endCreate) {
+            $query->whereDate('created_at', '>=', $startCreate);
+        } elseif ($endCreate && !$startCreate) {
+             $query->whereDate('created_at', '<=', $endCreate);
+        } elseif ($startCreate && $endCreate) {
+            if ($startCreate === $endCreate) {
+                $query->whereDate('created_at', $startCreate);
+            } else {
+                $query->whereBetween('created_at', [$startCreate, $endCreate]);
+            }
+        }
+
         if($request->filled('category')) {
             $categories = $request->input('category');
             $query->whereIn('category', $categories);

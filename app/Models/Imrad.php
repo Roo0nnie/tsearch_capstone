@@ -49,6 +49,11 @@ class imrad extends Model
         return $this->hasMany(MyLibrary::class, 'imrad_id');
     }
 
+    public function myTheses()
+    {
+        return $this->hasMany(MyThesis::class, 'imrad_id', 'id');
+    }
+
     public function ratings()
     {
         return $this->hasMany(Rating::class, 'metric_id');

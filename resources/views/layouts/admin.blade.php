@@ -10,6 +10,9 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
+    {{-- Logo --}}
+    <link rel="shortcut icon" href="{{ asset('assets/img/kaiadmin/ssu_logo.png') }}" type="image/png">
+
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
@@ -132,11 +135,29 @@
     <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
     <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
 
-
-
-
-
-
 </body>
 
 </html>
+
+<script>
+    const wrapper = document.querySelector('.wrapper');
+
+    const toggleSidebar = document.querySelector('.toggle-sidebar');
+    const sidenavToggler = document.querySelector('.sidenav-toggler');
+
+    toggleSidebar.addEventListener('click', function() {
+        wrapper.classList.toggle('sidebar_minimize');
+    });
+
+    sidenavToggler.addEventListener('click', function() {
+        wrapper.classList.toggle('sidebar_minimize');
+    });
+
+    const htmlElement = document.documentElement;
+
+    // Select the toggle button
+    const navToggle = document.querySelector('.nav_toggle');
+    navToggle.addEventListener('click', () => {
+        htmlElement.classList.toggle('nav_open');
+    });
+</script>

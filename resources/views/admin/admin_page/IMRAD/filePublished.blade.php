@@ -230,7 +230,6 @@
                                                             17 => 'Partnerships for the Goals',
                                                         ];
 
-                                                        // Dynamically map the SDG numbers to the list for rendering.
                                                         $SDGList = [];
                                                         foreach ($SDGMapping as $key => $name) {
                                                             $SDGList[$key] = $name;
@@ -243,6 +242,22 @@
                                                     @endforeach
                                                 </select>
                                             </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-2">
+                                        <!-- Start Create Section -->
+                                        <div class="col-md-6">
+                                            <label for="start_create">From Create</label>
+                                            <input type="date" id="start_create"
+                                                class="dynamic_start_create_select form-control" name="start_create">
+                                        </div>
+
+                                        <!-- End Create Section -->
+                                        <div class="col-md-6">
+                                            <label for="end_create">To Create</label>
+                                            <input type="date" id="end_create"
+                                                class="dynamic_end_create_select form-control" name="end_create">
                                         </div>
                                     </div>
 
@@ -348,9 +363,6 @@
                                                             <div class="btn-group text-sm-center" role="group"
                                                                 aria-label="Basic mixed styles example">
 
-                                                                {{-- <a href="{{ route('admin.imrad.edit', ['imrad' => $imrad]) }}"
-                                                                    class="btn-primary btn">Edit</a> --}}
-
                                                                 <button class="btn btn-outline-secondary dropdown-toggle"
                                                                     type="button" id="actionDropdown{{ $imrad->id }}"
                                                                     data-bs-toggle="dropdown" aria-haspopup="true"
@@ -364,26 +376,10 @@
                                                                     </li>
 
                                                                     <li>
-                                                                        {{-- <a href="{{ route('admin.imrad.archive', ['imrad' => $imrad]) }}"
-                                                                            class="dropdown-item archive-link"
-                                                                            data-id="{{ $imrad->id }}">
-                                                                            Archive
-                                                                        </a> --}}
                                                                         <a href="{{ route('admin.imrad.edit', ['imrad' => $imrad]) }}"
                                                                             class="dropdown-item archive-link"
                                                                             data-id="{{ $imrad->id }}">Edit</a>
                                                                     </li>
-                                                                    {{-- <li>
-                                                                        <form
-                                                                            action="{{ route('admin.imrad.delete', ['imrad' => $imrad]) }}"
-                                                                            method="POST" class="delete-form"
-                                                                            style="display:inline;">
-                                                                            @csrf
-                                                                            @method('DELETE')
-                                                                            <button type="button"
-                                                                                class="dropdown-item btn-delete">Delete</button>
-                                                                        </form>
-                                                                    </li> --}}
                                                                 </ul>
                                                                 </button>
                                                             </div>
@@ -423,14 +419,24 @@
 
                 const startYearField = document.querySelector('.dynamic_start_select');
                 const endYearField = document.querySelector('.dynamic_end_select');
+                const startCreateField = document.querySelector('.dynamic_start_create_select');
+                const endCreateField = document.querySelector('.dynamic_end_create_select');
 
                 const startYear = startYearField ? startYearField.value.trim() : '';
                 const endYear = endYearField ? endYearField.value.trim() : '';
+
+                const startCreate = startCreateField ? startCreateField.value.trim() : '';
+                const endCreate = endCreateField ? endCreateField.value.trim() : '';
 
                 // Validation: Ensure start year is less than or equal to end year
                 if (startYear && endYear && parseInt(startYear) > parseInt(endYear)) {
                     isValid = false;
                     alert('Start Year should be less than or equal to End Year.');
+                }
+
+                if (startCreate && endCreate && new Date(startCreate) > new Date(endCreate)) {
+                    isValid = false;
+                    alert('Start Create Date should be less than or equal to End Create Date.');
                 }
 
                 if (!isValid) return;
@@ -454,6 +460,8 @@
                 processDynamicFields('.dynamic_sdg_select', 'SDG');
                 processDynamicFields('.dynamic_start_select', 'Start_year');
                 processDynamicFields('.dynamic_end_select', 'End_year');
+                processDynamicFields('.dynamic_start_create_select', 'Start_create');
+                processDynamicFields('.dynamic_end_create_select', 'End_create');
             }
 
             function createDynamicField(type, value) {

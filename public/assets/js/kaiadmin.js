@@ -490,6 +490,8 @@ $(document).ready(function () {
         "#basic-datatables-view",
         "#basic-datatables-view-1",
         "#basic-datatables-view-2",
+        "#basic-datatables-my-thesis-list",
+        "#basic-datatables-my-advise-list",
     ];
 
     var logTables = ["#logDeleted-datatables_sample"];

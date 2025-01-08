@@ -10,6 +10,8 @@ use App\Models\Preference;
 use App\Models\Rating;
 use App\Models\SetDeleteDate;
 use App\Models\MyLibrary;
+use App\Models\Imrad;
+use App\Models\MyThesis;
 use App\Models\InvalidFaculty;
 use App\Notifications\CustomUserCode;
 use Illuminate\Support\Facades\Validator;
@@ -239,14 +241,78 @@ class GuestAccountController extends Controller
 
             $this->applyFilters($request, $query);
 
-            $guestAccounts = $query->get();
+            $guestAccounts = $query->where('type', 'student')->get();
 
             return view('admin.admin_page.guest_account.guestAccount', compact('guestAccounts'));
         }
 
-        $guestAccounts = GuestAccount::all();
+        $guestAccounts = GuestAccount::where('type', 'student')->get();
         return view('admin.admin_page.guest_account.guestAccount', compact('guestAccounts'));
+    }
 
+    public function facultyView(Request $request)
+    {
+
+        $filter_type = $request->input('filter_type');
+
+        if ($filter_type === 'published') {
+            $query = GuestAccount::query();
+
+            $this->applyFilters($request, $query);
+
+            $guestAccounts = $query->where('type', 'faculty')->get();
+
+            return view('admin.admin_page.faculty.faculty', compact('guestAccounts'));
+        }
+
+        $guestAccounts = GuestAccount::where('type', 'faculty')->get();
+        return view('admin.admin_page.faculty.faculty', compact('guestAccounts'));
+    }
+
+    public function changeToFaculty(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['message' => 'No items selected for archiving'], 400);
+        }
+
+        try {
+            $files = GuestAccount::whereIn('id', $ids)->get();
+
+            foreach ($files as $file) {
+                $file->update([
+                    'type' => 'faculty',
+                ]);
+            }
+
+            return response()->json(['message' => 'Selected items archived successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error deleting items: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function changeToStudent(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (!is_array($ids) || empty($ids)) {
+            return response()->json(['message' => 'No items selected for archiving'], 400);
+        }
+
+        try {
+            $files = GuestAccount::whereIn('id', $ids)->get();
+
+            foreach ($files as $file) {
+                $file->update([
+                    'type' => 'student',
+                ]);
+            }
+
+            return response()->json(['message' => 'Selected items archived successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error deleting items: ' . $e->getMessage()], 500);
+        }
     }
 
     protected function applyFilters(Request $request, $query)
@@ -320,7 +386,7 @@ public function callbackGoogle(Request $request) {
                                 'email' => $email,
                                 'google_id' => $user->getId(),
                                 'status' => 'Active',
-                                'type' => 'user',
+                                'type' => 'student',
                                 'user_code' => $user_code,
                             ]);
 
@@ -419,7 +485,6 @@ public function callbackGoogle(Request $request) {
 
     public function userview(GuestAccount $guestAccount) {
         $logs = LogHistory::all();
-
         $userPreferences = Preference::where('user_code', $guestAccount->user_code)->first();
 
         $title_ratings = Rating::where('user_code', $guestAccount->user_code)
@@ -430,11 +495,65 @@ public function callbackGoogle(Request $request) {
         ->where('user_code', $guestAccount->user_code)
         ->get();
 
+        $myTheses = MyThesis::with('imrad')->where('user_code', $guestAccount->user_code)->get();
+        $myThesesID = $myTheses->pluck('imrad_id')->toArray();
+
+        $thesisFileList = Imrad::whereNotIn('id', $myThesesID)->get();
+
         $selectedAuthors = $userPreferences ? explode(',', $userPreferences->authors) : [];
         $selectedAdvisers = $userPreferences ? explode(',', $userPreferences->advisers) : [];
         $selectedDepartments = $userPreferences ? explode(',', $userPreferences->departments) : [];
 
-        return view('admin.admin_page.guest_account.guestAccountView', compact('guestAccount', 'logs', 'selectedAuthors', 'selectedAdvisers', 'selectedDepartments', 'title_ratings', 'saved'));
+        return view('admin.admin_page.guest_account.guestAccountView', compact('guestAccount', 'myTheses','logs','thesisFileList', 'selectedAuthors', 'selectedAdvisers', 'selectedDepartments', 'title_ratings', 'saved'));
+    }
+
+    public function mythesisdestroy($id)
+    {
+        $myThesis = MyThesis::findOrFail($id);
+
+        if ($myThesis->delete()) {
+            return redirect()->back()->with('success', 'File successfully removed.');
+        }
+
+        return redirect()->back()->with('error', 'Failed to unselect the thesis.');
+    }
+
+
+    public function storeSelectedThesis(Request $request)
+    {
+
+        try {
+            $request->validate([
+                'ids' => 'required|array',
+                'user_code' => 'required|string',
+                'user_type' => 'required|string',
+            ]);
+
+            // $validatedData = $request->validate([
+            //     'ids' => 'required|array',
+            //     'user_code' => 'required|string',
+            //     'user_type' => 'required|string',
+            // ]);
+
+            // return response()->json([
+            //     'message' => 'Validation successful',
+            //     'data' => $validatedData
+            // ], 200);
+
+            foreach ($request->ids as $id) {
+                MyThesis::create([
+                    'user_code' => $request->user_code,
+                    'user_type' => $request->user_type,
+                    'imrad_id' => $id,
+                ]);
+            }
+
+            return response()->json(['message' => 'Selected theses successfully stored.']);
+        } catch (\Exception $e) {
+            \Log::error('Error storing theses: ' . $e->getMessage());
+
+            return response()->json(['message' => 'An error occurred while processing your request.'], 500);
+        }
     }
 
 

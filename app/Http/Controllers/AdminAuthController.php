@@ -299,8 +299,9 @@ class AdminAuthController extends Controller
 
         $Admin = Auth::guard('admin')->user();
 
+
         if (!$Admin) {
-            return back()->withErrors(['verification_code' => 'You must be logged in as a admin to access this feature.']);
+            return redirect()->route('landing.page')->with('error', 'You must be logged in as a admin');
         }
 
         if ($Admin->verification_code == $request->verification_code) {
@@ -482,6 +483,29 @@ class AdminAuthController extends Controller
                     $q->orWhereRaw("FIND_IN_SET(?, adviser)", [$adviser]);
                 }
             });
+        }
+
+        $startCreate = $request->input('start_create') ?? null;
+        $endCreate = $request->input('end_create') ?? null;
+
+        if (is_array($startCreate)) {
+            $startCreate = $startCreate[0];
+        }
+
+        if (is_array($endCreate)) {
+            $endCreate = $endCreate[0];
+        }
+
+        if ($startCreate && !$endCreate) {
+            $query->whereDate('created_at', '>=', $startCreate);
+        } elseif ($endCreate && !$startCreate) {
+             $query->whereDate('created_at', '<=', $endCreate);
+        } elseif ($startCreate && $endCreate) {
+            if ($startCreate === $endCreate) {
+                $query->whereDate('created_at', $startCreate);
+            } else {
+                $query->whereBetween('created_at', [$startCreate, $endCreate]);
+            }
         }
 
         if($request->filled('category')) {

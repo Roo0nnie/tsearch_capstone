@@ -66,6 +66,14 @@
                         </div>
                         <div>
                             <ul class="navbar-nav ms-auto align-items-center justify-content-center flex-row">
+
+                                @if (Auth::user()->type === 'faculty')
+                                    <li class="nav-item mx-2">
+                                        <a class="nav-link" href="{{ route('guest.account.home.view.myAdvise') }}">
+                                            <i class="fas fa-file"></i> {{ __('My Advisee') }}
+                                        </a>
+                                    </li>
+                                @endif
                                 <li class="nav-item mx-2">
                                     <a class="nav-link" href="{{ route('guest.account.home.view.mylibrary') }}">
                                         <i class="fas fa-file"></i> {{ __('My Library') }}
@@ -95,25 +103,25 @@
                                         class="rounded-circle profile-image"
                                         style="width: 40px; height: 40px; object-fit: cover;" />
                                 @endif
+
                                 <li class="nav-item dropdown mx-2">
-                                    <a id="navbarDropdownUserProfile"
-                                        class="nav-link dropdown-toggle d-flex align-items-center" href="#"
-                                        role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <a class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                                        href="">
                                         <span class="ms-2">{{ Auth::user()->name }}</span>
                                     </a>
 
-                                    <div class="dropdown-menu dropdown-menu-end"
-                                        aria-labelledby="navbarDropdownUserProfile">
-                                        <a class="dropdown-item"
-                                            href="{{ route('guest.account.profile', ['user_code' => encrypt(Auth::user()->user_code)]) }}">
-                                            <i class="fa-solid fa-user me-2"></i>{{ __('Profile') }}
-                                        </a>
-                                        <a class="dropdown-item" href="{{ route('guest.account.logout') }}"
-                                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                            <i class="fa-solid fa-right-from-bracket me-2"></i>{{ __('Logout') }}
-                                        </a>
-                                    </div>
+                                    <ul class="dropdown-menu">
+                                        <li> <a class="dropdown-item"
+                                                href="{{ route('guest.account.profile', ['user_code' => encrypt(Auth::user()->user_code)]) }}">
+                                                <i class="fa-solid fa-user me-2"></i>{{ __('Profile') }}
+                                            </a></li>
+                                        <li><a class="dropdown-item" href="{{ route('guest.account.logout') }}"
+                                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                                <i class="fa-solid fa-right-from-bracket me-2"></i>{{ __('Logout') }}
+                                            </a></li>
+                                    </ul>
                                 </li>
+
                             </ul>
                         </div>
                     </div>
@@ -247,6 +255,26 @@
                                             <a class="nav-link"
                                                 href="{{ route('eresources.display') }}">{{ __('E-Resources') }}</a>
                                         </li>
+
+                                        @if (
+                                            !Str::contains(request()->path(), 'login/admin/verify') &&
+                                                !Str::contains(request()->path(), 'login/superadmin/verify'))
+                                            <li class="nav-item mx-2">
+                                                <button>
+                                                    <div class="card px-5 btn-leave">
+                                                        <a class="nav-link  text-black fw-bold"
+                                                            href="{{ route('landing.page') }}">{{ __('Leave') }}</a>
+                                                    </div>
+
+                                                </button>
+                                            </li>
+                                        @endif
+
+
+
+
+
+
                                     </ul>
                                 </div>
                             </div>

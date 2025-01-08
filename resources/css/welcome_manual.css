@@ -325,8 +325,16 @@ span .university {
 }
 
 .btn-anno:hover {
-    background-color: #dc3545; /* Slightly darker shade on hover */
+    background-color: #c10417; /* Slightly darker shade on hover */
     color: #e0e0e0;
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+.btn-leave {
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.btn-leave:hover {
     transform: scale(1.05); /* Slight zoom effect */
 }
 /* =================== Footer Design ==================== */
@@ -719,7 +727,7 @@ span .university {
 
 /* Hover effect */
 .btn-ask:hover {
-    background-color: #dc3545; /* Slightly darker shade on hover */
+    background-color: #c10417; /* Slightly darker shade on hover */
     transform: scale(1.05); /* Slight zoom effect */
 }
 

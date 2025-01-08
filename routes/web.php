@@ -226,6 +226,8 @@ Route::middleware(['auth:guest_account'], ['web'])->group(function () {
 
     Route::get('guest/account/home/{imrad}', [HomeController::class, 'viewFile'])->name('guest_account.home.view.file');
     Route::get('guest/account/home/view/mylibrary', [MyLibraryController::class, 'index'])->name('guest.account.home.view.mylibrary');
+    Route::get('guest/account/home/view/myadvise', [MyLibraryController::class, 'myAdvise'])->name('guest.account.home.view.myAdvise');
+
 
     Route::get('guest/account/profile/{user_code}', [ProfileController::class, 'view'])->name('guest.account.profile');
     Route::put('guest/account/profile/{user_code}', [ProfileController::class, 'update'])->name('guest.account.update');
@@ -309,8 +311,8 @@ Route::group(['middleware' => ['auth:admin', \App\Http\Middleware\AdminVerified:
     Route::delete('admin/userinvalid/delete/{invaliduser}', [InvalidUserController::class, 'destroy'])->name('admin.invaliduser.delete');
 
     // ======================= Dashboard FACULTY CRUD method ================================
-    Route::get('admin/faculty', [FacultyController::class, 'view'])->name('admin.faculty');
-    Route::post('/admin/faculty', [FacultyController::class, 'store'])->name('admin.faculty.store');
+    // Route::get('admin/faculty', [FacultyController::class, 'view'])->name('admin.faculty');
+    // Route::post('/admin/faculty', [FacultyController::class, 'store'])->name('admin.faculty.store');
     Route::get('admin/faculty/create', [FacultyController::class, 'create'])->name('admin.faculty.create');
     Route::get('admin/faculty/edit/{faculty}', [FacultyController::class, 'edit'])->name('admin.faculty.edit');
     Route::put('admin/faculty/update/{faculty}', [FacultyController::class, 'update'])->name('admin.faculty.update');
@@ -362,6 +364,10 @@ Route::group(['middleware' => ['auth:admin', \App\Http\Middleware\AdminVerified:
 
     // ======================= Dashboard GUEST ACCOUNT CRUD method ================================
     Route::get('admin/guestAccount', [GuestAccountController::class, 'view'])->name('admin.guestAccount');
+    Route::get('admin/faculty', [GuestAccountController::class, 'facultyView'])->name('admin.faculty');
+    Route::put('admin/changeStatus_faculty', [GuestAccountController::class, 'changeToFaculty'])->name('admin.change.to.faculty');
+    Route::put('admin/changeStatus_status', [GuestAccountController::class, 'changeToStudent'])->name('admin.change.to.student');
+
     Route::post('/admin/guestAccount', [GuestAccountController::class, 'storefromadmin'])->name('admin.guestAccount.store');
     Route::get('admin/guestAccount/create', [GuestAccountController::class, 'createfromadmin'])->name('admin.guestAccount.create');
     Route::get('admin/guestAccount/edit/{guestAccount}', [GuestAccountController::class, 'edit'])->name('admin.guestAccount.edit');
@@ -387,6 +393,9 @@ Route::group(['middleware' => ['auth:admin', \App\Http\Middleware\AdminVerified:
     Route::get('admin/guestAccount/blocked/export-excel', [GuestAccountExportController::class, 'exportExcelBlocked'])->name('guestAccount.blocked.export.excel');
 
     Route::get('admin/guestAccount/view/{guestAccount}', [GuestAccountController::class, 'userview'])->name('admin.guestAccount.view');
+    Route::post('admin/guestAccount/add-thesis', [GuestAccountController::class, 'storeSelectedThesis'])->name('admin.guestAccount.add.thesis');
+    Route::delete('admin/my-thesis/{id}', [GuestAccountController::class, 'mythesisdestroy'])->name('my-thesis.destroy');
+
 
     Route::get('admin/log/view-pdf', [LogHistoryExportController::class, 'viewPdf'])->name('log.view.pdf');
     Route::get('admin/log/download-pdf', [LogHistoryExportController::class, 'downloadPdf'])->name('log.download.pdf');

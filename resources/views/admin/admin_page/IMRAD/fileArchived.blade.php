@@ -169,6 +169,22 @@
                                         </div>
 
                                         <div class="row mt-2">
+                                            <!-- Start Create Section -->
+                                            <div class="col-md-6">
+                                                <label for="start_create">From Create</label>
+                                                <input type="date" id="start_create"
+                                                    class="dynamic_start_create_select form-control" name="start_create">
+                                            </div>
+
+                                            <!-- End Create Section -->
+                                            <div class="col-md-6">
+                                                <label for="end_create">To Create</label>
+                                                <input type="date" id="end_create"
+                                                    class="dynamic_end_create_select form-control" name="end_create">
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-2">
                                             <!-- Start Year Section -->
                                             <div class="col-md-6">
                                                 <label for="start_year_archive">From Year</label>
@@ -335,15 +351,25 @@
 
                 const startYear_archiveField = document.querySelector('.dynamic_start_archive_select');
                 const endYear_archiveField = document.querySelector('.dynamic_end_archive_select');
+                const startCreateField = document.querySelector('.dynamic_start_create_select');
+                const endCreateField = document.querySelector('.dynamic_end_create_select');
 
                 const startYear_archive = startYear_archiveField ? startYear_archiveField.value.trim() : '';
                 const endYear_archive = endYear_archiveField ? endYear_archiveField.value.trim() : '';
+
+                const startCreate = startCreateField ? startCreateField.value.trim() : '';
+                const endCreate = endCreateField ? endCreateField.value.trim() : '';
 
                 // Validation: Ensure start year is less than or equal to end year
                 if (startYear_archive && endYear_archive && parseInt(startYear_archive) > parseInt(
                         endYear_archive)) {
                     isValid_archive = false;
                     alert('Start Year should be less than or equal to End Year.');
+                }
+
+                if (startCreate && endCreate && new Date(startCreate) > new Date(endCreate)) {
+                    isValid = false;
+                    alert('Start Create Date should be less than or equal to End Create Date.');
                 }
 
                 if (!isValid_archive) return;
@@ -368,6 +394,8 @@
                 processDynamicFields('.dynamic_sdg_archive_select', 'SDG');
                 processDynamicFields('.dynamic_start_archive_select', 'Start Year');
                 processDynamicFields('.dynamic_end_archive_select', 'End Year');
+                processDynamicFields('.dynamic_start_create_select', 'Start_create');
+                processDynamicFields('.dynamic_end_create_select', 'End_create');
             }
 
             function createDynamicField(type, value) {

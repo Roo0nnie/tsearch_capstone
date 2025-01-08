@@ -27,7 +27,7 @@
             <div class="page-inner">
                 <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row pt-2 pb-4">
                     <div>
-                        <h3 class="fw-bold mb-3">Student</h3>
+                        <h3 class="fw-bold mb-3">Faculty</h3>
                     </div>
                 </div>
 
@@ -122,7 +122,7 @@
 
                                 <div id="bulk-action-buttons" style="display: none; padding-left:10px;">
                                     <button id="faculty-selected" type="button" class="btn-primary btn mb-2 ">
-                                        Faculty</button>
+                                        Student</button>
                                     <button id="delete-selected" type="button" class="btn-maroon btn mb-2"><i
                                             class="fa-solid fa-trash"></i></button>
                                 </div>
@@ -346,7 +346,7 @@
                     confirmButtonText: "Yes!",
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        fetch('/admin/changeStatus_faculty', {
+                        fetch('/admin/changeStatus_status', {
                                 method: 'PUT',
                                 headers: {
                                     'Content-Type': 'application/json',

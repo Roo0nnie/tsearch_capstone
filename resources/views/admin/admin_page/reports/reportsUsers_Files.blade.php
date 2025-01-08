@@ -94,16 +94,34 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card card-secondary bg-secondary-gradient">
-                <div class="card-body bubble-shadow">
-                    <h1>{{ count($imrads) }}</h1>
-                    <h5 class="op-8">Published Files</h5>
-                    <div class="pull-right">
-                        <i class="fa-solid fa-book fa-2x"></i>
+            <div class="row">
+                <div class="col-6">
+                    <div class="card card-secondary bg-secondary-gradient">
+                        <div class="card-body bubble-shadow">
+                            <h1>{{ $imrads->where('status', 'published')->count() }}</h1>
+                            <h5 class="op-8">Published Files</h5>
+                            <div class="pull-right">
+                                <i class="fa-solid fa-book fa-2x"></i>
 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="card card-secondary bg-secondary-gradient">
+                        <div class="card-body bubble-shadow">
+                            <h1>{{ $imrads->where('status', 'archive')->count() }}</h1>
+                            <h5 class="op-8">Archived Files</h5>
+                            <div class="pull-right">
+                                <i class="fa-solid fa-book fa-2x"></i>
+
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+
         </div>
     </div>
 </div>

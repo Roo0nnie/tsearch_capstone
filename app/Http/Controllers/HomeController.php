@@ -99,7 +99,7 @@ class HomeController extends Controller
 
             // Paginate the results
             $currentPage = $request->input('page', 1);
-            $perPage = 5;
+            $perPage = 2;
             $currentItems = $imrads->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
             $imrads = new LengthAwarePaginator($currentItems, $imrads->count(), $perPage, $currentPage, [
@@ -119,7 +119,7 @@ class HomeController extends Controller
             });
 
             $currentPage = $request->input('page', 1);
-            $perPage = 5;
+            $perPage = 2;
             $currentItems = $imrads->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
             $imrads = new LengthAwarePaginator($currentItems, $imrads->count(), $perPage, $currentPage, [
@@ -170,7 +170,6 @@ class HomeController extends Controller
         sort($categories);
 
         foreach ($SDGs as $SDG) {
-            // Split the SDG values by comma
             $sdgArray = explode(',', $SDG->SDG);
 
             foreach ($sdgArray as $sdgItem) {
@@ -231,9 +230,11 @@ class HomeController extends Controller
             }
         }
 
+        $imradList = Imrad::with('imradMetric')->where('status', 'published')->where('action', null)->get();
+
         sort($adviserList);
 
-        return view('home', compact('imrads','categories', 'noResults', 'announcements', 'noAnnouncements', 'query', 'querySuggestions', 'admins', 'authorList', 'adviserList', 'departmentList', 'yearList', 'SDGList'))->with('success', $login_message);
+        return view('home', compact('imrads','categories','imradList', 'noResults', 'announcements', 'noAnnouncements', 'query', 'querySuggestions', 'admins', 'authorList', 'adviserList', 'departmentList', 'yearList', 'SDGList'))->with('success', $login_message);
     }
 
     protected function applyFilters(Request $request, $query)
@@ -309,7 +310,7 @@ public function filter(Request $request)
         }
 
         $currentPage = $request->input('page', 1);
-            $perPage = 5;
+            $perPage = 2;
             $currentItems = $imrads->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
             $imrads = new LengthAwarePaginator($currentItems, $imrads->count(), $perPage, $currentPage, [
@@ -424,7 +425,9 @@ public function filter(Request $request)
         $querySuggestions = '';
         $query = '';
 
-        return view('home', compact('imrads', 'query', 'categories','noResults', 'announcements', 'noAnnouncements', 'querySuggestions', 'admins', 'authorList', 'adviserList', 'departmentList', 'yearList', 'SDGList'));
+        $imradList = Imrad::with('imradMetric')->where('status', 'published')->where('action', null)->get();
+
+        return view('home', compact('imrads', 'query','imradList', 'categories','noResults', 'announcements', 'noAnnouncements', 'querySuggestions', 'admins', 'authorList', 'adviserList', 'departmentList', 'yearList', 'SDGList'));
     }
 }
 

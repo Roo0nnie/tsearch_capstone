@@ -63,6 +63,7 @@
                 <th>Adviser</th>
                 <th>Downloads</th>
                 <th>Rates</th>
+                <th>Rated User</th>
                 <th>Department</th>
                 <th>Date</th>
                 <th>Call #</th>
@@ -71,6 +72,9 @@
         <tbody>
             @php $counter = 1; @endphp
             @forelse ($imrads as $item)
+                @php
+                    $userCount = $item->ratings()->distinct('user_code')->count('user_code');
+                @endphp
                 <tr>
                     <td>{{ $counter++ }}</td>
                     <td>{{ $item->category }}</td>
@@ -79,6 +83,7 @@
                     <td>{{ $item->adviser }}</td>
                     <td>{{ $item->imradMetric->downloads }}</td>
                     <td>{{ $item->imradMetric->rates }}</td>
+                    <td>{{ $userCount }}</td>
                     <td>{{ $item->department }}</td>
                     <td>{{ $item->publication_date }}</td>
                     <td>{{ $item->location }}</td>

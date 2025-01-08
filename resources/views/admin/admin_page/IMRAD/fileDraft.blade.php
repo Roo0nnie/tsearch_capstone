@@ -183,6 +183,22 @@
                                     </div>
 
                                     <div class="row mt-2">
+                                        <!-- Start Create Section -->
+                                        <div class="col-md-6">
+                                            <label for="start_create">From Create</label>
+                                            <input type="date" id="start_create"
+                                                class="dynamic_start_create_select form-control" name="start_create">
+                                        </div>
+
+                                        <!-- End Create Section -->
+                                        <div class="col-md-6">
+                                            <label for="end_create">To Create</label>
+                                            <input type="date" id="end_create"
+                                                class="dynamic_end_create_select form-control" name="end_create">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-2">
                                         <!-- Start Year Section -->
                                         <div class="col-md-6">
                                             <label for="start_year_draft">From Year</label>
@@ -300,16 +316,6 @@
                                                                             class="dropdown-item">View</a>
                                                                     </li>
 
-                                                                    {{-- <li>
-                                                                        <form
-                                                                            action="{{ route('admin.temp.delete', ['temp' => $tempfile]) }}"
-                                                                            method="POST" style="display:inline;">
-                                                                            @csrf
-                                                                            @method('DELETE')
-                                                                            <button type="submit"
-                                                                                class="dropdown-item">Delete</button>
-                                                                        </form>
-                                                                    </li> --}}
                                                                 </ul>
                                                                 </button>
                                                             </div>
@@ -351,14 +357,25 @@
 
                 const startYear_draftField = document.querySelector('.dynamic_start_draft_select');
                 const endYear_draftField = document.querySelector('.dynamic_end_draft_select');
+                const startCreateField = document.querySelector('.dynamic_start_create_select');
+                const endCreateField = document.querySelector('.dynamic_end_create_select');
 
                 const startYear_draft = startYear_draftField ? startYear_draftField.value.trim() : '';
                 const endYear_draft = endYear_draftField ? endYear_draftField.value.trim() : '';
+
+                const startCreate = startCreateField ? startCreateField.value.trim() : '';
+                const endCreate = endCreateField ? endCreateField.value.trim() : '';
 
                 if (startYear_draft && endYear_draft && parseInt(startYear_draft) > parseInt(endYear_draft)) {
                     isValid_draft = false;
                     alert('Start Year should be less than or equal to End Year.');
                 }
+
+                if (startCreate && endCreate && new Date(startCreate) > new Date(endCreate)) {
+                    isValid = false;
+                    alert('Start Create Date should be less than or equal to End Create Date.');
+                }
+
 
                 if (!isValid_draft) return;
 
@@ -381,6 +398,8 @@
                 processDynamicFields('.dynamic_sdg_draft_select', 'SDG');
                 processDynamicFields('.dynamic_start_draft_select', 'Start Year');
                 processDynamicFields('.dynamic_end_draft_select', 'End Year');
+                processDynamicFields('.dynamic_start_create_select', 'Start_create');
+                processDynamicFields('.dynamic_end_create_select', 'End_create');
             }
 
             function createDynamicField(type, value) {

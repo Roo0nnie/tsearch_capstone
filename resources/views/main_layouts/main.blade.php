@@ -1,5 +1,8 @@
 <div class="mainWrapper" id="mainWrapper">
     <div class="left-container">
+        <div class="left-item bg-white mb-3">
+            @include('main_layouts.fileList')
+        </div>
         <div class="left-item bg-white">
             @include('main_layouts.filters')
         </div>
@@ -29,3 +32,25 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    })
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'PrintScreen') {
+            navigator.clipboard.writeText('Screenshots are disabled.');
+        }
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === "F12") {
+            e.preventDefault();
+        }
+        if ((e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) || (e.ctrlKey && e.key === 'U')) {
+            e.preventDefault();
+        }
+    });
+</script>

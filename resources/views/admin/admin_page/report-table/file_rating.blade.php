@@ -98,6 +98,22 @@
                                         </div>
                                     </div>
 
+                                    <!-- Adviser Section -->
+                                    <div id="dynamic_adviser_container">
+                                        <div class="select-wrapper">
+                                            <label for="adviser_select">Adviser</label>
+                                            <div class="input-group">
+                                                <select class="form-control dynamic_adviser_select"
+                                                    aria-label="Select Adviser" name="adviser[]">
+                                                    <option value="">Select Adviser</option>
+                                                    @foreach ($adviserList as $adviser)
+                                                        <option value="{{ $adviser }}">{{ $adviser }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div id="dynamic_category_container">
                                         <div class="select-wrapper">
                                             <label for="category_select">Category</label>
@@ -204,6 +220,22 @@
                                     </div>
 
                                     <div class="row mt-2">
+                                        <!-- Start Create Section -->
+                                        <div class="col-md-6">
+                                            <label for="start_create">From Create</label>
+                                            <input type="date" id="start_create"
+                                                class="dynamic_start_create_select form-control" name="start_create">
+                                        </div>
+
+                                        <!-- End Create Section -->
+                                        <div class="col-md-6">
+                                            <label for="end_create">To Create</label>
+                                            <input type="date" id="end_create"
+                                                class="dynamic_end_create_select form-control" name="end_create">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-2">
                                         <!-- Start Year Section -->
                                         <div class="col-md-6">
                                             <label for="start_year">From Year</label>
@@ -258,7 +290,7 @@
                                                 <th>Title</th>
                                                 <th>Downloads</th>
                                                 <th>Ratings</th>
-                                                <th>Department</th>
+                                                <th>Rated User</th>
                                                 <th>Year</th>
                                                 <th>Call#</th>
                                                 <th>Status</th>
@@ -270,13 +302,19 @@
                                                 $count = 1;
                                             @endphp
                                             @foreach ($imrads as $imrad)
+                                                @php
+                                                    $userCount = $imrad
+                                                        ->ratings()
+                                                        ->distinct('user_code')
+                                                        ->count('user_code');
+                                                @endphp
                                                 <tr>
                                                     <td>{{ $count++ }}</td>
                                                     <td>{{ $imrad->category }}</td>
                                                     <td>{{ $imrad->title }}</td>
                                                     <td>{{ $imrad->imradMetric->downloads }}</td>
                                                     <td>{{ $imrad->imradMetric->rates }}</td>
-                                                    <td>{{ $imrad->department }}</td>
+                                                    <td>{{ $userCount }}</td>
                                                     <td>{{ $imrad->publication_date }}</td>
                                                     <td>{{ $imrad->location }}</td>
                                                     <td>{{ $imrad->status }}</td>
@@ -302,6 +340,7 @@
 
             const dynamicCategoryContainer = document.getElementById('dynamic_category_container');
             const dynamicCourseContainer = document.getElementById('dynamic_course_container');
+            const dynamicAdviserContainer = document.getElementById('dynamic_adviser_container');
             const dynamicRatingContainer = document.getElementById('dynamic_rating_container');
             const dynamicSDGContainer = document.getElementById('dynamic_sdg_container');
             const dynamicStartContainer = document.getElementById('dynamic_start_container');
@@ -318,13 +357,23 @@
 
                 const startYearField = document.querySelector('.dynamic_start_select');
                 const endYearField = document.querySelector('.dynamic_end_select');
+                const startCreateField = document.querySelector('.dynamic_start_create_select');
+                const endCreateField = document.querySelector('.dynamic_end_create_select');
 
                 const startYear = startYearField ? startYearField.value.trim() : '';
                 const endYear = endYearField ? endYearField.value.trim() : '';
 
+                const startCreate = startCreateField ? startCreateField.value.trim() : '';
+                const endCreate = endCreateField ? endCreateField.value.trim() : '';
+
                 if (startYear && endYear && parseInt(startYear) > parseInt(endYear)) {
                     isValid = false;
                     alert('Start Year should be less than or equal to End Year.');
+                }
+
+                if (startCreate && endCreate && new Date(startCreate) > new Date(endCreate)) {
+                    isValid = false;
+                    alert('Start Create Date should be less than or equal to End Create Date.');
                 }
 
                 if (!isValid) return;
@@ -345,24 +394,27 @@
                 processDynamicFields('.dynamic_category_select', 'Category');
                 processDynamicFields('.dynamic_course_select', 'Department');
                 processDynamicFields('.dynamic_rating_select', 'Rating');
+                processDynamicFields('.dynamic_adviser_select', 'Adviser');
                 processDynamicFields('.dynamic_sdg_select', 'SDG');
                 processDynamicFields('.dynamic_start_select', 'Start_year');
                 processDynamicFields('.dynamic_end_select', 'End_year');
                 processDynamicFields('.dynamic_status_select', 'Status');
+                processDynamicFields('.dynamic_start_create_select', 'Start_create');
+                processDynamicFields('.dynamic_end_create_select', 'End_create');
             }
 
             function createDynamicField(type, value) {
                 const div = document.createElement('div');
                 div.classList.add('dynamicField');
                 div.innerHTML = `
-        <div class="input-group">
-            <span class="input-group-text">${type}</span>
-            <input type="text" value="${value}" readonly class="dynamicInput form-control" name="${type}[]">
-            <button type="button" class="deleteButton">
-                <i class="fa-solid fa-trash"></i>
-            </button>
-        </div>
-    `;
+                <div class="input-group">
+                    <span class="input-group-text">${type}</span>
+                    <input type="text" value="${value}" readonly class="dynamicInput form-control" name="${type}[]">
+                    <button type="button" class="deleteButton">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            `;
 
                 const hiddenInput = document.createElement('input');
                 hiddenInput.type = 'hidden';

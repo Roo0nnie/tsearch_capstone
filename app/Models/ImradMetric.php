@@ -14,11 +14,11 @@ class ImradMetric extends Model
     protected $fillable = ['imradID', 'rates', 'clicks', 'downloads', 'saved', 'views'];
 
     public function ratings()
-{
-    return $this->hasMany(Rating::class, 'metric_id', 'id');
-}
+    {
+        return $this->hasMany(Rating::class, 'metric_id', 'id');
+    }
 
-public function imrad()
+    public function imrad()
     {
         return $this->belongsTo(Imrad::class, 'imradID');
     }

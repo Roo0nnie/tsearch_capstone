@@ -31,11 +31,27 @@
                     </a>
                 </li>
 
-                <li class="nav-item {{ Request::routeIs('admin.guestAccount') ? 'active' : '' }}">
-                    <a href="{{ route('admin.guestAccount') }}">
+                <li class="nav-item {{ Request::routeIs('admin.guestAccount', 'admin.faculty') ? 'active' : '' }}">
+                    <a data-bs-toggle="collapse" href="#base_user">
                         <i class="fa-solid fa-users"></i>
                         <p>Users</p>
+                        <span class="caret"></span>
                     </a>
+
+                    <div class="collapse" id="base_user">
+                        <ul class="nav nav-collapse">
+                            <li class="{{ Request::is('admin/guestAccount') ? 'active' : '' }}">
+                                <a href="{{ route('admin.guestAccount') }}">
+                                    <span class="sub-item">Student</span>
+                                </a>
+                            </li>
+                            <li class="{{ Request::is('admin/faculty') ? 'active' : '' }}">
+                                <a href="{{ route('admin.faculty') }}">
+                                    <span class="sub-item">Faculty</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </li>
 
                 <li

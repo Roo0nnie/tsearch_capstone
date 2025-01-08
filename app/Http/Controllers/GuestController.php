@@ -87,7 +87,7 @@ class GuestController extends Controller
 
             // Paginate the results
             $currentPage = $request->input('page', 1);
-            $perPage = 5;
+            $perPage = 2;
             $currentItems = $imrads->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
             $imrads = new LengthAwarePaginator($currentItems, $imrads->count(), $perPage, $currentPage, [
@@ -107,7 +107,7 @@ class GuestController extends Controller
             });
 
             $currentPage = $request->input('page', 1);
-            $perPage = 5;
+            $perPage = 2;
             $currentItems = $imrads->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
             $imrads = new LengthAwarePaginator($currentItems, $imrads->count(), $perPage, $currentPage, [
@@ -220,8 +220,9 @@ class GuestController extends Controller
         }
 
         sort($adviserList);
+        $imradList = Imrad::with('imradMetric')->where('status', 'published')->where('action', null)->get();
 
-        return view('guest.guestLayout', compact('imrads','categories', 'noResults', 'announcements', 'noAnnouncements', 'query', 'querySuggestions', 'admins', 'authorList', 'adviserList', 'departmentList', 'yearList', 'SDGList', 'admins'));
+        return view('guest.guestLayout', compact('imrads','categories','imradList',  'noResults', 'announcements', 'noAnnouncements', 'query', 'querySuggestions', 'admins', 'authorList', 'adviserList', 'departmentList', 'yearList', 'SDGList', 'admins'));
     }
 
     protected function applyFilters(Request $request, $query)
@@ -297,7 +298,7 @@ public function filterFiles(Request $request)
         }
 
         $currentPage = $request->input('page', 1);
-            $perPage = 5;
+            $perPage = 2;
             $currentItems = $imrads->slice(($currentPage - 1) * $perPage, $perPage)->values();
 
             $imrads = new LengthAwarePaginator($currentItems, $imrads->count(), $perPage, $currentPage, [
@@ -408,7 +409,9 @@ public function filterFiles(Request $request)
         $querySuggestions = '';
         $query = '';
 
-        return view('guest.guestLayout', compact('imrads', 'query', 'categories', 'noResults', 'announcements', 'noAnnouncements', 'querySuggestions', 'admins', 'authorList', 'adviserList', 'departmentList', 'yearList', 'SDGList'));
+        $imradList = Imrad::with('imradMetric')->where('status', 'published')->where('action', null)->get();
+
+        return view('guest.guestLayout', compact('imrads', 'query', 'imradList' , 'categories', 'noResults', 'announcements', 'noAnnouncements', 'querySuggestions', 'admins', 'authorList', 'adviserList', 'departmentList', 'yearList', 'SDGList'));
     }
 }
 

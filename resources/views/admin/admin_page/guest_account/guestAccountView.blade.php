@@ -55,6 +55,14 @@
                                                 aria-selected="false" data-tab="all">Basic information</a>
 
                                         </li>
+                                        @if ($guestAccount->type === 'faculty')
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="handled-account-tab" data-bs-toggle="tab"
+                                                    href="#handled-account" role="tab" aria-controls="handled-account"
+                                                    aria-selected="false" data-tab="handled">Thesis Advise</a>
+                                            </li>
+                                        @endif
+
                                         <li class="nav-item">
                                             <a class="nav-link" id="offline-account-tab" data-bs-toggle="tab"
                                                 href="#offline-account" role="tab" aria-controls="offline-account"
@@ -64,7 +72,7 @@
                                         <li class="nav-item">
                                             <a class="nav-link" id="saved-account-tab" data-bs-toggle="tab"
                                                 href="#saved-account" role="tab" aria-controls="saved-account"
-                                                aria-selected="false" data-tab="offline">File Saved</a>
+                                                aria-selected="false" data-tab="saved">File Saved</a>
                                         </li>
 
                                         <li class="nav-item">
@@ -134,7 +142,8 @@
                                                     <div class="col-md-6">
                                                         <input id="phone" type="text"
                                                             class="form-control @error('phone') is-invalid @enderror"
-                                                            name="phone" value="{{ old('phone', $guestAccount->phone) }}"
+                                                            name="phone"
+                                                            value="{{ old('phone', $guestAccount->phone) }}"
                                                             autocomplete="phone" readonly>
                                                     </div>
                                                 </div>
@@ -181,60 +190,145 @@
 
                                             </div>
                                         </div>
-                                        <!-- File Information Tab -->
-                                        <div class="tab-pane fade" id="online-account" role="tabpanel"
-                                            aria-labelledby="online-account-tab">
+                                        <!-- Thesis Advise Tab -->
+                                        <div class="tab-pane fade" id="handled-account" role="tabpanel"
+                                            aria-labelledby="handled-account-tab">
                                             <div class="container">
-
-                                                <div class="py-2 px-3">
-                                                    <a data-bs-toggle="collapse" href="#collapseAuthor" role="button"
-                                                        aria-expanded="false" aria-controls="collapseAuthor"
-                                                        class="toggle-arrow">
-                                                        Author List <i class="fas fa-chevron-right ms-4"></i>
-                                                    </a>
-                                                </div>
-                                                <div class="collapse" id="collapseAuthor">
-                                                    <div class="card card-body">
-                                                        @forelse ($selectedAuthors as $selectedAuthor)
-                                                            <li>{{ $selectedAuthor }}</li>
-                                                        @empty
-                                                            <li>No Author/s Selected</li>
-                                                        @endforelse
+                                                <div class="table-responsive mt-3">
+                                                    <div class="my-2">
+                                                        <button type="button"
+                                                            class="btn btn-maroon mb-3 mt-3 w-80 d-flex align-items-center justify-content-center"
+                                                            data-bs-toggle="modal" data-bs-target="#thesisModal">
+                                                            Add Thesis Advisee
+                                                        </button>
                                                     </div>
-                                                </div>
 
-                                                <div class="py-2 px-3">
-                                                    <a data-bs-toggle="collapse" href="#collapseAdviser" role="button"
-                                                        aria-expanded="false" aria-controls="collapseAdviser"
-                                                        class="toggle-arrow">
-                                                        Adviser List <i class="fas fa-chevron-right ms-4"></i>
-                                                    </a>
-                                                </div>
-                                                <div class="collapse" id="collapseAdviser">
-                                                    <div class="card card-body">
-                                                        @forelse ($selectedAdvisers as $selectedAdviser)
-                                                            <li>{{ $selectedAdviser }}</li>
-                                                        @empty
-                                                            <li>No Adviser/s Selected</li>
-                                                        @endforelse
-                                                    </div>
-                                                </div>
+                                                    <!-- Email Modal -->
+                                                    <div class="modal fade" id="thesisModal" tabindex="-1"
+                                                        aria-labelledby="thesisModalLabel" aria-hidden="true">
+                                                        <div
+                                                            class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title fs-4 w-100 text-center"
+                                                                        id="thesisModalLabel"><strong>Thesis Title and its
+                                                                            Adviser</strong>
+                                                                    </h5>
+                                                                    <button type="button"
+                                                                        class="btn-close d-flex align-items-center justify-content-center"
+                                                                        data-bs-dismiss="modal" aria-label="Close"> <i
+                                                                            class="fs-3 fa-solid fa-xmark"></i></button>
+                                                                </div>
+                                                                <div class="modal-body">
 
-                                                <div class="py-2 px-3">
-                                                    <a data-bs-toggle="collapse" href="#collapseDepartment"
-                                                        role="button" aria-expanded="false"
-                                                        aria-controls="collapseDepartment" class="toggle-arrow">
-                                                        Department List <i class="fas fa-chevron-right ms-4"></i>
-                                                    </a>
-                                                </div>
-                                                <div class="collapse" id="collapseDepartment">
-                                                    <div class="card card-body">
-                                                        @forelse ($selectedDepartments as $selectedDepartment)
-                                                            <li>{{ $selectedDepartment }}</li>
-                                                        @empty
-                                                            <li>No Department's Selected</li>
-                                                        @endforelse
+                                                                    <div id="bulk-action-buttons"
+                                                                        style="display: none; padding-left:10px;">
+                                                                        <button id="add-selected" type="button"
+                                                                            class="btn btn-primary mb-2">Add
+                                                                            Advise</button>
+                                                                    </div>
+
+                                                                    <input type="hidden" id="user_id"
+                                                                        value="{{ $guestAccount->user_code }}">
+                                                                    <input type="hidden" id="user_type"
+                                                                        value="{{ $guestAccount->type }}">
+
+                                                                    <table id="basic-datatables-my-advise-list"
+                                                                        class="display table table-striped table-hover">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th scope="col"><input type="checkbox"
+                                                                                        id="select-all"></th>
+                                                                                <th scope="col">#</th>
+                                                                                <th scope="col">Thesis title</th>
+                                                                                <th scope="col">Adviser</th>
+                                                                                <th scope="col">Action</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody id="">
+                                                                            @php
+                                                                                $list = 1;
+                                                                            @endphp
+                                                                            @foreach ($thesisFileList as $thesis)
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <input type="checkbox"
+                                                                                            class="row-checkbox"
+                                                                                            id="select-all"
+                                                                                            value="{{ $thesis->id }}">
+                                                                                    </td>
+                                                                                    <td>{{ $list++ }}</td>
+                                                                                    <td>{{ $thesis->title }}
+                                                                                    <td>{{ $thesis->adviser }}
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <div class="btn-group text-sm-center"
+                                                                                            role="group"
+                                                                                            aria-label="Basic mixed styles example">
+
+                                                                                            <a href="{{ route('admin.imrad.view', ['imrad' => $thesis]) }}"
+                                                                                                class="btn-primary btn">View</a>
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            @endforeach
+                                                                        </tbody>
+                                                                    </table>
+                                                                </div>
+                                                            </div>
+                                                        </div>
                                                     </div>
+
+                                                    <table id="basic-datatables-my-thesis-list"
+                                                        class="display table table-striped table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">#</th>
+                                                                <th scope="col">Thesis title</th>
+                                                                <th scope="col">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="">
+                                                            @php
+                                                                $count = 1;
+                                                            @endphp
+                                                            @foreach ($myTheses as $thesis)
+                                                                <tr>
+                                                                    <td>{{ $count++ }}</td>
+                                                                    <td>{{ $thesis->imrad->title }}</td>
+                                                                    <td>
+                                                                        <div class="btn-group text-sm-center"
+                                                                            role="group"
+                                                                            aria-label="Basic mixed styles example">
+
+                                                                            <a href="{{ route('admin.imrad.view', ['imrad' => $thesis->imrad]) }}"
+                                                                                class="btn-primary btn">View</a>
+
+                                                                            <button
+                                                                                class="btn btn-outline-secondary dropdown-toggle"
+                                                                                type="button"
+                                                                                id="actionDropdown{{ $count }}"
+                                                                                data-bs-toggle="dropdown"
+                                                                                aria-haspopup="true"
+                                                                                aria-expanded="false">
+
+                                                                            </button>
+                                                                            <ul class="dropdown-menu"
+                                                                                aria-labelledby="actionDropdown{{ $count }}">
+                                                                                <li>
+                                                                                    <a href="#"
+                                                                                        class="dropdown-item"
+                                                                                        onclick="confirmUnselect(event, '{{ route('my-thesis.destroy', $thesis->id) }}')">Unselect</a>
+                                                                                </li>
+                                                                            </ul>
+                                                                            </button>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
                                                 </div>
 
                                             </div>
@@ -353,7 +447,17 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="row mb-0">
+                        <div>
+                            <a href="{{ route('admin.guestAccount') }}" class="btn btn-secondary">
+                                {{ __('Back') }}
+                            </a>
+                        </div>
+                    </div>
                 </div>
+
+
             </div>
         </div>
     </div>
@@ -390,7 +494,117 @@
                     localStorage.setItem('activeTabView', selectedTab);
                 });
             });
+
+            // Select all checkbox
+            const selectAllCheckbox = document.getElementById("select-all");
+            const rowCheckboxes = document.querySelectorAll(".row-checkbox");
+            const bulkActionButtons = document.getElementById("bulk-action-buttons");
+
+            const userId = document.getElementById("user_id").value;
+            const userType = document.getElementById("user_type").value;
+
+
+
+            const updateBulkActionButtons = () => {
+                const anyChecked = Array.from(rowCheckboxes).some(checkbox => checkbox.checked);
+                bulkActionButtons.style.display = anyChecked ? "block" : "none";
+            };
+
+            selectAllCheckbox.addEventListener("change", (e) => {
+                rowCheckboxes.forEach(checkbox => checkbox.checked = e.target.checked);
+                updateBulkActionButtons();
+            });
+
+            rowCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener("change", updateBulkActionButtons);
+            });
+
+
+            document.getElementById("add-selected").addEventListener("click", () => {
+                const rowCheckboxes = document.querySelectorAll(".row-checkbox");
+                const selectedIds = Array.from(rowCheckboxes)
+                    .filter(checkbox => checkbox.checked)
+                    .map(checkbox => checkbox.value);
+
+                if (selectedIds.length === 0) {
+                    Swal.fire("No Selection", "Please select items to delete.", "warning");
+                    return;
+                }
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You are about to add the selected items. This action cannot be undone!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Yes!",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('/admin/guestAccount/add-thesis', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector(
+                                        'meta[name="csrf-token"]').content,
+                                },
+                                body: JSON.stringify({
+                                    ids: selectedIds,
+                                    user_code: userId,
+                                    user_type: userType,
+                                }),
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('Response Data:', data);
+                                Swal.fire("File added!", "The selected items have been added.",
+                                    "success");
+                                location.reload();
+                            })
+                            .catch(error => {
+                                console.error('Error archiving:', error);
+                                Swal.fire("Error!",
+                                    "An error occurred while adding the items.", "error");
+                            });
+                    }
+                });
+            });
         });
+
+        function confirmUnselect(event, deleteUrl) {
+            event.preventDefault(); // Prevent default link behavior
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes!',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const form = document.createElement('form');
+                    form.action = deleteUrl;
+                    form.method = 'POST';
+
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = '_token';
+                    csrfInput.value = '{{ csrf_token() }}';
+
+                    const methodInput = document.createElement('input');
+                    methodInput.type = 'hidden';
+                    methodInput.name = '_method';
+                    methodInput.value = 'DELETE';
+
+                    form.appendChild(csrfInput);
+                    form.appendChild(methodInput);
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+            });
+        }
     </script>
 
 @endsection

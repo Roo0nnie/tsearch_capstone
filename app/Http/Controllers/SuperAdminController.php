@@ -31,7 +31,7 @@ class SuperAdminController extends Controller
         $superadmin = Auth::guard('superadmin')->user();
 
         if (!$superadmin) {
-            return back()->withErrors(['authentication' => 'You must be logged in as a superadmin to access this feature.']);
+            return redirect()->route('landing.page')->with('error', 'You must be logged in as a superadmin');
         }
 
         if ($superadmin->verification_code == $request->verification_code) {
