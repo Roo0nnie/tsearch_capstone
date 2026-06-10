@@ -34,13 +34,13 @@
                                     <!-- Nav tabs -->
                                     <ul class="nav nav-tabs" role="tablist">
                                         <li class="nav-item">
-                                            <a class="nav-link" id="all-account-tab" data-bs-toggle="tab"
+                                            <a class="nav-link" id="all-account-tab" data-ui-toggle="tab"
                                                 href="#all-account" role="tab" aria-controls="all-account"
                                                 aria-selected="false" data-tab="all">Basic information</a>
 
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" id="online-account-tab" data-bs-toggle="tab"
+                                            <a class="nav-link" id="online-account-tab" data-ui-toggle="tab"
                                                 href="#online-account" role="tab" aria-controls="online-account"
                                                 aria-selected="false" data-tab="online">Change Password</a>
                                         </li>
@@ -289,8 +289,7 @@
             // Activate the tab and corresponding content
             let tabToActivate = document.querySelector(`a[data-tab="${activeTabViewProfilesuper}"]`);
             if (tabToActivate) {
-                var tab = new bootstrap.Tab(tabToActivate);
-                tab.show();
+                window.TSearchUI?.activateTab(tabToActivate);
 
                 // Activate the content
                 document.querySelectorAll('.tab-pane').forEach(function(pane) {
@@ -300,8 +299,8 @@
                 document.querySelector(contentId).classList.add('show', 'active');
             }
 
-            document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(function(tab) {
-                tab.addEventListener('shown.bs.tab', function(event) {
+            document.querySelectorAll('a[data-ui-toggle="tab"]').forEach(function(tab) {
+                tab.addEventListener('shown.ui.tab', function(event) {
                     let selectedTab = event.target.getAttribute('data-tab');
                     localStorage.setItem('activeTabViewProfilesuper', selectedTab);
                 });

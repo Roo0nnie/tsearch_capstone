@@ -1,5 +1,9 @@
-import "./bootstrap";
+import "./http";
+import "./ui";
 import Swal from "sweetalert2";
+import "sweetalert2/dist/sweetalert2.min.css";
+
+window.Swal = Swal;
 
 // Check if there's a success or error message in the session
 document.addEventListener("DOMContentLoaded", function () {

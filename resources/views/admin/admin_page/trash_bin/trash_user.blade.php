@@ -34,7 +34,7 @@
 
                 <div class="d-flex align-items-center">
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-ui-toggle="dropdown"
                             aria-expanded="false">
                             Download
                         </button>
@@ -52,7 +52,7 @@
                             <!-- Nav tabs -->
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link" id="all-account-tab" data-bs-toggle="tab" href="#all-account"
+                                    <a class="nav-link" id="all-account-tab" data-ui-toggle="tab" href="#all-account"
                                         role="tab" aria-controls="all-account" aria-selected="false"
                                         data-tab="all">Users</a>
                                 </li>

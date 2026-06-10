@@ -35,8 +35,8 @@
                 <div class="d-flex justify-content-between">
                     <div class="filter-buttons mb-3">
                         <div class="d-flex">
-                            <button type="button" class="btn btn-maroon me-2" data-bs-toggle="modal"
-                                data-bs-target="#filter-database" data-button="published">
+                            <button type="button" class="btn btn-maroon me-2" data-ui-toggle="modal"
+                                data-ui-target="#filter-database" data-button="published">
                                 Filter Category
                             </button>
 
@@ -55,7 +55,7 @@
 
                     <div class="d-flex align-items-center">
                         <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-ui-toggle="dropdown"
                                 aria-expanded="false">
                                 Download
                             </button>
@@ -75,7 +75,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h1 class="modal-title fs-5" id="exampleModalLabel">Filter User</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                <button type="button" class="btn-close" data-ui-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
 
@@ -109,7 +109,7 @@
                                     <!-- Apply Button -->
                                     <div class="text-center">
                                         <button type="button" id="applyButton" class="btn btn-primary mt-2 text-center"
-                                            data-bs-dismiss="modal">Apply</button>
+                                            data-ui-dismiss="modal">Apply</button>
                                     </div>
                                 </form>
 
@@ -124,7 +124,7 @@
                             <!-- Nav tabs -->
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link" id="online-account-tab" data-bs-toggle="tab" href="#online-account"
+                                    <a class="nav-link" id="online-account-tab" data-ui-toggle="tab" href="#online-account"
                                         role="tab" aria-controls="online-account" aria-selected="false"
                                         data-tab="online">Files</a>
                                 </li>

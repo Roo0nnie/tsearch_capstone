@@ -42,8 +42,8 @@
                             class="navbar-brand img-fluid" style="max-height: 50px;" />
                     </a>
                 </div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                <button class="navbar-toggler" type="button" data-ui-toggle="collapse"
+                    data-ui-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                     aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -105,7 +105,7 @@
                                 @endif
 
                                 <li class="nav-item dropdown mx-2">
-                                    <a class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"
+                                    <a class="dropdown-toggle" data-ui-toggle="dropdown" aria-expanded="false"
                                         href="">
                                         <span class="ms-2">{{ Auth::user()->name }}</span>
                                     </a>
@@ -200,8 +200,8 @@
                         class="navbar-brand img-fluid" style="max-height: 50px;" />
                 </a>
             </div>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            <button class="navbar-toggler" type="button" data-ui-toggle="collapse"
+                data-ui-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="{{ __('Toggle navigation') }}">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -233,8 +233,8 @@
                             class="navbar-brand img-fluid" style="max-height: 50px;" />
                     </a>
                 </div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                <button class="navbar-toggler" type="button" data-ui-toggle="collapse"
+                    data-ui-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                     aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -285,49 +285,3 @@
         @endif
     </div>
 </nav>
-
-<style>
-    /* Custom Responsive Styles */
-    .bg-maroon {
-        background-color: #800000 !important;
-    }
-
-    .navbar-dark .navbar-nav .nav-link {
-        color: rgba(255, 255, 255, 0.8) !important;
-    }
-
-    .navbar-dark .navbar-nav .nav-link:hover {
-        color: white !important;
-    }
-
-    @media (max-width: 768px) {
-        .navbar-collapse {
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .navbar-nav {
-            flex-direction: column !important;
-            align-items: center !important;
-        }
-
-        .nav-item {
-            text-align: center;
-            padding: 10px 0;
-            width: 100%;
-        }
-
-        .dropdown-menu {
-            position: static;
-            transform: none !important;
-            margin-top: 10px;
-            text-align: center;
-            border: none;
-            background-color: transparent;
-        }
-
-        .profile-image {
-            margin: 0 auto 10px !important;
-        }
-    }
-</style>

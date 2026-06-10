@@ -34,7 +34,7 @@
 
                 <div class="d-flex align-items-center mb-2">
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-ui-toggle="dropdown"
                             aria-expanded="false">
                             Download
                         </button>

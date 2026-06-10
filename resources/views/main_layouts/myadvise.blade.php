@@ -80,8 +80,8 @@
                                     data-imrad-id="{{ $savefile->imrad->id }}">
                                     Download PDF
                                 </a>
-                                <button class="btn btn-cite mx-1" data-bs-toggle="modal"
-                                    data-bs-target="#modalCitation{{ $savefile->imrad->id }}">Cite</button>
+                                <button class="btn btn-cite mx-1" data-ui-toggle="modal"
+                                    data-ui-target="#modalCitation{{ $savefile->imrad->id }}">Cite</button>
 
                                 <!-- Modal Citation for generating citations in different formats -->
                                 <div class="modal fade" id="modalCitation{{ $savefile->imrad->id }}" tabindex="-1"
@@ -91,7 +91,7 @@
                                         <div class="modal-content">
                                             <div class="modal-header text-center">
                                                 <p><strong>{{ $savefile->imrad->title }}</strong></p>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                <button type="button" class="btn-close" data-ui-dismiss="modal"
                                                     aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
@@ -321,7 +321,7 @@
 
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-save"
-                                                    data-bs-dismiss="modal">Close</button>
+                                                    data-ui-dismiss="modal">Close</button>
                                             </div>
                                         </div>
                                     </div>

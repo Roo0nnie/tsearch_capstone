@@ -43,8 +43,8 @@
                         @endif
 
                         <!-- Button to open the citation modal -->
-                        <button class="btn btn-cite" data-bs-toggle="modal"
-                            data-bs-target="#modalCitation{{ $imrad->id }}">Cite</button>
+                        <button class="btn btn-cite" data-ui-toggle="modal"
+                            data-ui-target="#modalCitation{{ $imrad->id }}">Cite</button>
 
                         <!-- Form to save the article for guest users -->
                         @if (Auth::guard('guest_account')->check())
@@ -90,7 +90,7 @@
                 <div class="modal-content">
                     <div class="modal-header text-center">
                         <p><strong>{{ $imrad->title }}</strong></p>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-ui-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
 
@@ -290,7 +290,7 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-save" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-save" data-ui-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>

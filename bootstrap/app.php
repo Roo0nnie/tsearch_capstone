@@ -8,6 +8,8 @@ use App\Http\Middleware\CheckIfUserLoggedIn;
 use App\Http\Middleware\SessionTimeout;
 use App\Http\Middleware\SuperAdminVerified;
 use App\Http\Middleware\AdminVerified;
+use App\Http\Middleware\EnsurePermission;
+use App\Http\Middleware\EnsureRole;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -21,6 +23,11 @@ return Application::configure(basePath: dirname(__DIR__))
             UpdateSessionWithUserCode::class,
             SuperAdminVerified::class,
             AdminVerified::class,
+        ]);
+
+        $middleware->alias([
+            'role' => EnsureRole::class,
+            'permission' => EnsurePermission::class,
         ]);
     })
 

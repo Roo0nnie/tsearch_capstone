@@ -33,8 +33,8 @@
 
                 <div class="d-flex justify-content-between">
                     <div class="d-flex justify-content-start">
-                        <button type="button" class="btn btn-maroon me-2" data-bs-toggle="modal"
-                            data-bs-target="#filter-database" data-button="published">
+                        <button type="button" class="btn btn-maroon me-2" data-ui-toggle="modal"
+                            data-ui-target="#filter-database" data-button="published">
                             Filter Category
                         </button>
 
@@ -52,7 +52,7 @@
 
                     <div class="">
                         <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-ui-toggle="dropdown"
                                 aria-expanded="false">
                                 Download
                             </button>
@@ -77,7 +77,7 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h1 class="modal-title fs-5" id="exampleModalLabel">Filter Published Files</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                <button type="button" class="btn-close" data-ui-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
 
@@ -264,7 +264,7 @@
                                     <!-- Apply Button -->
                                     <div class="text-center">
                                         <button type="button" id="applyButton" class="btn btn-primary mt-2 text-center"
-                                            data-bs-dismiss="modal">Apply</button>
+                                            data-ui-dismiss="modal">Apply</button>
                                     </div>
                                 </form>
                             </div>

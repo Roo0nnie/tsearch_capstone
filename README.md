@@ -1,71 +1,318 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# T-Search — Thesis Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+T-Search is a capstone web application for **Sorsogon State University (SSU)**. It catalogs thesis and research documents in **IMRAD** format and provides search, curation, reporting, and multi-role account management.
 
-## About Laravel
+Built as a **Laravel 11 Blade monolith** with Vite, Tailwind CSS, and PostgreSQL.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
--   [Simple, fast routing engine](https://laravel.com/docs/routing).
--   [Powerful dependency injection container](https://laravel.com/docs/container).
--   Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
--   Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
--   Database agnostic [schema migrations](https://laravel.com/docs/migrations).
--   [Robust background job processing](https://laravel.com/docs/queues).
--   [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **IMRAD repository** — publish, draft, archive, and delete thesis documents with PDF upload and metadata extraction
+- **Public guest browse** — search and filter theses without logging in
+- **Google OAuth login** — SSU account sign-in for students and faculty (guest accounts)
+- **Personal library** — save and manage favorite theses
+- **Ratings and metrics** — rate theses; track views and downloads
+- **Announcements** — role-targeted announcements from admins
+- **Account management** — students, faculty, guests, and admins with Excel import/export
+- **Reports** — SDG charts, file upload stats, user demographics; PDF and Excel exports
+- **Audit and trash** — login history and soft-delete recovery
+- **RBAC** — role-based access control (superadmin, admin, faculty, student, guest)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## System Requirements
 
-## Learning Laravel
+| Component | Requirement |
+|-----------|-------------|
+| PHP | `^8.2` (8.2–8.4 recommended; see [Troubleshooting](#troubleshooting) for PHP 8.5) |
+| Database | PostgreSQL 14+ |
+| Composer | 2.x |
+| Node.js | 18+ with npm |
+| OS | Windows, Linux, or macOS |
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Required PHP Extensions
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Enable these in your `php.ini`:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```
+fileinfo
+pdo_pgsql
+pgsql
+mbstring
+openssl
+curl
+zip
+gd
+```
 
-## Laravel Sponsors
+### Optional Integrations
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+| Integration | Purpose | Environment Variables |
+|-------------|---------|----------------------|
+| Google OAuth | SSU student/faculty login | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
+| SMTP mail | Admin/superadmin email verification | `MAIL_MAILER`, `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD` |
+| Aspell | Search spell-check suggestions | System package (`tigitz/php-spellchecker`) |
+| External PDF API | PDF metadata extraction | Used by `IMRADController` (remote service) |
 
-### Premium Partners
+## Project Structure
 
--   **[Vehikl](https://vehikl.com/)**
--   **[Tighten Co.](https://tighten.co)**
--   **[WebReinvent](https://webreinvent.com/)**
--   **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
--   **[64 Robots](https://64robots.com)**
--   **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
--   **[Cyber-Duck](https://cyber-duck.co.uk)**
--   **[DevSquad](https://devsquad.com/hire-laravel-developers)**
--   **[Jump24](https://jump24.co.uk)**
--   **[Redberry](https://redberry.international/laravel/)**
--   **[Active Logic](https://activelogic.com)**
--   **[byte5](https://byte5.de)**
--   **[OP.GG](https://op.gg)**
+```mermaid
+flowchart TB
+    subgraph entry [EntryPoints]
+        webPhp["routes/web.php"]
+        publicRoutes["routes/web/public.php"]
+        adminRoutes["routes/web/admin.php"]
+        superRoutes["routes/web/superadmin.php"]
+        guestRoutes["routes/web/guest-account.php"]
+        studentRoutes["routes/web/student.php"]
+    end
+    subgraph app [Application]
+        controllers["app/Http/Controllers"]
+        models["app/Models"]
+        middleware["app/Http/Middleware"]
+        authServices["app/Services/Auth"]
+    end
+    subgraph data [Data]
+        migrations["database/migrations"]
+        seeders["database/seeders/RbacSeeder.php"]
+        rbacConfig["config/rbac.php"]
+    end
+    subgraph ui [Frontend]
+        views["resources/views"]
+        vite["resources/js + Vite"]
+    end
+    webPhp --> publicRoutes & adminRoutes & superRoutes & guestRoutes & studentRoutes
+    publicRoutes --> controllers
+    controllers --> models
+    controllers --> migrations
+    controllers --> views
+    views --> vite
+```
 
-## Contributing
+### Key Directories
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+| Path | Description |
+|------|-------------|
+| `app/Http/Controllers/` | HTTP handlers (IMRAD, reports, accounts, auth) |
+| `app/Models/` | Eloquent models (`Imrad`, `User`, `Admin`, `GuestAccount`, etc.) |
+| `app/Http/Middleware/` | Auth, RBAC (`EnsureRole`, `EnsurePermission`), session middleware |
+| `app/Services/Auth/` | `AccountResolver`, `AccountLookup` — multi-guard account resolution |
+| `app/Exports/`, `app/Imports/` | Maatwebsite Excel import/export |
+| `routes/web.php` | Loads audience-based route files |
+| `routes/web/` | `public.php`, `admin.php`, `superadmin.php`, `guest-account.php`, `student.php` |
+| `config/auth.php` | Multi-guard session auth |
+| `config/rbac.php` | Role and permission definitions |
+| `resources/views/` | Blade templates (`admin/`, `superadmin/`, `main_layouts/`, `components/ui/`) |
+| `resources/js/`, `resources/css/` | Vite + Tailwind frontend assets |
+| `database/migrations/` | Schema migrations (26 tables including RBAC) |
+| `database/seeders/` | `RbacSeeder` — seeds roles and permissions |
 
-## Code of Conduct
+## User Roles and Entry URLs
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+| Role | Login / Entry | Dashboard |
+|------|---------------|-----------|
+| Public guest | `/guest` | — |
+| Guest (Google OAuth) | `/guest/auth/google` | `/guest/account/home` |
+| Admin | `/login/admin` | `/admin/dashboard` |
+| Super Admin | `/login/superadmin` | `/super_admin/dashboard` |
+| Student (legacy) | `/home` (auth required) | `/home` |
 
-## Security Vulnerabilities
+**Landing page:** `/` (`landing.page`)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Auth uses multiple Laravel guards (`admin`, `superadmin`, `user`, `faculty`, `guest_account`) with an RBAC layer. See [docs/refactor-foundation.md](docs/refactor-foundation.md) for refactor details.
+
+## Environment Setup
+
+### 1. Clone and enter the project
+
+```powershell
+cd D:\projects\tsearch_capstone
+```
+
+```bash
+cd /path/to/tsearch_capstone
+```
+
+### 2. Create environment file
+
+**Windows (PowerShell):**
+
+```powershell
+copy .env.example .env
+```
+
+**Linux / macOS:**
+
+```bash
+cp .env.example .env
+```
+
+### 3. Configure database
+
+Edit `.env` with your PostgreSQL credentials:
+
+```env
+DB_CONNECTION=pgsql
+DB_URL="postgresql://postgres:password@localhost:5432/tsearch"
+DB_HOST=localhost
+DB_PORT=5432
+DB_DATABASE=tsearch
+DB_USERNAME=postgres
+DB_PASSWORD=password
+```
+
+Create the database in PostgreSQL:
+
+```sql
+CREATE DATABASE tsearch;
+```
+
+### 4. Configure optional services
+
+```env
+APP_NAME="Thesis Management System"
+APP_URL=http://127.0.0.1:8000
+
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.example.com
+MAIL_PORT=465
+MAIL_USERNAME=your-email@example.com
+MAIL_PASSWORD=your-app-password
+MAIL_ENCRYPTION=ssl
+```
+
+> **Security:** `.env` is gitignored. Never commit real credentials to version control.
+
+## Installation
+
+Run all commands from the **project root** (`tsearch_capstone/`), not your home directory.
+
+### Windows (PowerShell)
+
+```powershell
+cd D:\projects\tsearch_capstone
+
+composer install
+php artisan key:generate
+php artisan migrate
+php artisan db:seed
+php artisan storage:link
+npm install
+npm run build
+```
+
+### Linux / macOS
+
+```bash
+cd /path/to/tsearch_capstone
+
+composer install
+php artisan key:generate
+php artisan migrate
+php artisan db:seed
+php artisan storage:link
+npm install
+npm run build
+```
+
+If `composer install` fails on **PHP 8.5**, use:
+
+```powershell
+composer install --ignore-platform-req=php --ignore-platform-req=php-64bit
+```
+
+## Running the Application
+
+### Development (recommended — two terminals)
+
+**Terminal 1 — Laravel backend:**
+
+```powershell
+php artisan serve
+```
+
+**Terminal 2 — Vite dev server (live CSS/JS reload):**
+
+```powershell
+npm run dev
+```
+
+Open **http://127.0.0.1:8000** in your browser.
+
+### Production build (single terminal)
+
+If you already ran `npm run build`, only the backend is needed:
+
+```powershell
+php artisan serve
+```
+
+### LAN / network access
+
+```powershell
+php artisan serve --host=0.0.0.0 --port=8000
+```
+
+Update `APP_URL` in `.env` to match your machine's IP if needed.
+
+## Useful Commands
+
+| Command | Purpose |
+|---------|---------|
+| `php artisan migrate:status` | Check migration state |
+| `php artisan config:clear` | Clear cached config |
+| `php artisan db:seed` | Re-seed roles and permissions |
+| `php artisan storage:link` | Link `public/storage` to `storage/app/public` |
+| `npm run build` | Build frontend assets for production |
+| `npm run dev` | Start Vite dev server with hot reload |
+| `composer install` | Install PHP dependencies |
+| `php artisan test` | Run PHPUnit tests |
+
+Health check endpoint: **http://127.0.0.1:8000/up**
+
+## Windows / Cursor IDE Notes
+
+- PHP must be on your system `Path` (e.g. `C:\php-8.5.7`).
+- If `php` or `composer` is not recognized in a Cursor terminal, **close and open a new terminal**, or restart Cursor.
+- The project includes `.vscode/settings.json` which prepends PHP and Composer to the terminal `Path` automatically.
+- Run `composer install` and `php artisan` from `D:\projects\tsearch_capstone`, not `C:\Users\<you>`.
+
+## Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| `composer.json not found` | `cd` into the project root before running commands |
+| `php` / `composer` not recognized | Add PHP to PATH, restart terminal, or use full path: `C:\php-8.5.7\php.exe artisan serve` |
+| `composer install` fails on PHP 8.5 | Run with `--ignore-platform-req=php --ignore-platform-req=php-64bit` |
+| Database connection refused | Ensure PostgreSQL is running on port 5432 and `tsearch` database exists |
+| `vendor/autoload.php` missing | Run `composer install` |
+| Blank page or missing styles | Run `npm install` then `npm run build` |
+| No login accounts | No default admin is seeded; create accounts via superadmin or database |
+| Admin 2FA email not received | Configure SMTP settings in `.env` (`MAIL_*` variables) |
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Backend | Laravel 11, PHP 8.2+ |
+| Database | PostgreSQL |
+| Frontend | Blade, Vite 5, Tailwind CSS, SweetAlert2 |
+| Auth | Multi-guard sessions, Google OAuth (Socialite), RBAC |
+| PDF | DomPDF, smalot/pdfparser |
+| Excel | Maatwebsite Excel |
+| Images | Intervention Image |
+
+## Related Documentation
+
+- [docs/refactor-foundation.md](docs/refactor-foundation.md) — RBAC refactor, route splitting, and auth architecture notes
+
+## Project Credits
+
+**August – November 2024**
+
+- Ronnie F. Estillero — Backend (Laravel)
+- Marlon Orpiada — Frontend (Laravel)
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-
-## Owner of this project - August - November, 2024
-
-Ronnie F. Estillero - backend of Laravel
-Marlon Orpiada - Frontend of Laravel
+This project is built on the [Laravel](https://laravel.com) framework, which is open-source software licensed under the [MIT license](https://opensource.org/licenses/MIT).

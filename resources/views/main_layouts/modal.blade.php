@@ -77,7 +77,7 @@
                                     {{ __('Sign In') }}
                                 </button>
 
-                                <a class="text-primary" href="" data-bs-dismiss="modal">
+                                <a class="text-primary" href="" data-ui-dismiss="modal">
                                     {{ __('Back') }}
                                 </a>
 

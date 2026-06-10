@@ -8,14 +8,14 @@
             </a>
             <div class="nav-toggle">
                 <button class="btn btn-toggle toggle-sidebar">
-                    <i class="gg-menu-right"></i>
+                    <i class="fa-solid fa-bars"></i>
                 </button>
                 <button class="btn btn-toggle sidenav-toggler">
-                    <i class="gg-menu-left"></i>
+                    <i class="fa-solid fa-angle-left"></i>
                 </button>
             </div>
             <button class="topbar-toggler more">
-                <i class="gg-more-vertical-alt"></i>
+                <i class="fa-solid fa-ellipsis-vertical"></i>
             </button>
         </div>
         <!-- End Logo Header -->
@@ -25,7 +25,7 @@
         <div class="container-fluid">
             <ul class="navbar-nav topbar-nav ms-md-auto align-items-center">
                 <li class="nav-item topbar-icon dropdown hidden-caret d-flex d-lg-none">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button"
+                    <a class="nav-link dropdown-toggle" data-ui-toggle="dropdown" href="#" role="button"
                         aria-expanded="false" aria-haspopup="true">
                         <i class="fa fa-search"></i>
                     </a>
@@ -39,7 +39,7 @@
                 </li>
 
                 <li class="nav-item topbar-user dropdown hidden-caret">
-                    <a class="dropdown-toggle profile-pic" data-bs-toggle="dropdown" href="#" aria-expanded="false">
+                    <a class="dropdown-toggle profile-pic" data-ui-toggle="dropdown" href="#" aria-expanded="false">
                         @if (Auth::user()->profile)
                             <img src="{{ asset('assets/img/superadmin_profile/' . Auth::user()->profile) }}" alt="Profile"
                                 class="rounded-circle" width="30" height="30">

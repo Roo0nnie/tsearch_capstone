@@ -21,17 +21,8 @@
     <!-- icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    <!-- CSS styling -->
-    @vite(['resources/sass/app.scss', 'resources/css/welcome.css', 'resources/css/welcome_manual.css', 'resources/js/app.js', 'resources/js/nav.js', 'resources/js/announcement.js', 'resources/js/profile.js', 'resources/js/user_search.js', 'resources/js/faculty_search.js', 'resources/js/guest_search.js', 'resources/js/imrad_search.js', 'resources/js/rating.js'])
-    {{-- Sweet Alert CSS --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-
-    {{-- Sweet Alert JS --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.2.0/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script>
+    <!-- App styling and scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/nav.js', 'resources/js/announcement.js', 'resources/js/profile.js', 'resources/js/user_search.js', 'resources/js/faculty_search.js', 'resources/js/guest_search.js', 'resources/js/imrad_search.js', 'resources/js/rating.js'])
 </head>
 
 <body data-route="{{ Route::currentRouteName() }}">

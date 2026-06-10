@@ -9,14 +9,14 @@
 
             <div class="nav-toggle">
                 <button class="btn btn-toggle toggle-sidebar">
-                    <i class="gg-menu-right"></i>
+                    <i class="fa-solid fa-bars"></i>
                 </button>
                 <button class="btn btn-toggle sidenav-toggler">
-                    <i class="gg-menu-left"></i>
+                    <i class="fa-solid fa-angle-left"></i>
                 </button>
             </div>
             <button class="topbar-toggler more">
-                <i class="gg-more-vertical-alt"></i>
+                <i class="fa-solid fa-ellipsis-vertical"></i>
             </button>
         </div>
         <!-- End Logo Header -->
@@ -31,23 +31,27 @@
                     </a>
                 </li>
 
-                <li class="nav-item {{ Request::routeIs('super_admin.admin') ? 'active' : '' }}">
-                    <a href="{{ route('super_admin.admin') }}" aria-expanded="false">
-                        <i class="fas fa-user-shield"></i>
-                        <p>Admin Mngt</p>
-                    </a>
-                </li>
+                @permission('accounts.admins.manage')
+                    <li class="nav-item {{ Request::routeIs('super_admin.admin') ? 'active' : '' }}">
+                        <a href="{{ route('super_admin.admin') }}" aria-expanded="false">
+                            <i class="fas fa-user-shield"></i>
+                            <p>Admin Mngt</p>
+                        </a>
+                    </li>
+                @endpermission
 
-                <li class="nav-item {{ Request::routeIs('superadmin.trash-bin') ? 'active' : '' }}">
-                    <a href="{{ route('superadmin.trash-bin') }}" aria-expanded="false">
-                        <i class="fas fa-trash"></i>
-                        <p>Trash Bin</p>
-                    </a>
-                </li>
+                @permission('trash.manage')
+                    <li class="nav-item {{ Request::routeIs('superadmin.trash-bin') ? 'active' : '' }}">
+                        <a href="{{ route('superadmin.trash-bin') }}" aria-expanded="false">
+                            <i class="fas fa-trash"></i>
+                            <p>Trash Bin</p>
+                        </a>
+                    </li>
+                @endpermission
 
                 {{-- <li class="nav-item {{ Request::routeIs('admin.user', 'admin.faculty') ? 'active' : '' }}">
 
-                    <a data-bs-toggle="collapse" href="#base">
+                    <a data-ui-toggle="collapse" href="#base">
                         <i class="fa-solid fa-users"></i>
                         <p>Users</p>
                         <span class="caret"></span>

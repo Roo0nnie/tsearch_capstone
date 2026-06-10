@@ -1,20 +1,59 @@
-/.phpunit.cache
-/node_modules
+# Dependencies
+/vendor
+node_modules/
+.pnpm-store/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+.env.backup
+.env.production
+env.txt
+auth.json
+Homestead.json
+Homestead.yaml
+
+# Laravel runtime
 /public/build
 /public/hot
 /public/storage
 /storage/*.key
-/vendor
-.env
-.env.backup
-.env.production
-.phpactor.json
-.phpunit.result.cache
-Homestead.json
-Homestead.yaml
-auth.json
+/bootstrap/cache/*
+!/bootstrap/cache/.gitignore
+
+# User-uploaded content (thesis PDFs, profile photos, attachments)
+/public/assets/pdf/*
+!/public/assets/pdf/.gitkeep
+/public/assets/img/admin_profile/*
+!/public/assets/img/admin_profile/default.png
+/public/assets/img/superadmin_profile/*
+!/public/assets/img/superadmin_profile/default.png
+/public/assets/img/student_profile/*
+!/public/assets/img/student_profile/.gitkeep
+/public/assets/img/faculty_profile/*
+!/public/assets/img/faculty_profile/.gitkeep
+/public/assets/img/guest_profile/*
+!/public/assets/img/guest_profile/.gitkeep
+/storage/app/public/attachments/
+
+# Logs & debug
+*.log
 npm-debug.log
 yarn-error.log
+pnpm-debug.log*
+
+# PHPUnit
+/.phpunit.cache
+.phpunit.result.cache
+
+# IDE & editor
 /.fleet
 /.idea
 /.vscode
+.phpactor.json
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini

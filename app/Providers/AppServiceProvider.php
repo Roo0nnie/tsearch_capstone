@@ -14,6 +14,8 @@ use App\Observers\AdminObserver;
 use App\Observers\FacultyObserver;
 use App\Observers\GuestAccountObserver;
 use App\Observers\ImradObserver;
+use App\Services\Auth\AccountResolver;
+use Illuminate\Support\Facades\Blade;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -35,5 +37,8 @@ class AppServiceProvider extends ServiceProvider
         Faculty::observe(FacultyObserver::class);
         GuestAccount::observe(GuestAccountObserver::class);
         Imrad::observe(ImradObserver::class);
+
+        Blade::if('role', fn (...$roles) => app(AccountResolver::class)->hasAnyRole($roles));
+        Blade::if('permission', fn (...$permissions) => app(AccountResolver::class)->hasPermission($permissions));
     }
 }

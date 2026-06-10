@@ -223,7 +223,7 @@
                                                     class="btn btn-primary">Edit</a>
 
                                                 <button class="btn btn-outline-secondary dropdown-toggle" type="button"
-                                                    id="actionDropdown{{ $announcement->id }}" data-bs-toggle="dropdown"
+                                                    id="actionDropdown{{ $announcement->id }}" data-ui-toggle="dropdown"
                                                     aria-haspopup="true" aria-expanded="false">
 
                                                 </button>

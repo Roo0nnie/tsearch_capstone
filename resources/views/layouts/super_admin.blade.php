@@ -44,19 +44,10 @@
         });
     </script>
 
-    <!-- CSS Files -->
-    <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/css/plugins.min.css') }}" />
-    <link rel="stylesheet" href="{{ asset('assets/css/kaiadmin.css') }}" />
-    <!-- <link rel="stylesheet" href="{{ asset('assets/css/demo.css') }}" /> -->
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.2.3/css/buttons.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
 
 </head>
 
@@ -77,61 +68,23 @@
     </div>
 
 
-    <!-- Core JS Files -->
     <script src="{{ asset('assets/js/core/jquery-3.7.1.min.js') }}"></script>
-    <script src="{{ asset('assets/js/core/popper.min.js') }}"></script>
-    <script src="{{ asset('assets/js/core/bootstrap.min.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.datatables.net/1.11.8/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
-    <!-- Kaiadmin JS -->
-    <script src="{{ asset('assets/js/kaiadmin.min.js') }}"></script>
-
-    <!-- jQuery Scrollbar Plugin -->
-    <script src="{{ asset('assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
-    <!-- Chart JS -->
-    <script src="{{ asset('assets/js/plugin/chart.js/chart.min.js') }}"></script>
-
-    <!-- jQuery Sparkline -->
-    <script src="{{ asset('assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js') }}"></script>
-
-    <!-- Chart Circle -->
-    <script src="{{ asset('assets/js/plugin/chart-circle/circles.min.js') }}"></script>
-
-    <!-- Datatables -->
-    <script src="{{ asset('assets/js/plugin/datatables/datatables.min.js') }}"></script>
-
-    <!-- Bootstrap Notify -->
-    <script src="{{ asset('assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
-
-    <!-- jQuery Vector Maps -->
-    <script src="{{ asset('assets/js/plugin/jsvectormap/jsvectormap.min.js') }}"></script>
-    <script src="{{ asset('assets/js/plugin/jsvectormap/world.js') }}"></script>
-
-    <!-- Google Maps Plugin -->
-    <script src="{{ asset('assets/js/plugin/gmaps/gmaps.js') }}"></script>
-
-    <!-- Sweet Alert -->
-    <script src="{{ asset('assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
-    <script src="{{ asset('assets/js/demo.js') }}"></script>
-    <script src="{{ asset('assets/js/report_demo.js') }}"></script>
-    <script src="{{ asset('assets/js/reportBar_demo.js') }}"></script>
-    <script src="{{ asset('assets/js/chart.js') }}"></script>
-    <script src="{{ asset('assets/js/kaiadmin.js') }}"></script>
-
-
-
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.3/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.2.3/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+    <script src="{{ asset('assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugin/chart-circle/circles.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugin/jsvectormap/jsvectormap.min.js') }}"></script>
+    <script src="{{ asset('assets/js/plugin/jsvectormap/world.js') }}"></script>
+    <script src="{{ asset('assets/js/plugin/gmaps/gmaps.js') }}"></script>
+    <script src="{{ asset('assets/js/report_demo.js') }}"></script>
+    <script src="{{ asset('assets/js/reportBar_demo.js') }}"></script>
+    <script src="{{ asset('assets/js/chart.js') }}"></script>
 
     <script>
         document.addEventListener('contextmenu', function(e) {

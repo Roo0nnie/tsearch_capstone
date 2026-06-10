@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Concerns\HasAccountRole;
 
 class Faculty extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasAccountRole, HasFactory, Notifiable;
 
     /**
      * The table associated with the model.
@@ -24,6 +25,7 @@ class Faculty extends Authenticatable
      */
     protected $fillable = [
         'profile',
+        'role_id',
         'name',
         'user_code',
         'email',

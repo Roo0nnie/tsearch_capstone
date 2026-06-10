@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\LogHistory;
-use App\Model\GuestAccount;
+use App\Services\Auth\AccountResolver;
 use Illuminate\Support\Facades\DB;
 
 class LogHistoryController extends Controller
@@ -28,11 +28,14 @@ class LogHistoryController extends Controller
         $sessionExists = LogHistory::where('session_id', $sessionId)->exists();
 
         if (!$sessionExists) {
+            $accountResolver = app(AccountResolver::class);
+            $account = $accountResolver->user();
+
             LogHistory::create([
                 'session_id' => $sessionId,
                 'user_code' => $userCode,
-                'name' => auth()->user()->name ?? null,
-                'user_type' => auth()->user()->type ?? null,
+                'name' => $account->name ?? null,
+                'user_type' => $accountResolver->roleName($account),
                 'login' => now(),
                 'logout' => null,
             ]);
@@ -57,7 +60,6 @@ public function view() {
 }
 
 }
-
 
 
 

@@ -152,7 +152,7 @@ class UserLoginController extends Controller
         }
     }
 
-    protected function resendSuperadminLogin()
+    public function resendSuperadminLogin()
     {
         $superAdmin = Auth::guard('superadmin')->user();
         $verificationCode = rand(100000, 999999);

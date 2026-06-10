@@ -182,8 +182,7 @@
             // Activate the tab and corresponding content
             let tabToActivate = document.querySelector(`a[data-tab="${activeTabView}"]`);
             if (tabToActivate) {
-                var tab = new bootstrap.Tab(tabToActivate);
-                tab.show();
+                window.TSearchUI?.activateTab(tabToActivate);
 
                 // Activate the content
                 document.querySelectorAll('.tab-pane').forEach(function(pane) {
@@ -194,8 +193,8 @@
             }
 
             // Store active tab in local storage when clicked
-            document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(function(tab) {
-                tab.addEventListener('shown.bs.tab', function(event) {
+            document.querySelectorAll('a[data-ui-toggle="tab"]').forEach(function(tab) {
+                tab.addEventListener('shown.ui.tab', function(event) {
                     let selectedTab = event.target.getAttribute('data-tab');
                     localStorage.setItem('activeTabView', selectedTab);
                 });

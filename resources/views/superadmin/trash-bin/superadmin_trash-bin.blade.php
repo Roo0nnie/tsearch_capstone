@@ -38,7 +38,7 @@
                             <!-- Nav tabs -->
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link" id="all-account-tab" data-bs-toggle="tab" href="#all-account"
+                                    <a class="nav-link" id="all-account-tab" data-ui-toggle="tab" href="#all-account"
                                         role="tab" aria-controls="all-account" aria-selected="false"
                                         data-tab="all">Admin</a>
                                 </li>
@@ -94,7 +94,7 @@
                                                                             class="btn btn-outline-secondary dropdown-toggle"
                                                                             type="button"
                                                                             id="actionDropdown{{ $admin->id }}"
-                                                                            data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                            data-ui-toggle="dropdown" aria-haspopup="true"
                                                                             aria-expanded="false">
 
                                                                         </button>
@@ -224,8 +224,7 @@
             // Activate the tab and corresponding content
             let tabToActivate = document.querySelector(`a[data-tab="${activeTabDeletedAdmin}"]`);
             if (tabToActivate) {
-                var tab = new bootstrap.Tab(tabToActivate);
-                tab.show();
+                window.TSearchUI?.activateTab(tabToActivate);
 
                 // Activate the content
                 document.querySelectorAll('.tab-pane').forEach(function(pane) {
@@ -236,8 +235,8 @@
             }
 
             // Store active tab in local storage when clicked
-            document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(function(tab) {
-                tab.addEventListener('shown.bs.tab', function(event) {
+            document.querySelectorAll('a[data-ui-toggle="tab"]').forEach(function(tab) {
+                tab.addEventListener('shown.ui.tab', function(event) {
                     let selectedTab = event.target.getAttribute('data-tab');
                     localStorage.setItem('activeTabDeletedAdmin', selectedTab);
                 });

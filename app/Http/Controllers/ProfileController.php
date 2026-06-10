@@ -4,78 +4,51 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use App\Models\Admin;
 use App\Models\SuperAdmin;
+use App\Services\Auth\AccountLookup;
 
 
 class ProfileController extends Controller
 {
+    public function __construct(private AccountLookup $accountLookup)
+    {
+    }
+
     public function view($user_code)
     {
         $user_code = decrypt($user_code);
 
-            $credentials = [];
-            $guard = '';
-            $model = '';
+        $user = $this->accountLookup->findByCode($user_code);
 
-            if (str_starts_with($user_code, '21')) {
-                $credentials['user_code'] = $user_code;
-                $guard = 'user';
-                $model = \App\Models\User::class;
-            } elseif (str_starts_with($user_code, '20')) {
-                $credentials['user_code'] = $user_code;
-                $guard = 'faculty';
-                $model = \App\Models\Faculty::class;
-            } elseif (str_starts_with($user_code, '19')) {
-                $credentials['user_code'] = $user_code;
-                $guard = 'admin';
-                $model = \App\Models\Admin::class;
-            } elseif (str_starts_with($user_code, '09')) {
-                $credentials['user_code'] = $user_code;
-                $guard = 'guest_account';
-                $model = \App\Models\GuestAccount::class;
-            } else {
-                return back();
-            }
+        if (!$user) {
+            return back();
+        }
 
-            $user = $model::where(key($credentials), $user_code)->first();
-
-            return view('profile.profile', compact('user'));
+        return view('profile.profile', compact('user'));
     }
 
     public function update($user_code, Request $request)
     {
 
         $user_code = decrypt($user_code);
-        $model = null;
-        $profileExtension = null;
+        $model = $this->accountLookup->modelForCode($user_code);
+        $profileDirectory = $this->accountLookup->profileDirectoryForCode($user_code);
 
-        if (str_starts_with($user_code, '21')) {
-            $profileExtension = 'user';
-            $model = new \App\Models\User;
-        } elseif (str_starts_with($user_code, '20')) {
-            $profileExtension = 'faculty';
-            $model = new \App\Models\Faculty;
-        } elseif (str_starts_with($user_code, '19')) {
-            $profileExtension = 'admin';
-            $model = new \App\Models\Admin;
-        } elseif (str_starts_with($user_code, '09')) {
-            $profileExtension = 'guest';
-            $model = new \App\Models\GuestAccount;
-        } else {
+        if (!$model || !$profileDirectory) {
             return back()->withErrors(['error' => 'Invalid user_code']);
         }
 
         $user = $model::where('user_code', $user_code)->firstOrFail();
+        $modelInstance = new $model();
 
         $rules = [
-            'user_code' => 'required|string|max:255|unique:' . $model->getTable() . ',user_code,' . $user->id,
+            'user_code' => 'required|string|max:255|unique:' . $modelInstance->getTable() . ',user_code,' . $user->id,
             'name' => 'required|string|max:255',
             'age' => 'nullable|integer|min:0',
             'gender' => 'nullable|in:male,female,other',
-            'email' => 'required|string|email|max:255|unique:' . $model->getTable() . ',email,' . $user->id,
-            'phone' => 'nullable|string|max:255|unique:' . $model->getTable() . ',phone,' . $user->id . '|regex:/^09\d{9}$/',
+            'email' => 'required|string|email|max:255|unique:' . $modelInstance->getTable() . ',email,' . $user->id,
+            'phone' => 'nullable|string|max:255|unique:' . $modelInstance->getTable() . ',phone,' . $user->id . '|regex:/^09\d{9}$/',
         ];
 
         if (str_starts_with($user_code, '09')) {
@@ -90,28 +63,6 @@ class ProfileController extends Controller
             $file = $request->file('profile');
             $extension = $file->getClientOriginalExtension();
             $filename = time() . "_" . $data['user_code'] . "." . $extension;
-
-
-            $profileDirectory = '';
-            switch ($profileExtension) {
-                case 'user':
-                    $profileDirectory = public_path('assets/img/student_profile');
-                    break;
-                case 'admin':
-                    $profileDirectory = public_path('assets/img/admin_profile');
-                    break;
-                case 'guest':
-                    $profileDirectory = public_path('assets/img/guest_profile');
-                    break;
-                case 'faculty':
-                    $profileDirectory = public_path('assets/img/faculty_profile');
-                    break;
-                case 'superadmin':
-                    $profileDirectory = public_path('assets/img/superadmin_profile');
-                    break;
-                default:
-                    return back()->with('error', 'Invalid user type.');
-            }
 
             foreach (glob($profileDirectory . "/*_" . $data['user_code'] . ".*") as $existingFile) {
                 if (file_exists($existingFile)) {
@@ -146,13 +97,7 @@ class ProfileController extends Controller
 
         $user_code = decrypt($user_code);
 
-        $model = match (true) {
-            str_starts_with($user_code, '21') => \App\Models\User::class,
-            str_starts_with($user_code, '20') => \App\Models\Faculty::class,
-            str_starts_with($user_code, '19') => \App\Models\Admin::class,
-            str_starts_with($user_code, '09') => \App\Models\GuestAccount::class,
-            default => null,
-        };
+        $model = $this->accountLookup->modelForCode($user_code);
 
         if ($model === null) {
             return back()->withErrors(['error' => 'Invalid user_code']);
@@ -171,15 +116,9 @@ class ProfileController extends Controller
 
         $user_code = decrypt($user_code);
 
-        if (str_starts_with($user_code, '21')) {
-            $model = \App\Models\User::class;
-        } elseif (str_starts_with($user_code, '20')) {
-            $model = \App\Models\Faculty::class;
-        } elseif (str_starts_with($user_code, '19')) {
-            $model = \App\Models\Admin::class;
-        } elseif (str_starts_with($user_code, '09')) {
-            $model = \App\Models\GuestAccount::class;
-        } else {
+        $model = $this->accountLookup->modelForCode($user_code);
+
+        if (!$model) {
             return response()->json(['valid' => false, 'error' => 'Invalid user_code']);
         }
 

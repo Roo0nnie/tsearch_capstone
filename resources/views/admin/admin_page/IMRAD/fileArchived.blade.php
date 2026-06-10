@@ -35,8 +35,8 @@
                     <div class="filter-buttons">
 
                         <div class="d-flex">
-                            <button type="button" class="btn btn-maroon me-2" data-bs-toggle="modal"
-                                data-bs-target="#filter-database_1" data-button="archive">
+                            <button type="button" class="btn btn-maroon me-2" data-ui-toggle="modal"
+                                data-ui-target="#filter-database_1" data-button="archive">
                                 Filter Category
                             </button>
 
@@ -61,7 +61,7 @@
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h1 class="modal-title fs-5" id="exampleModalLabel">Filter Archieve Files</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    <button type="button" class="btn-close" data-ui-dismiss="modal"
                                         aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
@@ -214,7 +214,7 @@
                                         <div class="text-center">
                                             <button type="button" id="applyButton_archive"
                                                 class="btn btn-primary mt-2 text-center"
-                                                data-bs-dismiss="modal">Apply</button>
+                                                data-ui-dismiss="modal">Apply</button>
                                         </div>
                                     </form>
                                 </div>
@@ -225,7 +225,7 @@
 
                 <div class="d-flex align-items-center">
                     <div class="dropdown me-2">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-ui-toggle="dropdown"
                             aria-expanded="false">
                             Download
                         </button>
@@ -249,7 +249,7 @@
                         <ul class="nav nav-tabs" role="tablist">
 
                             <li class="nav-item">
-                                <a class="nav-link active" id="online-account-tab" data-bs-toggle="tab"
+                                <a class="nav-link active" id="online-account-tab" data-ui-toggle="tab"
                                     href="#online-account" role="tab" aria-controls="online-account"
                                     aria-selected="false" data-tab="archive">Archive Files</a>
                             </li>

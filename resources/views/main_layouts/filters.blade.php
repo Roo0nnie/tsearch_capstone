@@ -32,7 +32,7 @@
 
             <!-- Collapsible Author Section -->
             <div class="form-group mb-4 mt-2">
-                <button class="btn btn-link text-maroon" type="button" data-bs-toggle="collapse" href="#authorCollapse"
+                <button class="btn btn-link text-maroon" type="button" data-ui-toggle="collapse" href="#authorCollapse"
                     role="button" aria-expanded="false" aria-controls="authorCollapse">
                     Author
                 </button>
@@ -53,7 +53,7 @@
 
             <!-- Collapsible Adviser Section -->
             <div class="form-group mb-4 mt-2">
-                <button class="btn btn-link text-maroon" type="button" data-bs-toggle="collapse"
+                <button class="btn btn-link text-maroon" type="button" data-ui-toggle="collapse"
                     href="#adviserCollapse" role="button" aria-expanded="false" aria-controls="adviserCollapse">
                     Adviser
                 </button>
@@ -74,7 +74,7 @@
 
             <!-- Collapsible Year of Submission Section -->
             <div class="form-group mb-4 mt-2">
-                <button class="btn btn-link text-maroon" type="button" data-bs-toggle="collapse" href="#yearCollapse"
+                <button class="btn btn-link text-maroon" type="button" data-ui-toggle="collapse" href="#yearCollapse"
                     role="button" aria-expanded="false" aria-controls="yearCollapse">
                     Year
                 </button>
@@ -94,7 +94,7 @@
             <hr>
 
             <div class="form-group mb-4 mt-2">
-                <button class="btn btn-link text-maroon" data-bs-toggle="collapse" href="#categoryCollapse"
+                <button class="btn btn-link text-maroon" data-ui-toggle="collapse" href="#categoryCollapse"
                     role="button" type="button" aria-expanded="false" aria-controls="departmentCollapse">
                     Category
                 </button>
@@ -116,7 +116,7 @@
 
             <!-- Collapsible Department Section -->
             <div class="form-group mb-4 mt-2">
-                <button class="btn btn-link text-maroon" data-bs-toggle="collapse" href="#departmentCollapse"
+                <button class="btn btn-link text-maroon" data-ui-toggle="collapse" href="#departmentCollapse"
                     role="button" type="button" aria-expanded="false" aria-controls="departmentCollapse">
                     Department
                 </button>
@@ -138,7 +138,7 @@
 
             <!-- Collapsible SDG Topic Section -->
             <div class="form-group mb-4 mt-2">
-                <button class="btn btn-link text-maroon" data-bs-toggle="collapse" href="#sdgCollapse"
+                <button class="btn btn-link text-maroon" data-ui-toggle="collapse" href="#sdgCollapse"
                     role="button" type="button" aria-expanded="false" aria-controls="sdgCollapse">
                     Sustainable Development Goals
                 </button>

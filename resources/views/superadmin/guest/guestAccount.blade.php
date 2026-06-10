@@ -86,16 +86,16 @@
                 </div>
                 <nav class="nav justify-content-center nav-bg">
                     <li class="nav-item">
-                        <a class="nav-link active" data-bs-toggle="tab" href="#allguestaccount">All Guest</a>
+                        <a class="nav-link active" data-ui-toggle="tab" href="#allguestaccount">All Guest</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#activeguest">Online Guest</a>
+                        <a class="nav-link" data-ui-toggle="tab" href="#activeguest">Online Guest</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#deactiveguest">Offline Guest</a>
+                        <a class="nav-link" data-ui-toggle="tab" href="#deactiveguest">Offline Guest</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#invalid_faculty">Invalid Guest</a>
+                        <a class="nav-link" data-ui-toggle="tab" href="#invalid_faculty">Invalid Guest</a>
                     </li>
                 </nav>
 
@@ -113,7 +113,7 @@
 
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button"
-                                            id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                            id="exportDropdown" data-ui-toggle="dropdown" aria-expanded="false">
                                             Export
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="exportDropdown">
@@ -197,7 +197,7 @@
 
                                         <div class="dropdown">
                                             <button class="btn btn-secondary dropdown-toggle" type="button"
-                                                id="exportDropdown1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                id="exportDropdown1" data-ui-toggle="dropdown" aria-expanded="false">
                                                 Export
                                             </button>
                                             <ul class="dropdown-menu" aria-labelledby="exportDropdown1">
@@ -286,7 +286,7 @@
 
                                             <div class="dropdown">
                                                 <button class="btn btn-secondary dropdown-toggle" type="button"
-                                                    id="exportDropdown2" data-bs-toggle="dropdown"
+                                                    id="exportDropdown2" data-ui-toggle="dropdown"
                                                     aria-expanded="false">
                                                     Export
                                                 </button>
@@ -375,7 +375,7 @@
 
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button"
-                                            id="exportDropdown3" data-bs-toggle="dropdown" aria-expanded="false">
+                                            id="exportDropdown3" data-ui-toggle="dropdown" aria-expanded="false">
                                             Export
                                         </button>
                                         <ul class="dropdown-menu" aria-labelledby="exportDropdown3">
@@ -575,7 +575,7 @@
                         <div class="mb-2 mb-sm-0">
                             <!-- NILIPAT KO NALNG DITO YUNG EXPORT -->
                             {{-- <button class="btn btn-label-danger dropdown-toggle border border-danger" type="button"
-                                id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                id="exportDropdown" data-ui-toggle="dropdown" aria-expanded="false">
                                 Export
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="exportDropdown">
@@ -610,16 +610,16 @@
 
                 <nav class="nav nav-tabs justify-content-center flex-wrap custom-tabs">
                     <li class="nav-item">
-                        <a class="nav-link active" data-bs-toggle="tab" href="#allguestaccount">All Guest</a>
+                        <a class="nav-link active" data-ui-toggle="tab" href="#allguestaccount">All Guest</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#activeguest">Online Guest</a>
+                        <a class="nav-link" data-ui-toggle="tab" href="#activeguest">Online Guest</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#deactiveguest">Offline Guest</a>
+                        <a class="nav-link" data-ui-toggle="tab" href="#deactiveguest">Offline Guest</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#invalid_faculty">Blocked Guest</a>
+                        <a class="nav-link" data-ui-toggle="tab" href="#invalid_faculty">Blocked Guest</a>
                     </li>
                 </nav>
 
@@ -632,7 +632,7 @@
                                     <div class="container mb-2 justify-content-end d-flex">
                                         <div class="dropdown">
                                             <button class="btn btn-label-danger dropdown-toggle border border-danger"
-                                                type="button" id="exportDropdown" data-bs-toggle="dropdown"
+                                                type="button" id="exportDropdown" data-ui-toggle="dropdown"
                                                 aria-expanded="false">
                                                 Export
                                             </button>
@@ -706,7 +706,7 @@
                                     <div class="container mb-2 justify-content-end d-flex">
                                         <div class="dropdown">
                                             <button class="btn btn-label-danger dropdown-toggle border border-danger"
-                                                type="button" id="exportDropdown1" data-bs-toggle="dropdown"
+                                                type="button" id="exportDropdown1" data-ui-toggle="dropdown"
                                                 aria-expanded="false">
                                                 Export
                                             </button>
@@ -787,7 +787,7 @@
                                     <div class="container mb-2 justify-content-end d-flex">
                                         <div class="dropdown">
                                             <button class="btn btn-label-danger dropdown-toggle border border-danger"
-                                                type="button" id="exportDropdown2" data-bs-toggle="dropdown"
+                                                type="button" id="exportDropdown2" data-ui-toggle="dropdown"
                                                 aria-expanded="false">
                                                 Export
                                             </button>
@@ -871,7 +871,7 @@
                                     <div class="container mb-2 justify-content-end d-flex">
                                         <div class="dropdown">
                                             <button class="btn btn-label-danger dropdown-toggle border border-danger"
-                                                type="button" id="exportDropdown45" data-bs-toggle="dropdown"
+                                                type="button" id="exportDropdown45" data-ui-toggle="dropdown"
                                                 aria-expanded="false">
                                                 Export
                                             </button>

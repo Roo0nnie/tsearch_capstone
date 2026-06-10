@@ -282,14 +282,14 @@ class ReportController extends Controller
 
     public function getDataUserStatistics() {
         // Active users per day count
-        $activeUsersCount = LogHistory::selectRaw('DATE(created_at) as date, COUNT(DISTINCT user_code) as active_count')
-            ->groupBy('date')
+        $activeUsersCount = LogHistory::selectRaw('CAST(created_at AS date) as date, COUNT(DISTINCT user_code) as active_count')
+            ->groupByRaw('CAST(created_at AS date)')
             ->orderBy('date')
             ->get();
 
         // New users per day count
-        $newUsersCount = GuestAccount::selectRaw('DATE(created_at) as date, COUNT(*) as new_user_count')
-            ->groupBy('date')
+        $newUsersCount = GuestAccount::selectRaw('CAST(created_at AS date) as date, COUNT(*) as new_user_count')
+            ->groupByRaw('CAST(created_at AS date)')
             ->orderBy('date')
             ->get();
 
@@ -311,14 +311,14 @@ class ReportController extends Controller
 
     public function supergetDataUserStatistics() {
         // Active users per day count
-        $activeUsersCount = LogHistory::selectRaw('DATE(created_at) as date, COUNT(DISTINCT user_code) as active_count')
-            ->groupBy('date')
+        $activeUsersCount = LogHistory::selectRaw('CAST(created_at AS date) as date, COUNT(DISTINCT user_code) as active_count')
+            ->groupByRaw('CAST(created_at AS date)')
             ->orderBy('date')
             ->get();
 
         // New users per day count
-        $newUsersCount = GuestAccount::selectRaw('DATE(created_at) as date, COUNT(*) as new_user_count')
-            ->groupBy('date')
+        $newUsersCount = GuestAccount::selectRaw('CAST(created_at AS date) as date, COUNT(*) as new_user_count')
+            ->groupByRaw('CAST(created_at AS date)')
             ->orderBy('date')
             ->get();
 
@@ -504,8 +504,8 @@ public function supergetUserDemographics(Request $request)
 
     public function reportfilecount(Request $request) {
         $uploads = DB::table('imrads')
-            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as upload_count'))
-            ->groupBy('month')
+            ->select(DB::raw('EXTRACT(MONTH FROM created_at) as month'), DB::raw('COUNT(*) as upload_count'))
+            ->groupByRaw('EXTRACT(MONTH FROM created_at)')
             ->get();
 
         $monthlyCounts = array_fill(0, 12, 0);
@@ -519,8 +519,8 @@ public function supergetUserDemographics(Request $request)
 
     public function superreportfilecount(Request $request) {
         $uploads = DB::table('imrads')
-            ->select(DB::raw('MONTH(created_at) as month'), DB::raw('COUNT(*) as upload_count'))
-            ->groupBy('month')
+            ->select(DB::raw('EXTRACT(MONTH FROM created_at) as month'), DB::raw('COUNT(*) as upload_count'))
+            ->groupByRaw('EXTRACT(MONTH FROM created_at)')
             ->get();
 
         $monthlyCounts = array_fill(0, 12, 0);

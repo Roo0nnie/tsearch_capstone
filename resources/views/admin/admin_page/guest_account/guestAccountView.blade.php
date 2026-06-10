@@ -50,33 +50,33 @@
                                     <!-- Nav tabs -->
                                     <ul class="nav nav-tabs" role="tablist">
                                         <li class="nav-item">
-                                            <a class="nav-link" id="all-account-tab" data-bs-toggle="tab"
+                                            <a class="nav-link" id="all-account-tab" data-ui-toggle="tab"
                                                 href="#all-account" role="tab" aria-controls="all-account"
                                                 aria-selected="false" data-tab="all">Basic information</a>
 
                                         </li>
                                         @if ($guestAccount->type === 'faculty')
                                             <li class="nav-item">
-                                                <a class="nav-link" id="handled-account-tab" data-bs-toggle="tab"
+                                                <a class="nav-link" id="handled-account-tab" data-ui-toggle="tab"
                                                     href="#handled-account" role="tab" aria-controls="handled-account"
                                                     aria-selected="false" data-tab="handled">Thesis Advise</a>
                                             </li>
                                         @endif
 
                                         <li class="nav-item">
-                                            <a class="nav-link" id="offline-account-tab" data-bs-toggle="tab"
+                                            <a class="nav-link" id="offline-account-tab" data-ui-toggle="tab"
                                                 href="#offline-account" role="tab" aria-controls="offline-account"
                                                 aria-selected="false" data-tab="offline">File Rating</a>
                                         </li>
 
                                         <li class="nav-item">
-                                            <a class="nav-link" id="saved-account-tab" data-bs-toggle="tab"
+                                            <a class="nav-link" id="saved-account-tab" data-ui-toggle="tab"
                                                 href="#saved-account" role="tab" aria-controls="saved-account"
                                                 aria-selected="false" data-tab="saved">File Saved</a>
                                         </li>
 
                                         <li class="nav-item">
-                                            <a class="nav-link" id="invalid-account-tab" data-bs-toggle="tab"
+                                            <a class="nav-link" id="invalid-account-tab" data-ui-toggle="tab"
                                                 href="#invalid-account" role="tab" aria-controls="invalid-account"
                                                 aria-selected="false" data-tab="invalid">Log History</a>
                                         </li>
@@ -198,7 +198,7 @@
                                                     <div class="my-2">
                                                         <button type="button"
                                                             class="btn btn-maroon mb-3 mt-3 w-80 d-flex align-items-center justify-content-center"
-                                                            data-bs-toggle="modal" data-bs-target="#thesisModal">
+                                                            data-ui-toggle="modal" data-ui-target="#thesisModal">
                                                             Add Thesis Advisee
                                                         </button>
                                                     </div>
@@ -216,7 +216,7 @@
                                                                     </h5>
                                                                     <button type="button"
                                                                         class="btn-close d-flex align-items-center justify-content-center"
-                                                                        data-bs-dismiss="modal" aria-label="Close"> <i
+                                                                        data-ui-dismiss="modal" aria-label="Close"> <i
                                                                             class="fs-3 fa-solid fa-xmark"></i></button>
                                                                 </div>
                                                                 <div class="modal-body">
@@ -309,7 +309,7 @@
                                                                                 class="btn btn-outline-secondary dropdown-toggle"
                                                                                 type="button"
                                                                                 id="actionDropdown{{ $count }}"
-                                                                                data-bs-toggle="dropdown"
+                                                                                data-ui-toggle="dropdown"
                                                                                 aria-haspopup="true"
                                                                                 aria-expanded="false">
 
@@ -476,8 +476,7 @@
             // Activate the tab and corresponding content
             let tabToActivate = document.querySelector(`a[data-tab="${activeTabView}"]`);
             if (tabToActivate) {
-                var tab = new bootstrap.Tab(tabToActivate);
-                tab.show();
+                window.TSearchUI?.activateTab(tabToActivate);
 
                 // Activate the content
                 document.querySelectorAll('.tab-pane').forEach(function(pane) {
@@ -488,8 +487,8 @@
             }
 
             // Store active tab in local storage when clicked
-            document.querySelectorAll('a[data-bs-toggle="tab"]').forEach(function(tab) {
-                tab.addEventListener('shown.bs.tab', function(event) {
+            document.querySelectorAll('a[data-ui-toggle="tab"]').forEach(function(tab) {
+                tab.addEventListener('shown.ui.tab', function(event) {
                     let selectedTab = event.target.getAttribute('data-tab');
                     localStorage.setItem('activeTabView', selectedTab);
                 });

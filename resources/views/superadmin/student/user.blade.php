@@ -185,16 +185,16 @@
 
                 <nav class="nav nav-tabs justify-content-center flex-wrap custom-tabs">
                     <li class="nav-item">
-                        <a class="nav-link active" data-bs-toggle="tab" href="#alluser">All User</a>
+                        <a class="nav-link active" data-ui-toggle="tab" href="#alluser">All User</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#activeUser">Online User</a>
+                        <a class="nav-link" data-ui-toggle="tab" href="#activeUser">Online User</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#deactiveUser">Offline User</a>
+                        <a class="nav-link" data-ui-toggle="tab" href="#deactiveUser">Offline User</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" href="#invalid_user">Invalid User</a>
+                        <a class="nav-link" data-ui-toggle="tab" href="#invalid_user">Invalid User</a>
                     </li>
                 </nav>
 
@@ -207,7 +207,7 @@
                                 <div>
                                     <div class="container mb-2 justify-content-end d-flex">
                                         <button class="btn btn-label-danger dropdown-toggle border border-danger"
-                                            type="button" id="exportDropdown" data-bs-toggle="dropdown"
+                                            type="button" id="exportDropdown" data-ui-toggle="dropdown"
                                             aria-expanded="false">
                                             Export
                                         </button>
@@ -280,7 +280,7 @@
                                 <div class="container">
                                     <div class="container mb-2 justify-content-end d-flex">
                                         <button class="btn btn-label-danger dropdown-toggle border border-danger"
-                                            type="button" id="exportDropdown1" data-bs-toggle="dropdown"
+                                            type="button" id="exportDropdown1" data-ui-toggle="dropdown"
                                             aria-expanded="false">
                                             Export
                                         </button>
@@ -357,7 +357,7 @@
                                 <div class="container">
                                     <div class="container mb-2 justify-content-end d-flex">
                                         <button class="btn btn-label-danger dropdown-toggle border border-danger"
-                                            type="button" id="exportDropdown2" data-bs-toggle="dropdown"
+                                            type="button" id="exportDropdown2" data-ui-toggle="dropdown"
                                             aria-expanded="false">
                                             Export
                                         </button>
@@ -434,7 +434,7 @@
                                 <div class="container">
                                     <div class="container mb-2 justify-content-end d-flex">
                                         <button class="btn btn-label-danger dropdown-toggle border border-danger"
-                                            type="button" id="exportDropdown3" data-bs-toggle="dropdown"
+                                            type="button" id="exportDropdown3" data-ui-toggle="dropdown"
                                             aria-expanded="false">
                                             Export
                                         </button>

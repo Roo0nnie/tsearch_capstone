@@ -17,7 +17,7 @@
                 <!-- Button 2: Email Modal with Icon -->
                 <button type="button"
                     class="btn btn-ask mb-3 mt-3 w-80 d-flex align-items-center justify-content-center"
-                    data-bs-toggle="modal" data-bs-target="#emailModal">
+                    data-ui-toggle="modal" data-ui-target="#emailModal">
                     <i class="fas fa-envelope me-2"></i> Send Email
                 </button>
 
@@ -59,7 +59,7 @@
                         Librarian</strong>
                 </h5>
                 <button type="button" class="btn-close d-flex align-items-center justify-content-center"
-                    data-bs-dismiss="modal" aria-label="Close"> <i class="fs-3 fa-solid fa-xmark"></i></button>
+                    data-ui-dismiss="modal" aria-label="Close"> <i class="fs-3 fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-body">
                 @php
