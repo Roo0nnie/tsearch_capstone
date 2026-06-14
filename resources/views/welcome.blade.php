@@ -32,12 +32,25 @@
                             @endif
 
                             <div class="button-group">
-                                <a href="{{ route('guest.auth.google') }}" class="custom-button">
-                                    {{ __('SSU Login') }}
-                                </a>
-                                <a href="{{ route('guest.page') }}" class="custom-button">Guest</a>
-                                <a href="{{ route('login', ['userType' => 'admin']) }}"
-                                    class="custom-button">Administrator</a>
+                                @if (app()->environment('local'))
+                                    <a href="{{ route('dev.login', 'student') }}" class="custom-button btn-primary-custom">
+                                        {{ __('SSU Login') }}
+                                    </a>
+                                    <a href="{{ route('dev.login', 'guest') }}" class="custom-button btn-secondary-custom">Guest</a>
+                                    <a href="{{ route('dev.login', 'admin') }}" class="custom-button btn-secondary-custom">Administrator</a>
+                                    <a href="{{ route('dev.login', 'faculty') }}" class="custom-button btn-secondary-custom">Faculty</a>
+                                    <a href="{{ route('dev.login', 'superadmin') }}" class="custom-button btn-secondary-custom">Super Admin</a>
+                                    <p class="mt-3 mb-0 text-muted" style="font-size: 13px;">
+                                        Dev mode: one-click login as seed users (password: password)
+                                    </p>
+                                @else
+                                    <a href="{{ route('guest.auth.google') }}" class="custom-button btn-primary-custom">
+                                        {{ __('SSU Login') }}
+                                    </a>
+                                    <a href="{{ route('guest.page') }}" class="custom-button btn-secondary-custom">Guest</a>
+                                    <a href="{{ route('login', ['userType' => 'admin']) }}"
+                                        class="custom-button btn-secondary-custom">Administrator</a>
+                                @endif
                             </div>
 
                         </div>

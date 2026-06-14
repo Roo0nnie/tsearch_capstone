@@ -145,46 +145,56 @@
                                 <div class="tab-pane active" id="online-account" role="tabpanel"
                                     aria-labelledby="online-account-tab">
                                     <div class="container">
-
-
-                                        <div id="imrad-table">
-                                            <table id="fileDeleted-datatables_1"
-                                                class="display table table-striped table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th scope="col"><input type="checkbox" id="select-all"></th>
-                                                        <th scope="col">#</th>
-                                                        <th scope="col">Category</th>
-                                                        <th scope="col">Title</th>
-                                                        <th scope="col">Deleted On</th>
-                                                        <th scope="col">Deleted By</th>
-                                                        <th scope="col">Scheduled Deletion</th>
-                                                        {{-- <th scope="col">Actions</th> --}}
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="archive-table-body">
-                                                    @php
-                                                        $count = 1;
-                                                    @endphp
-                                                    @foreach ($archives as $archive)
-                                                        <tr data-id="{{ $archive->id }}">
-                                                            <td>
-                                                                <input type="checkbox" class="row-checkbox"
-                                                                    id="select-all" value="{{ $archive->id }}">
-                                                            </td>
-                                                            <td>{{ $count++ }}</td>
-                                                            <td>{{ $archive->category }}</td>
-                                                            <td>{{ $archive->title }}</td>
-                                                            <td>{{ $archive->deleted_time }}</td>
-                                                            <td>{{ $archive->delete_by }}</td>
-                                                            <td class="scheduled-deletion">
-                                                                {{ $archive->permanent_delete }}
-                                                            </td>
+                                        @if ($archives->isEmpty())
+                                            <div class="d-flex flex-column align-items-center justify-content-center py-5 text-center px-4">
+                                                <div class="mb-4 bg-light bg-opacity-50 rounded-circle p-4 border border-light-subtle d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                                                    <i class="fa-solid fa-folder-open fa-3x text-muted opacity-50"></i>
+                                                </div>
+                                                <h4 class="fw-bold text-dark mb-1">No Deleted Files</h4>
+                                                <p class="text-secondary text-xs mb-4" style="max-width: 340px; margin-inline: auto;">There are no deleted thesis manuscripts or documents in the Recovery Center. Soft-deleted documents appear here for recovery before permanent purging.</p>
+                                                <a href="{{ route('admin.file.published') }}" class="btn btn-sm btn-primary-custom" style="width: auto;">
+                                                    <i class="fas fa-file-alt me-1"></i> View Published Files
+                                                </a>
+                                            </div>
+                                        @else
+                                            <div id="imrad-table">
+                                                <table id="fileDeleted-datatables_1"
+                                                    class="display table table-striped table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col"><input type="checkbox" id="select-all"></th>
+                                                            <th scope="col">#</th>
+                                                            <th scope="col">Category</th>
+                                                            <th scope="col">Title</th>
+                                                            <th scope="col">Deleted On</th>
+                                                            <th scope="col">Deleted By</th>
+                                                            <th scope="col">Scheduled Deletion</th>
                                                         </tr>
-                                                    @endforeach
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                    </thead>
+                                                    <tbody id="archive-table-body">
+                                                        @php
+                                                            $count = 1;
+                                                        @endphp
+                                                        @foreach ($archives as $archive)
+                                                            <tr data-id="{{ $archive->id }}">
+                                                                <td>
+                                                                    <input type="checkbox" class="row-checkbox"
+                                                                        id="select-all" value="{{ $archive->id }}">
+                                                                </td>
+                                                                <td>{{ $count++ }}</td>
+                                                                <td>{{ $archive->category }}</td>
+                                                                <td>{{ $archive->title }}</td>
+                                                                <td>{{ $archive->deleted_time }}</td>
+                                                                <td>{{ $archive->delete_by }}</td>
+                                                                <td class="scheduled-deletion">
+                                                                    {{ $archive->permanent_delete }}
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
 

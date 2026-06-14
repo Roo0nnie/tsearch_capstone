@@ -4,9 +4,34 @@
 
 @layer base {
     :root {
+        /* Core SSU Canvas variables */
         --tsearch-maroon: #800000;
         --tsearch-maroon-hover: #991b1b;
         --tsearch-surface: #f5f7fb;
+        
+        --color-primary-dark:    #660000;
+        --color-primary:         #800000;
+        --color-primary-light:   #A31A1A;
+        --color-primary-tint:    #FFF0F0;
+        --color-accent:          #D4AF37;
+        --color-accent-light:    #F9E7B9;
+
+        --color-bg-base:         #F8FAFC;
+        --color-bg-surface:      #FFFFFF;
+        --color-border:          #E2E8F0;
+        --color-text-primary:    #0F172A;
+        --color-text-secondary:  #475569;
+        --color-text-muted:      #94A3B8;
+
+        --color-success:         #0F766E;
+        --color-success-bg:      #F0FDF4;
+        --color-warning:         #B45309;
+        --color-warning-bg:      #FFFBEB;
+        --color-danger:          #BE123C;
+        --color-danger-bg:       #FFF1F2;
+        --color-info:            #0369A1;
+        --color-info-bg:         #F0F9FF;
+
         scroll-behavior: smooth;
     }
 
@@ -1220,6 +1245,9 @@
     .sidebar .nav-item.active > a,
     .sidebar .nav-collapse li.active > a {
         @apply bg-brand-maroon/10 text-brand-maroon;
+        border-left: 3px solid var(--tsearch-maroon);
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
     }
 
     .sidebar .nav-item i {

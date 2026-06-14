@@ -2,49 +2,53 @@
     <!-- Article List -->
     @foreach ($imrads as $imrad)
         <div class="article-list" id="imrad_result">
-            <div class="article mb-3 p-3 border">
+            <div class="thesis-card mb-4 p-4">
                 <div class="non-select">
-                    <div class="thesis-title roboto-bold bg-maroon px-4 py-1 d-inline-block text-white rounded-1">
-                        {{ $imrad->category }}</div>
-                    <h3 class="title thesis-title roboto-bold my-2" id="viewsButton-{{ $imrad->id }}"
+                    <div class="category-badge mb-2">
+                        {{ $imrad->category }}
+                    </div>
+                    <h3 class="title thesis-title my-2" id="viewsButton-{{ $imrad->id }}"
                         data-imrad-id="{{ $imrad->id }}">
                         <a href="#" class="view-imrad-link" data-imrad-id="{{ $imrad->id }}"
                             data-pdf-url="
-                           @if (Auth::guard('guest_account')->check()) {{ route('guest_account.home.view.file', ['imrad' => $imrad->id]) }}
-                           @else
-                           {{ route('guest.view.file', ['imrad' => $imrad->id]) }} @endif
-                           ">
+                            @if (Auth::guard('guest_account')->check()) {{ route('guest_account.home.view.file', ['imrad' => $imrad->id]) }}
+                            @else
+                            {{ route('guest.view.file', ['imrad' => $imrad->id]) }} @endif
+                            ">
                             {{ $imrad->title }}
                         </a>
                     </h3>
 
                     <!-- Display the abstract of the article with a max length -->
-                    <div>
-                        <p class="abstract-text mb-2" id="abstract-{{ $imrad->id }}">{{ $imrad->abstract }}</p>
-                        <p><strong>Author:</strong> {{ $imrad->author }}</p>
-                        <p><strong>Call No.:</strong> {{ $imrad->location }}</p>
-                        <p><strong>Keyword:</strong> {{ $imrad->keywords }}</p>
-                        <p><strong>Year:</strong> {{ $imrad->publication_date }}</p>
+                    <div class="thesis-abstract-container mb-3 mt-3">
+                        <p class="abstract-text text-secondary mb-3 lh-relaxed" id="abstract-{{ $imrad->id }}">{{ $imrad->abstract }}</p>
+                        <div class="d-flex flex-wrap gap-3 text-xs text-muted">
+                            <span class="meta-item"><i class="fas fa-user-edit me-1 text-maroon"></i><strong>Author:</strong> {{ $imrad->author }}</span>
+                            <span class="meta-item"><i class="fas fa-calendar-alt me-1 text-maroon"></i><strong>Year:</strong> {{ $imrad->publication_date }}</span>
+                            @if($imrad->location)
+                                <span class="meta-item"><i class="fas fa-bookmark me-1 text-maroon"></i><strong>Call No.:</strong> {{ $imrad->location }}</span>
+                            @endif
+                        </div>
                     </div>
                 </div>
-                <div
-                    class="d-flex flex-lg-row flex-column justify-content-lg-between align-items-lg-start align-items-center mt-2">
-                    <div class="">
+                
+                <div class="d-flex flex-lg-row flex-column justify-content-lg-between align-items-lg-center gap-3 mt-4 pt-3 border-top border-light-subtle">
+                    <div class="d-flex flex-wrap gap-2 align-items-center">
                         <!-- Button to download the PDF if available -->
                         @if (Auth::guard('guest_account')->check())
                             @if ($imrad->pdf_file)
-                                <a href="{{ asset('assets/pdf/' . $imrad->pdf_file) }}" class="btn btn-download"
+                                <a href="{{ asset('assets/pdf/' . $imrad->pdf_file) }}" class="btn btn-sm btn-primary-custom"
                                     target="_blank" id="downloadPdfButton-{{ $imrad->id }}"
                                     data-pdf-url="{{ asset('assets/pdf/' . $imrad->pdf_file) }}"
                                     data-imrad-id="{{ $imrad->id }}">
-                                    PDF
+                                    <i class="fas fa-file-pdf me-1"></i> Read PDF
                                 </a>
                             @endif
                         @endif
 
                         <!-- Button to open the citation modal -->
-                        <button class="btn btn-cite" data-ui-toggle="modal"
-                            data-ui-target="#modalCitation{{ $imrad->id }}">Cite</button>
+                        <button class="btn btn-sm btn-outline-primary" data-ui-toggle="modal"
+                            data-ui-target="#modalCitation{{ $imrad->id }}"><i class="fas fa-quote-right me-1"></i> Cite</button>
 
                         <!-- Form to save the article for guest users -->
                         @if (Auth::guard('guest_account')->check())
@@ -52,34 +56,31 @@
                                 action="{{ route('guest.account.home.save.imrad', ['imrad' => $imrad->id]) }}"
                                 method="post" style="display: inline">
                                 @csrf
-                                <button type="submit" class="btn btn-save">Save</button>
+                                <button type="submit" class="btn btn-sm btn-outline-primary"><i class="fas fa-heart me-1"></i> Save to Library</button>
                             </form>
                         @endif
-
-                        <span class="btn btn-cite">Downloads: {{ $imrad->imradMetric->downloads }}</span>
                     </div>
 
-                    <div class="">
-                        <!-- Display rating stars -->
-                        <div class="rating-display">
-                            @foreach (range(5, 1) as $rating)
-                                <input type="radio" id="star{{ $rating }}-{{ $imrad->id }}"
-                                    name="rating-{{ $imrad->id }}" value="{{ $rating }}"
-                                    @if ($imrad->imradMetric && $imrad->imradMetric->rates == $rating) checked @endif @disabled(true) />
-                                <label for="star{{ $rating }}-{{ $imrad->id }}"
-                                    title="{{ $rating }} stars"></label>
-                            @endforeach
+                    <div class="d-flex align-items-center gap-4">
+                        <span class="text-secondary text-sm d-inline-flex align-items-center gap-1 font-semibold">
+                            <i class="fas fa-arrow-alt-circle-down text-maroon"></i> {{ $imrad->imradMetric->downloads ?? 0 }} downloads
+                        </span>
+
+                        <div class="d-inline-flex align-items-center gap-1 text-warning">
+                            @php
+                                $avgRate = $imrad->imradMetric ? $imrad->imradMetric->rates : 0;
+                                $userCount = $imrad->ratings()->distinct('user_code')->count('user_code');
+                            @endphp
+                            @for ($i = 1; $i <= 5; $i++)
+                                @if ($i <= $avgRate)
+                                    <i class="fas fa-star"></i>
+                                @else
+                                    <i class="far fa-star text-slate-300"></i>
+                                @endif
+                            @endfor
+                            <span class="text-secondary text-xs ms-1">({{ $userCount }} ratings)</span>
                         </div>
-
-                        @php
-                            $userCount = $imrad->ratings()->distinct('user_code')->count('user_code');
-                        @endphp
-
-                        <div class="btn-maroon">User Rate : {{ $userCount }}</div>
-
                     </div>
-
-
                 </div>
             </div>
         </div>

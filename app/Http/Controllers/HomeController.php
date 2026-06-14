@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\LengthAwarePaginator;
 
+use App\Services\Auth\AccountResolver;
 use App\Services\SpellCheckerService;
 use Illuminate\Support\Facades\Log;
 use PhpSpellcheck\Spellchecker\Aspell;
@@ -51,8 +52,7 @@ class HomeController extends Controller
         $noResults = false;
         $noAnnouncements = false;
 
-        $user_code = Auth::user()->user_code;
-        GuestAccount::where('user_code', $user_code)->first()->update(['status' => 'Active']);
+        $this->markAuthenticatedUserOnline();
 
         if ($query) {
 
@@ -437,7 +437,8 @@ public function filter(Request $request)
         $announcements = Announcement::where('activation', 'Activate')->get();
         $noAnnouncements = $announcements->isEmpty();
 
-        $user_code = Auth::user()->user_code;
+        $user = app(AccountResolver::class)->user();
+        $user_code = $user?->user_code;
         $rating = Rating::where('metric_id', $imrad->id)
             ->where('user_code', $user_code)
             ->first();
@@ -468,6 +469,18 @@ public function filter(Request $request)
 
         $admins = Admin::all();
         return view('main_layouts.resources', compact('admins'));
+    }
+
+    private function markAuthenticatedUserOnline(): void
+    {
+        $user = app(AccountResolver::class)->user();
+
+        if (!$user) {
+            return;
+        }
+
+        $status = $user instanceof GuestAccount ? 'Active' : 'online';
+        $user->update(['status' => $status]);
     }
 
 }

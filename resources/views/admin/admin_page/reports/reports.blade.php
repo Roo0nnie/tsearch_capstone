@@ -91,27 +91,31 @@
                         labels: sdgLabels,
                         datasets: [{
                                 label: "Downloads",
-                                backgroundColor: "rgba(75, 192, 192, 0.7)", // Teal
-                                borderColor: "rgba(75, 192, 192, 1)",
+                                backgroundColor: "rgba(128, 0, 0, 0.75)", // SSU Maroon
+                                borderColor: "rgba(128, 0, 0, 1)",
                                 data: downloadsData,
+                                borderRadius: 4,
                             },
                             {
                                 label: "Views",
-                                backgroundColor: "rgba(255, 99, 132, 0.7)", // Red
-                                borderColor: "rgba(255, 99, 132, 1)",
+                                backgroundColor: "rgba(15, 118, 110, 0.75)", // Semantic Teal
+                                borderColor: "rgba(15, 118, 110, 1)",
                                 data: viewsData,
+                                borderRadius: 4,
                             },
                             {
                                 label: "Saved",
-                                backgroundColor: "rgba(54, 162, 235, 0.7)", // Blue
-                                borderColor: "rgba(54, 162, 235, 1)",
+                                backgroundColor: "rgba(3, 105, 161, 0.75)", // Semantic Blue
+                                borderColor: "rgba(3, 105, 161, 1)",
                                 data: savedData,
+                                borderRadius: 4,
                             },
                             {
                                 label: "Rating",
-                                backgroundColor: "rgba(255, 206, 86, 0.7)", // Yellow
-                                borderColor: "rgba(255, 206, 86, 1)",
+                                backgroundColor: "rgba(212, 175, 55, 0.75)", // Academic Gold
+                                borderColor: "rgba(212, 175, 55, 1)",
                                 data: ratingsData,
+                                borderRadius: 4,
                             }
                         ],
                     },

@@ -1,8 +1,5 @@
 <div class="mainWrapper" id="mainWrapper">
     <div class="left-container">
-        <div class="left-item bg-white mb-3">
-            @include('main_layouts.fileList')
-        </div>
         <div class="left-item bg-white">
             @include('main_layouts.filters')
         </div>

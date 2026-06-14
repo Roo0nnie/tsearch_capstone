@@ -166,25 +166,15 @@
                                                                 <td>{{ $guestAccount->email }}</td>
                                                                 <td>{{ $guestAccount->phone }}</td>
                                                                 <td>{{ $guestAccount->birthday }}</td>
-                                                                @if ($guestAccount->status === 'Active')
-                                                                    @if ($guestAccount->account_status === 'active')
-                                                                        <td><span
-                                                                                class="badge fs-5 text-bg-success">{{ $guestAccount->status }}</span>
-                                                                        </td>
+                                                                <td>
+                                                                    @if ($guestAccount->account_status === 'blocked')
+                                                                        <span class="badge bg-red-50 text-red-700 border border-red-200 text-xs font-semibold px-2.5 py-0.5 rounded-full">Blocked</span>
+                                                                    @elseif ($guestAccount->status === 'Active')
+                                                                        <span class="badge bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold px-2.5 py-0.5 rounded-full">Active</span>
+                                                                    @else
+                                                                        <span class="badge bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold px-2.5 py-0.5 rounded-full">Inactive</span>
                                                                     @endif
-                                                                @endif
-                                                                @if ($guestAccount->status === 'Inactive')
-                                                                    @if ($guestAccount->account_status === 'active')
-                                                                        <td><span
-                                                                                class="badge fs-5 text-bg-primary">{{ $guestAccount->status }}</span>
-                                                                        </td>
-                                                                    @endif
-                                                                @endif
-                                                                @if ($guestAccount->account_status === 'blocked')
-                                                                    <td><span
-                                                                            class="badge fs-5 text-bg-danger">{{ $guestAccount->account_status }}</span>
-                                                                    </td>
-                                                                @endif
+                                                                </td>
 
                                                                 <td>
                                                                     <div class="btn-group text-sm-center" role="group"

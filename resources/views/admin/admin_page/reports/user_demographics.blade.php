@@ -67,11 +67,11 @@
                 case 'gender':
                     labels = ['Male', 'Female', 'Other'];
                     data = [response.gender.male, response.gender.female, response.gender.other];
-                    backgroundColor = ['#f3545d', '#177dff', '#fdaf4b'];
+                    backgroundColor = ['#0369a1', '#800000', '#cbd5e1']; // Info Blue, Brand Maroon, Slate 300
                     break;
 
                 case 'ageRange':
-                    labels = ['null', '13 - 19', '20 - 34', '35 - 49', '50+'];
+                    labels = ['Not Specified', '13 - 19', '20 - 34', '35 - 49', '50+'];
                     data = [
                         response.age['null'],
                         response.age['13 - 19'],
@@ -79,13 +79,13 @@
                         response.age['35 - 49'],
                         response.age['50+'],
                     ];
-                    backgroundColor = ['#42b883', '#f3545d', '#fdaf4b', '#177dff', '#0d47a1'];
+                    backgroundColor = ['#94a3b8', '#fecdd3', '#800000', '#d4af37', '#1f2937']; // Slate 400, Rose 200, Maroon, Gold, Dark Slate
                     break;
 
                 case 'userRole':
                     labels = ['Admin', 'User'];
                     data = [response.user.admin, response.user.user];
-                    backgroundColor = ['#177dff', '#fdaf4b'];
+                    backgroundColor = ['#800000', '#d4af37']; // Maroon, Gold
                     break;
 
                 default:

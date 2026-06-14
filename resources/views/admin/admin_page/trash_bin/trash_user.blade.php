@@ -72,45 +72,58 @@
                                 <div class="tab-pane active" id="all-account" role="tabpanel"
                                     aria-labelledby="all-account-tab">
                                     <div class="container">
-                                        <div>
-                                            <div id="imrad-table">
-                                                <table id="userDeleted-datatables_1"
-                                                    class="display table table-striped table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th scope="col"><input type="checkbox" id="select-all"></th>
-                                                            <th scope="col">#</th>
-                                                            <th scope="col">Code</th>
-                                                            <th scope="col">Name</th>
-                                                            <th scope="col">Deleted On</th>
-                                                            <th scope="col">Deleted By</th>
-                                                            <th scope="col">Scheduled Deletion</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="user-table-body">
-                                                        @php
-                                                            $count = 1;
-                                                        @endphp
-                                                        @foreach ($users as $user)
-                                                            <tr data-id="{{ $user->id }}">
-                                                                <td>
-                                                                    <input type="checkbox" class="row-checkbox"
-                                                                        id="select-all" value="{{ $user->id }}">
-                                                                </td>
-                                                                <td>{{ $count++ }}</td>
-                                                                <td>{{ $user->user_code }}</td>
-                                                                <td>{{ $user->name }}</td>
-                                                                <td>{{ $user->deleted_time }}</td>
-                                                                <td>{{ $user->delete_by }}</td>
-                                                                <td class="scheduled-deletion">
-                                                                    {{ $user->permanent_delete }}
-                                                                </td>
-                                                            </tr>
-                                                        @endforeach
-                                                    </tbody>
-                                                </table>
+                                        @if ($users->isEmpty())
+                                            <div class="d-flex flex-column align-items-center justify-content-center py-5 text-center px-4">
+                                                <div class="mb-4 bg-light bg-opacity-50 rounded-circle p-4 border border-light-subtle d-inline-flex align-items-center justify-content-center" style="width: 100px; height: 100px;">
+                                                    <i class="fa-solid fa-trash-arrow-up fa-3x text-muted opacity-50"></i>
+                                                </div>
+                                                <h4 class="fw-bold text-dark mb-1">Trash is Empty</h4>
+                                                <p class="text-secondary text-xs mb-4" style="max-width: 340px; margin-inline: auto;">There are no deleted student accounts in the Recovery Center. Any user soft-deleted will appear here for 30 days before permanent purging.</p>
+                                                <a href="{{ route('admin.guestAccount') }}" class="btn btn-sm btn-primary-custom" style="width: auto;">
+                                                    <i class="fas fa-users me-1"></i> Go to User Directory
+                                                </a>
                                             </div>
-                                        </div>
+                                        @else
+                                            <div>
+                                                <div id="imrad-table">
+                                                    <table id="userDeleted-datatables_1"
+                                                        class="display table table-striped table-hover">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col"><input type="checkbox" id="select-all"></th>
+                                                                <th scope="col">#</th>
+                                                                <th scope="col">Code</th>
+                                                                <th scope="col">Name</th>
+                                                                <th scope="col">Deleted On</th>
+                                                                <th scope="col">Deleted By</th>
+                                                                <th scope="col">Scheduled Deletion</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="user-table-body">
+                                                            @php
+                                                                $count = 1;
+                                                            @endphp
+                                                            @foreach ($users as $user)
+                                                                <tr data-id="{{ $user->id }}">
+                                                                    <td>
+                                                                        <input type="checkbox" class="row-checkbox"
+                                                                            id="select-all" value="{{ $user->id }}">
+                                                                    </td>
+                                                                    <td>{{ $count++ }}</td>
+                                                                    <td>{{ $user->user_code }}</td>
+                                                                    <td>{{ $user->name }}</td>
+                                                                    <td>{{ $user->deleted_time }}</td>
+                                                                    <td>{{ $user->delete_by }}</td>
+                                                                    <td class="scheduled-deletion">
+                                                                        {{ $user->permanent_delete }}
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
 

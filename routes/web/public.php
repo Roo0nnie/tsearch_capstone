@@ -36,6 +36,7 @@ use App\Http\Controllers\UserAuth\UserLoginController;
 use App\Http\Controllers\UserAuth\UserResetController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserExportController;
+use App\Http\Controllers\DevLoginController;
 // ======================= Super Admin Verification Route ================================
 Route::get('login/superadmin/verify', [SuperAdminController::class, 'showVerifyForm'])->name('superadmin.verify');
 Route::post('login/super_admin/verify_code', [SuperAdminController::class, 'verify_code'])->name('superadmin.verify.code');
@@ -46,6 +47,10 @@ Route::post('login/admin/verify_code', [AdminAuthController::class, 'adminVerify
 
 // ======================= Landing Page Route ================================
 Route::get('/', [AdminLoginController::class, 'landingPage'])->name('landing.page');
+
+Route::get('/dev/login/{role}', [DevLoginController::class, 'login'])
+    ->where('role', 'student|faculty|guest|admin|superadmin')
+    ->name('dev.login');
 
 Route::middleware('guest')->group(function () {
 
