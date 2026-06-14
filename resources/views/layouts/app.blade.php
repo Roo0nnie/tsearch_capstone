@@ -52,13 +52,13 @@
 </body>
 
 <script>
-    var nav = document.getElementById("welcome");
-    var currentRoute = nav.getAttribute('data-route');
+    var welcomeEl = document.getElementById("welcome");
+    var currentRoute = document.body.getAttribute('data-route');
 
-    if (currentRoute !== 'admin.dashboard' && currentRoute !== 'guest.page' && currentRoute !== 'home') {
-        nav.classList.add("welcome");
-    } else {
-        nav.classList.remove("welcome");
+    if (welcomeEl && currentRoute !== 'admin.dashboard' && currentRoute !== 'guest.page' && currentRoute !== 'home') {
+        welcomeEl.classList.add("welcome");
+    } else if (welcomeEl) {
+        welcomeEl.classList.remove("welcome");
     }
 
     document.addEventListener('contextmenu', function(e) {

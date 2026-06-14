@@ -931,7 +931,11 @@
     }
 
     .navbar {
-        @apply relative z-40 w-full;
+        @apply sticky top-0 z-50 w-full shadow-md;
+    }
+
+    .navbar-expand-md-fixed {
+        @apply fixed left-0 right-0 top-0 z-50 shadow-lg;
     }
 
     .bg-main,
@@ -1027,43 +1031,54 @@
     }
 
     .welcome {
-        min-height: 100vh;
-        background-image: url("/resources/image/ssu_library.jpg");
+        min-height: calc(100vh - 4.5rem);
+        background-image: linear-gradient(
+                rgba(15, 23, 42, 0.42),
+                rgba(15, 23, 42, 0.58)
+            ),
+            url("/resources/image/ssu_library.jpg");
         background-position: center;
         background-repeat: no-repeat;
         background-size: cover;
     }
 
     .login-container {
-        @apply flex min-h-screen items-center justify-center px-4;
+        @apply flex min-h-[calc(100vh-4.5rem)] items-center justify-center px-4 py-8;
     }
 
     .welcome-box {
-        @apply mx-auto my-10 w-full max-w-sm rounded-lg border border-white/30 bg-white/45 p-6 text-center shadow-shell backdrop-blur-md;
+        @apply mx-auto w-full max-w-md rounded-2xl border border-white/50 bg-white/90 p-8 text-center shadow-2xl backdrop-blur-lg;
     }
 
     .welcome-box h3 {
-        @apply mb-2 text-2xl font-bold text-slate-950;
+        @apply mb-1 text-2xl font-bold tracking-tight text-brand-maroon;
     }
 
     .welcome-box p {
-        @apply mt-2 text-xl text-slate-800;
+        @apply mb-6 text-sm font-semibold uppercase tracking-widest text-slate-500;
+    }
+
+    .welcome-box .button-group {
+        @apply mx-auto w-full max-w-sm space-y-3;
     }
 
     .circle,
     .circle_header {
-        @apply relative mx-auto overflow-hidden rounded-full bg-brand-maroon;
+        @apply relative mx-auto overflow-hidden rounded-full;
     }
 
     .circle {
-        @apply h-36 w-36;
+        @apply mb-2 flex h-24 w-24 items-center justify-center border-2 border-brand-maroon bg-white p-2 shadow-md;
     }
 
     .circle_header {
         @apply h-12 w-12;
     }
 
-    .circle img,
+    .circle img {
+        @apply h-full w-full object-contain;
+    }
+
     .circle_header img {
         @apply absolute inset-0 h-full w-full object-contain;
     }
@@ -1077,7 +1092,15 @@
     .btn-anno,
     .btn-ask,
     .btn-dept {
-        @apply my-2 inline-flex w-full items-center justify-center rounded-lg border border-brand-maroon bg-brand-maroon px-4 py-2.5 font-semibold text-white transition hover:bg-brand-maroon-hover hover:text-white;
+        @apply inline-flex w-full items-center justify-center rounded-lg border border-brand-maroon bg-brand-maroon px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-px hover:bg-brand-maroon-hover hover:text-white hover:shadow-md;
+    }
+
+    .custom-button.btn-primary-custom {
+        @apply border-brand-maroon bg-brand-maroon text-white hover:bg-brand-maroon-hover;
+    }
+
+    .custom-button.btn-secondary-custom {
+        @apply border-brand-maroon bg-transparent text-brand-maroon shadow-none hover:bg-brand-maroon/5 hover:text-brand-maroon-hover;
     }
 
     .custom-button-white {
