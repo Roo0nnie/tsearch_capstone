@@ -9,7 +9,7 @@
         <div class="login-container">
             <div class="welcome-box">
                 <div class="circle">
-                    <img src="{{ asset('assets/img/kaiadmin/tsearch_logo.png') }}" class="img-fluid" alt="T-SEARCH logo">
+                    <img src="{{ asset('assets/img/kaiadmin/ssu_logo.png') }}" alt="SSU logo">
                 </div>
 
                 <h3>Thesis Management System</h3>

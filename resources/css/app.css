@@ -1076,7 +1076,7 @@
     }
 
     .circle img {
-        @apply h-full w-full object-contain;
+        @apply block h-full w-full object-cover object-center;
     }
 
     .circle_header img {
@@ -1158,7 +1158,7 @@
 
     .mainWrapper {
         @apply m-4 grid gap-4;
-        grid-template-columns: 300px minmax(0, 1fr) 280px;
+        grid-template-columns: 300px minmax(0, 1fr) minmax(0, 280px);
     }
 
     .mainWrapper-rem {
@@ -1171,6 +1171,28 @@
     .main-content,
     .article {
         @apply rounded-lg bg-white p-5 shadow-panel;
+    }
+
+    .right-container {
+        @apply flex min-w-0 flex-col;
+    }
+
+    .right-item {
+        @apply min-w-0 overflow-hidden;
+    }
+
+    .lib-box,
+    .announcement-box {
+        @apply box-border w-full;
+    }
+
+    .right-item .button-group {
+        @apply w-full max-w-full;
+    }
+
+    .right-item .btn-ask,
+    .right-item .btn-anno {
+        @apply max-w-full whitespace-normal px-4;
     }
 
     .filter-section,
@@ -1484,6 +1506,11 @@
 
     .text-start {
         text-align: left;
+    }
+
+    .w-80 {
+        width: 80%;
+        max-width: 100%;
     }
 
     .w-100 {

@@ -1,14 +1,14 @@
-<div class="lib-box p-3 text-white d-flex justify-content-center align-items-center">
-    <div class="m-2 d-flex justify-content-center align-items-center flex-column">
-        <div class="smallContainer w-80">
+<div class="lib-box p-3 text-white w-100">
+    <div class="w-100 d-flex flex-column align-items-center">
+        <div class="smallContainer w-100">
             <h5 class="text-maroon text-center fw-bold mb-4" style="font-size: 17px;">Ask-a-Librarian </h5>
 
             <!-- Buttons Section with Icons and Dividers -->
-            <div class="button-group d-flex flex-column align-items-center ">
+            <div class="button-group d-flex flex-column align-items-stretch w-100">
 
                 <!-- Button 1: Messenger with Icon -->
                 <a href="https://www.facebook.com/messages/t/114298653592013" target="_blank"
-                    class="btn btn-ask mb-3 mt-2 w-80 d-flex align-items-center justify-content-center">
+                    class="btn btn-ask mb-3 mt-2 d-flex align-items-center justify-content-center">
                     <i class="fas fa-comment-dots me-2"></i> Ask via Messenger
                 </a>
 
@@ -16,7 +16,7 @@
 
                 <!-- Button 2: Email Modal with Icon -->
                 <button type="button"
-                    class="btn btn-ask mb-3 mt-3 w-80 d-flex align-items-center justify-content-center"
+                    class="btn btn-ask mb-3 mt-3 d-flex align-items-center justify-content-center"
                     data-ui-toggle="modal" data-ui-target="#emailModal">
                     <i class="fas fa-envelope me-2"></i> Send Email
                 </button>
@@ -33,14 +33,14 @@
                     }
                 @endphp
                 <a href="{{ $url }}"
-                    class="btn btn-ask mt-3 mb-3 w-80 d-flex align-items-center justify-content-center">
+                    class="btn btn-ask mt-3 mb-3 d-flex align-items-center justify-content-center">
                     <i class="fas fa-question-circle me-2"></i>FAQs
                 </a>
 
                 <hr class="w-75 text-light">
 
                 <a href="https://www.facebook.com/messages/t/100059931776599" target="_blank"
-                    class="btn btn-ask mb-3 mt-3 w-80 d-flex align-items-center justify-content-center">
+                    class="btn btn-ask mb-3 mt-3 d-flex align-items-center justify-content-center">
                     <i class="fas fa-phone me-2"></i> Help
                 </a>
 
