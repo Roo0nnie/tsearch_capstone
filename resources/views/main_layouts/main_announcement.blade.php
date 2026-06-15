@@ -1,4 +1,4 @@
-<div class="announcement-box p-3 text-maroon w-100">
+<div class="announcement-box text-maroon w-100">
     <div class="w-100 d-flex flex-column align-items-center">
         <h5 class="roboto-bold mb-3">ANNOUNCEMENT</h5>
 

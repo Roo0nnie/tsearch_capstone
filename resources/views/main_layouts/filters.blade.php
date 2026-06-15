@@ -194,9 +194,9 @@
         </div>
 
         <!-- Search Button -->
-        <div class="d-flex justify-content-between">
-            <button type="submit" class="btn btn-filter w-50">Apply Filters</button>
-            <button type="button" class="btn btn-clear w-50 ms-2" onclick="clearAllFilters()">Clear All</button>
+        <div class="grid grid-cols-2 gap-2">
+            <button type="submit" class="btn btn-filter w-full">Apply Filters</button>
+            <button type="button" class="btn btn-clear w-full" onclick="clearAllFilters()">Clear All</button>
         </div>
     </form>
 </div>

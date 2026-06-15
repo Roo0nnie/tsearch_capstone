@@ -37,10 +37,19 @@
 
     html {
         scroll-behavior: smooth;
+        overflow-x: hidden;
+        max-width: 100%;
     }
 
     body {
         @apply min-h-screen bg-brand-surface font-sans text-slate-800 antialiased;
+        overflow-x: hidden;
+        max-width: 100%;
+    }
+
+    #app {
+        overflow-x: hidden;
+        max-width: 100%;
     }
 
     a {
@@ -730,7 +739,12 @@
     }
 
     .input-group > .form-control {
-        @apply rounded-r-none;
+        @apply min-w-0 flex-1 rounded-r-none;
+    }
+
+    .input-group > .input-group-text,
+    .input-group > .btn-search {
+        @apply shrink-0;
     }
 
     .input-group-text {
@@ -1149,7 +1163,10 @@
     }
 
     .fixed-button {
-        @apply fixed bottom-5 right-5 z-50 rounded-md bg-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-sky-400/40 hover:bg-blue-600;
+        @apply fixed bottom-5 right-4 z-50 rounded-md bg-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-sky-400/40 hover:bg-blue-600;
+        max-width: calc(100vw - 2rem);
+        white-space: normal;
+        text-align: center;
     }
 
     .fixed-button a {
@@ -1157,12 +1174,18 @@
     }
 
     .mainWrapper {
-        @apply m-4 grid gap-4;
+        @apply m-4 grid min-w-0 max-w-full gap-4;
         grid-template-columns: 300px minmax(0, 1fr) minmax(0, 280px);
     }
 
     .mainWrapper-rem {
         @apply mt-24;
+    }
+
+    .left-container,
+    .main-container,
+    .right-container {
+        @apply min-w-0 max-w-full;
     }
 
     .left-item,
@@ -1171,6 +1194,10 @@
     .main-content,
     .article {
         @apply rounded-lg bg-white p-5 shadow-panel;
+    }
+
+    .left-item {
+        @apply min-w-0 overflow-hidden;
     }
 
     .right-container {
@@ -1192,7 +1219,7 @@
 
     .right-item .btn-ask,
     .right-item .btn-anno {
-        @apply max-w-full whitespace-normal px-4;
+        @apply min-w-0 w-full max-w-full box-border whitespace-normal px-3 text-xs leading-snug;
     }
 
     .filter-section,
@@ -1506,6 +1533,16 @@
 
     .text-start {
         text-align: left;
+    }
+
+    .w-50 {
+        width: 50%;
+        max-width: 100%;
+    }
+
+    .w-75 {
+        width: 75%;
+        max-width: 100%;
     }
 
     .w-80 {

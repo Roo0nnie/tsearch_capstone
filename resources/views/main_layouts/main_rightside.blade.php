@@ -1,4 +1,4 @@
-<div class="lib-box p-3 text-white w-100">
+<div class="lib-box text-white w-100">
     <div class="w-100 d-flex flex-column align-items-center">
         <div class="smallContainer w-100">
             <h5 class="text-maroon text-center fw-bold mb-4" style="font-size: 17px;">Ask-a-Librarian </h5>
